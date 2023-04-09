@@ -1,0 +1,14 @@
+.ratings #star {
+    color: #f6ed3e;
+    transform: translateY(-3px);
+    font-size: 20px;
+}
+
+.ratings span {
+    margin: 0.12rem;
+}
+
+.ratings #text {
+    padding: 12px;
+    font-size: 16px;
+}

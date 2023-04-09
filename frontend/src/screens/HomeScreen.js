@@ -6,7 +6,6 @@ import Product from "./Product";
 function HomeScreen() {
     return (
         <div>
-            <h1>Latest Products</h1>
             <Row>
                 {
                     products.map(product => (
