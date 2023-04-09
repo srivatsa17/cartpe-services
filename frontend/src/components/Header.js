@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Navbar, Container, Nav, NavDropdown, Form, Button } from 'react-bootstrap';
 import { FaShoppingCart, FaRegHeart, FaRegUser } from 'react-icons/fa';
+import '../css/Header.css';
 
 function Header() {
+    const brandLogo = "/images/favicon.ico";
+    
     const [show, setShow] = useState(false);
     const showProfileDropdown = (e) =>{
         setShow(!show);
@@ -18,7 +21,7 @@ function Header() {
                 <Container>
                     <Nav>
                         <Navbar.Brand href="#home">
-                            <img src="favicon.ico" alt="logo" className="photo" style={{ height: "30px" }} /> CartPe
+                            <img src={brandLogo} alt="logo" className="brandLogo" /> CartPe
                         </Navbar.Brand>
 
                         <Nav.Item>
@@ -39,13 +42,12 @@ function Header() {
                         </Nav.Item>
 
                         <Nav.Item>
-                            <Form className="d-flex" style={{paddingLeft: '100px'}}>
+                            <Form className="d-flex searchForm">
                                 <Form.Control
                                     type="search"
                                     placeholder="Search"
-                                    className="me-3"
+                                    className="me-3 searchBar"
                                     aria-label="Search"
-                                    style={{width: '500px'}}
                                 />
                                 <Button variant="outline-success">Search</Button>
                             </Form>
@@ -57,7 +59,7 @@ function Header() {
                             <NavDropdown 
                                 title={
                                     <span>
-                                        <FaRegUser style={{transform: "translateY(-2px)"}}/> Profile
+                                        <FaRegUser className='icons'/> Profile
                                     </span>
                                 }
                                 id="collapsible-nav-dropdown"
@@ -80,7 +82,7 @@ function Header() {
                         <Nav.Item>
                             <Nav.Link href="#wishlist">
                                 <span>
-                                    <FaRegHeart style={{transform: "translateY(-2px)"}}/> Wishlist
+                                    <FaRegHeart className='icons'/> Wishlist
                                 </span>
                             </Nav.Link>
                         </Nav.Item>
@@ -88,7 +90,7 @@ function Header() {
                         <Nav.Item>
                             <Nav.Link href="#cart">
                                 <span>
-                                    <FaShoppingCart style={{transform: "translateY(-2px)"}}/> Cart
+                                    <FaShoppingCart className='icons'/> Cart
                                 </span>
                             </Nav.Link>
                         </Nav.Item>

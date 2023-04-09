@@ -1,0 +1,15 @@
+.icons {
+    transform: translateY(-2px)
+}
+
+.brandLogo {
+    height: 30px
+}
+
+.searchForm {
+    transform: translateX(100px)
+}
+
+.searchBar {
+    width: 500px;
+}
