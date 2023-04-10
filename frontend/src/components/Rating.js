@@ -3,7 +3,6 @@ import { BsStarFill, BsStarHalf, BsStar } from 'react-icons/bs';
 import '../css/Rating.css';
 
 function Rating({ rating, text }) {
-    console.log(rating);
     return (
         <div className="ratings" title={`${rating}/5`}>
             <span>
