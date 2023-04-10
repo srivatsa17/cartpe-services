@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Navbar, Container, Nav, NavDropdown, Form, Button } from 'react-bootstrap';
 import { FaShoppingCart, FaRegHeart, FaRegUser } from 'react-icons/fa';
 import '../css/Header.css';
+import { LinkContainer } from 'react-router-bootstrap';
 
 function Header() {
     const brandLogo = "/images/favicon.ico";
@@ -20,9 +21,11 @@ function Header() {
             <Navbar collapseOnSelect expand="md" bg="dark" variant="dark" className='p-3'>
                 <Container>
                     <Nav>
-                        <Navbar.Brand href="#home">
-                            <img src={brandLogo} alt="logo" className="brandLogo" /> CartPe
-                        </Navbar.Brand>
+                        <LinkContainer to="/">
+                            <Navbar.Brand>
+                                <img src={brandLogo} alt="logo" className="brandLogo" /> CartPe
+                            </Navbar.Brand>
+                        </LinkContainer>
 
                         <Nav.Item>
                             <NavDropdown 
@@ -80,19 +83,23 @@ function Header() {
                         </Nav.Item>
 
                         <Nav.Item>
-                            <Nav.Link href="#wishlist">
-                                <span>
-                                    <FaRegHeart className='icons'/> Wishlist
-                                </span>
-                            </Nav.Link>
+                            <LinkContainer to="/wishlist">
+                                <Nav.Link>
+                                    <span>
+                                        <FaRegHeart className='icons'/> Wishlist
+                                    </span>
+                                </Nav.Link>
+                            </LinkContainer>
                         </Nav.Item>
 
                         <Nav.Item>
-                            <Nav.Link href="#cart">
-                                <span>
-                                    <FaShoppingCart className='icons'/> Cart
-                                </span>
-                            </Nav.Link>
+                            <LinkContainer to="/cart">
+                                <Nav.Link>
+                                    <span>
+                                        <FaShoppingCart className='icons'/> Cart
+                                    </span>
+                                </Nav.Link>
+                            </LinkContainer>
                         </Nav.Item>
                     </Nav>
                 </Container>
