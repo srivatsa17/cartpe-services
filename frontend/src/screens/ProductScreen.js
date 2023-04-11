@@ -51,9 +51,11 @@ function ProductScreen({ match }) {
                                 <Row>
                                     <Col>Availability:</Col>
                                     <Col>
-                                        {
-                                            product.countInStock > 0 ? "In Stock" : "Out of Stock"
-                                        }
+                                        <strong style={{ color: product.countInStock > 0 ? "green" : "red"}}>
+                                            {
+                                                product.countInStock > 0 ? "In Stock" : "Out of Stock"
+                                            }
+                                        </strong>
                                     </Col>
                                 </Row>
                             </ListGroup.Item>
