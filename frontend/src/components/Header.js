@@ -5,7 +5,7 @@ import '../css/Header.css';
 import { LinkContainer } from 'react-router-bootstrap';
 
 function Header() {
-    const brandLogo = "/images/favicon.ico";
+    const brandLogo = "/images/cartpe-logo.png";
     
     const [show, setShow] = useState(false);
     const showProfileDropdown = (e) =>{
@@ -23,7 +23,7 @@ function Header() {
                     <Nav>
                         <LinkContainer to="/">
                             <Navbar.Brand>
-                                <img src={brandLogo} alt="logo" className="brandLogo" /> CartPe
+                                <img src={brandLogo} alt="logo" className="brandLogo" />
                             </Navbar.Brand>
                         </LinkContainer>
 
