@@ -18,12 +18,12 @@ function Header() {
 
     return (
         <header>
-            <Navbar collapseOnSelect expand="md" bg="dark" variant="dark" className='p-3'>
+            <Navbar collapseOnSelect expand="md" bg="dark" variant="dark" className='p-3' data-testid="navbar">
                 <Container>
                     <Nav>
                         <LinkContainer to="/">
                             <Navbar.Brand>
-                                <img src={brandLogo} alt="logo" className="brandLogo" />
+                                <img src={brandLogo} alt="brandLogo" className="brandLogo" />
                             </Navbar.Brand>
                         </LinkContainer>
 
