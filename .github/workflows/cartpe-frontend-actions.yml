@@ -36,7 +36,3 @@ jobs:
     - name: Run tests
       working-directory: ./frontend
       run: npm test
-    
-    - name: Collect test coverage
-      working-directory: ./frontend
-      run: npm run coverage
