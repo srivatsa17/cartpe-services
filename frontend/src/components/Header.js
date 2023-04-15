@@ -6,7 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 function Header() {
     const brandLogo = "/images/cartpe-logo.png";
-    
+
     const [show, setShow] = useState(false);
     const showProfileDropdown = (e) =>{
         setShow(!show);
@@ -28,8 +28,8 @@ function Header() {
                         </LinkContainer>
 
                         <Nav.Item>
-                            <NavDropdown 
-                                title="Categories" 
+                            <NavDropdown
+                                title="Categories"
                                 id="collapsible-nav-dropdown"
                                 data-testid="categories-dropdown"
                             >
@@ -58,10 +58,10 @@ function Header() {
                             </Form>
                         </Nav.Item>
                     </Nav>
-                    
+
                     <Nav>
                         <Nav.Item>
-                            <NavDropdown 
+                            <NavDropdown
                                 title={
                                     <span>
                                         <FaRegUser className='icons'/> Profile
@@ -70,7 +70,7 @@ function Header() {
                                 id="collapsible-nav-dropdown"
                                 data-testid="profile-dropdown"
                                 show={show}
-                                onMouseEnter={showProfileDropdown} 
+                                onMouseEnter={showProfileDropdown}
                                 onMouseLeave={hideProfileDropdown}
                             >
                                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>

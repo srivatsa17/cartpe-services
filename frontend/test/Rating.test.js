@@ -1,10 +1,14 @@
-import { screen, render, fireEvent, waitFor } from '@testing-library/react';
+import { screen, render, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import Rating from '../src/components/Rating';
 
 
 describe("Rating component", () => {
 
     const text = '12 reviews';
+
+    afterEach(() => {
+        cleanup();
+    })
 
     test("Check for stars", () => {
         render(

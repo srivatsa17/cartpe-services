@@ -40,8 +40,8 @@ function createStars(ratingObj) {
             </span>
         );
     }
-    
-    return stars; 
+
+    return stars;
 }
 
 function Rating({ rating, text }) {

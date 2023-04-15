@@ -1,4 +1,4 @@
-import { screen, render, fireEvent, waitFor } from '@testing-library/react';
+import { screen, render, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Product from '../src/components/Product';
 
@@ -18,6 +18,10 @@ describe("Product component", () => {
             </Router>
         );
     });
+
+    afterEach(() => {
+        cleanup();
+    })
 
     test('Check for product name', () => {
         const productName = product.name;
