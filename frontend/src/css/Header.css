@@ -3,7 +3,8 @@
 }
 
 .brandLogo {
-    height: 30px
+    height: 30px;
+    transform: translateY(-2px);
 }
 
 .searchForm {

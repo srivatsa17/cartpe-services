@@ -3,6 +3,47 @@ import { BsStarFill, BsStarHalf, BsStar } from 'react-icons/bs';
 import { Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import '../css/Rating.css';
 
+function createStars(ratingObj) {
+    var stars = [];
+    var ratingIntPart = Math.trunc(ratingObj.rating);
+    var ratingDecimalPart = Number((ratingObj.rating - ratingIntPart).toFixed(2));
+    var count = 0;
+
+    if(ratingIntPart < 0) {
+        ratingIntPart = 0;
+        ratingDecimalPart = 0;
+    }
+
+    for(let i = 0; i < ratingIntPart && i < 5; i++){
+        count++;
+        stars.push(
+            <span key={count}>
+                <BsStarFill data-testid="full-star"/>
+            </span>
+        );
+    }
+
+    if(ratingDecimalPart >= 0.5 && count < 5) {
+        count++;
+        stars.push(
+            <span key={count}>
+                <BsStarHalf data-testid="half-star"/>
+            </span>
+        );
+    }
+
+    for(let i = count; i < 5; i++){
+        count++;
+        stars.push(
+            <span key={count}>
+                <BsStar data-testid="empty-star"/>
+            </span>
+        );
+    }
+    
+    return stars; 
+}
+
 function Rating({ rating, text }) {
     return (
         <Row>
@@ -16,28 +57,16 @@ function Rating({ rating, text }) {
                         </Tooltip>
                     }
                 >
-                    <div className="ratings">
-                        <span>
-                            { rating >= 1 ? <BsStarFill id="star"/> : rating >= 0.5 ? <BsStarHalf id="star"/> : <BsStar id="star"/> }
-                        </span>
-                        <span>
-                            { rating >= 2 ? <BsStarFill id="star"/> : rating >= 1.5 ? <BsStarHalf id="star"/> : <BsStar id="star"/> }
-                        </span>
-                        <span>
-                            { rating >= 3 ? <BsStarFill id="star"/> : rating >= 2.5 ? <BsStarHalf id="star"/> : <BsStar id="star"/> }
-                        </span>
-                        <span>
-                            { rating >= 4 ? <BsStarFill id="star"/> : rating >= 3.5 ? <BsStarHalf id="star"/> : <BsStar id="star"/> }
-                        </span>
-                        <span>
-                            { rating >= 5 ? <BsStarFill id="star"/> : rating >= 4.5 ? <BsStarHalf id="star"/> : <BsStar id="star"/> }
-                        </span>
+                    <div className="ratings" data-testid="ratings">
+                        { createStars({ rating }) }
                     </div>
                 </OverlayTrigger>
             </Col>
 
             <Col>
-                <span>{text && text}</span>
+                {
+                    text && <span data-testid="review-count">{ text }</span>
+                }
             </Col>
         </Row>
     );

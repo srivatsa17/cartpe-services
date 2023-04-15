@@ -31,6 +31,7 @@ function Header() {
                             <NavDropdown 
                                 title="Categories" 
                                 id="collapsible-nav-dropdown"
+                                data-testid="categories-dropdown"
                             >
                                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                                 <NavDropdown.Item href="#action/3.2">
@@ -51,6 +52,7 @@ function Header() {
                                     placeholder="Search"
                                     className="me-3 searchBar"
                                     aria-label="Search"
+                                    data-testid="Searchbar"
                                 />
                                 <Button variant="outline-success">Search</Button>
                             </Form>
@@ -66,6 +68,7 @@ function Header() {
                                     </span>
                                 }
                                 id="collapsible-nav-dropdown"
+                                data-testid="profile-dropdown"
                                 show={show}
                                 onMouseEnter={showProfileDropdown} 
                                 onMouseLeave={hideProfileDropdown}
