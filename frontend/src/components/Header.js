@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navbar, Container, Nav, NavDropdown, Form, Button } from 'react-bootstrap';
+import { Navbar, Container, Nav, NavDropdown, FormControl, Form, Button } from 'react-bootstrap';
 import { FaShoppingCart, FaRegHeart, FaRegUser } from 'react-icons/fa';
 import '../css/Header.css';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -8,26 +8,28 @@ function Header() {
     const brandLogo = "/images/cartpe-logo.png";
 
     const [show, setShow] = useState(false);
-    const showProfileDropdown = (e) =>{
+    const showProfileDropdown = () => {
         setShow(!show);
     }
 
-    const hideProfileDropdown = (e) => {
+    const hideProfileDropdown = () => {
         setShow(false);
     }
 
     return (
         <header>
-            <Navbar collapseOnSelect expand="md" bg="dark" variant="dark" className='p-3' data-testid="navbar">
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className='p-3' data-testid="navbar">
                 <Container>
-                    <Nav>
-                        <LinkContainer to="/">
-                            <Navbar.Brand>
-                                <img src={brandLogo} alt="brandLogo" className="brandLogo" />
-                            </Navbar.Brand>
-                        </LinkContainer>
+                    <LinkContainer to="/">
+                        <Navbar.Brand>
+                            <img src={brandLogo} alt="brandLogo" className="brandLogo" />
+                        </Navbar.Brand>
+                    </LinkContainer>
 
-                        <Nav.Item>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className='me-auto'>
                             <NavDropdown
                                 title="Categories"
                                 id="collapsible-nav-dropdown"
@@ -43,24 +45,22 @@ function Header() {
                                     Separated link
                                 </NavDropdown.Item>
                             </NavDropdown>
-                        </Nav.Item>
+                        </Nav>
 
-                        <Nav.Item>
-                            <Form className="d-flex searchForm">
-                                <Form.Control
+                        <Nav className='me-auto'>
+                            <Form className="d-flex py-2">
+                                <FormControl
                                     type="search"
                                     placeholder="Search"
-                                    className="me-3 searchBar"
+                                    className="me-2 searchBar"
                                     aria-label="Search"
                                     data-testid="Searchbar"
                                 />
                                 <Button variant="outline-success">Search</Button>
                             </Form>
-                        </Nav.Item>
-                    </Nav>
+                        </Nav>
 
-                    <Nav>
-                        <Nav.Item>
+                        <Nav className="justify-content-end">
                             <NavDropdown
                                 title={
                                     <span>
@@ -83,28 +83,28 @@ function Header() {
                                     Separated link
                                 </NavDropdown.Item>
                             </NavDropdown>
-                        </Nav.Item>
 
-                        <Nav.Item>
-                            <LinkContainer to="/wishlist">
-                                <Nav.Link>
-                                    <span>
-                                        <FaRegHeart className='icons'/> Wishlist
-                                    </span>
-                                </Nav.Link>
-                            </LinkContainer>
-                        </Nav.Item>
+                            <Nav.Item>
+                                <LinkContainer to="/wishlist">
+                                    <Nav.Link>
+                                        <span>
+                                            <FaRegHeart className='icons'/> Wishlist
+                                        </span>
+                                    </Nav.Link>
+                                </LinkContainer>
+                            </Nav.Item>
 
-                        <Nav.Item>
-                            <LinkContainer to="/cart">
-                                <Nav.Link>
-                                    <span>
-                                        <FaShoppingCart className='icons'/> Cart
-                                    </span>
-                                </Nav.Link>
-                            </LinkContainer>
-                        </Nav.Item>
-                    </Nav>
+                            <Nav.Item>
+                                <LinkContainer to="/cart">
+                                    <Nav.Link>
+                                        <span>
+                                            <FaShoppingCart className='icons'/> Cart
+                                        </span>
+                                    </Nav.Link>
+                                </LinkContainer>
+                            </Nav.Item>
+                        </Nav>
+                    </Navbar.Collapse>
                 </Container>
             </Navbar>
         </header>
