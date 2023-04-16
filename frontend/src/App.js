@@ -12,7 +12,7 @@ function App() {
     // It is sent from here as we are communicating from parent to child component.
     const [searchText, setSearchText] = useState("");
     var handleChange = (event) => {
-        setSearchText(event.target.value.toLowerCase());
+        setSearchText(event.target.value.toLowerCase().trim());
     };
 
     return (
