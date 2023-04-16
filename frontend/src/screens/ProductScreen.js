@@ -4,7 +4,7 @@ import { Row, Col, Image, Button, Card, ListGroup } from 'react-bootstrap';
 import Rating from '../components/Rating';
 import products from "../products";
 
-function ProductScreen({ match }) {
+function ProductScreen() {
     const { id } = useParams();
     const product = products.find((p) => p._id === id)
     let navigate = useNavigate();

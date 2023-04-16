@@ -43,13 +43,22 @@ describe("Header component", () => {
         expect(screen.getByText('Separated link')).toBeInTheDocument();
     });
 
-
     test('Check for Searchbar', () => {
         expect(screen.getByTestId('Searchbar')).toBeInTheDocument();
     });
 
-    test('Check for Search button', () => {
-        expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
+    test('Check for valid searching', () => {
+        const input = screen.getByTestId("Searchbar");
+        expect(input.value).toBe('');
+        fireEvent.change(input, { target: { value: 'abc' }})
+        expect(input.value).toBe('abc');
+    })
+
+    test('Check for invalid searching', () => {
+        const input = screen.getByTestId("Searchbar");
+        expect(input.value).toBe('');
+        fireEvent.change(input, { target: { value: 'abc' }})
+        expect(input.value).not.toBe('cd');
     })
 
     test('Check for Wishlist link', () => {

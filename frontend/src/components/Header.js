@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Navbar, Container, Nav, NavDropdown, FormControl, Form, Button } from 'react-bootstrap';
+import { Navbar, Container, Nav, NavDropdown, FormControl, Form } from 'react-bootstrap';
 import { FaShoppingCart, FaRegHeart, FaRegUser } from 'react-icons/fa';
 import '../css/Header.css';
 import { LinkContainer } from 'react-router-bootstrap';
 
-function Header() {
+function Header({ searchText }) {
     const brandLogo = "/images/cartpe-logo.png";
 
     const [show, setShow] = useState(false);
@@ -47,7 +47,7 @@ function Header() {
                             </NavDropdown>
                         </Nav>
 
-                        <Nav className='me-auto'>
+                        <Nav>
                             <Form className="d-flex py-2">
                                 <FormControl
                                     type="search"
@@ -55,8 +55,8 @@ function Header() {
                                     className="me-2 searchBar"
                                     aria-label="Search"
                                     data-testid="Searchbar"
+                                    onChange={searchText}
                                 />
-                                <Button variant="outline-success">Search</Button>
                             </Form>
                         </Nav>
 
