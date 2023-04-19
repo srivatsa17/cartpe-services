@@ -56,7 +56,7 @@ describe("Product component", () => {
     });
 
     test('Check for product price', () => {
-        const price = "Rs. " +  product.price;
+        const price = product.price;
         expect(screen.getByText(price)).toBeInTheDocument();
     })
 });

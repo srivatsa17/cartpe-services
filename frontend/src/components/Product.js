@@ -2,6 +2,8 @@ import React from "react";
 import { Card } from "react-bootstrap";
 import Rating from "./Rating";
 import { Link } from "react-router-dom";
+import { FaRupeeSign } from "react-icons/fa";
+import "../css/Product.css";
 
 function Product({ product }) {
     return (
@@ -15,7 +17,7 @@ function Product({ product }) {
             <Card.Body>
                 <Link
                     to={`/product/${product._id}`}
-                    style={{ color: "black", textDecoration: "none" }}
+                    id="product-link-by-name"
                     data-testid="product-link-by-name"
                 >
                     <Card.Title as="div">
@@ -31,7 +33,7 @@ function Product({ product }) {
 
                 <Card.Text as='div'>
                     <h3>
-                        Rs. {product.price}
+                        <FaRupeeSign size={24} id="rupee-icon"/>{product.price}
                     </h3>
                 </Card.Text>
             </Card.Body>

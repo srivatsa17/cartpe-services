@@ -1,8 +1,11 @@
 import React from "react";
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Row, Col, Image, Button, Card, ListGroup } from 'react-bootstrap';
+import { Row, Col, Button, Card, ListGroup } from 'react-bootstrap';
+import { FaRupeeSign } from "react-icons/fa";
 import Rating from '../components/Rating';
+import ImageSlider from "../components/ImageSlider";
 import products from "../products";
+import "../css/ProductScreen.css";
 
 function ProductScreen() {
     const { id } = useParams();
@@ -11,12 +14,14 @@ function ProductScreen() {
 
     return (
         <div>
-            <Link onClick={() => navigate(-1)} className="btn btn-outline-secondary my-3">Go back</Link>
+            <Link onClick={() => navigate(-1)} className="btn btn-outline-secondary my-3">
+                Go back
+            </Link>
             <Row>
                 <Col md={6}>
-                    <Image src={product.image} alt={product.name} fluid/>
+                    <ImageSlider product={product} />
                 </Col>
-                
+
                 <Col md={3}>
                     <ListGroup variant="flush">
                         <ListGroup.Item>
@@ -26,7 +31,9 @@ function ProductScreen() {
                             <Rating rating={product.rating} text={`${product.numReviews} reviews`} />
                         </ListGroup.Item>
                         <ListGroup.Item>
-                            Price: Rs. {product.price}
+                            <h5>
+                                Price: <FaRupeeSign size={18} id="rupee-icon" />{product.price}
+                            </h5>
                         </ListGroup.Item>
                         <ListGroup.Item>
                             Description: {product.description}
@@ -42,7 +49,7 @@ function ProductScreen() {
                                     <Col>Price:</Col>
                                     <Col>
                                         <strong>
-                                            {product.price}
+                                            <FaRupeeSign size={16} id="rupee-icon" />{product.price}
                                         </strong>
                                     </Col>
                                 </Row>
@@ -60,7 +67,9 @@ function ProductScreen() {
                                 </Row>
                             </ListGroup.Item>
                             <ListGroup.Item className="d-grid gap-2">
-                                <Button variant="dark" type="button" disabled={product.countInStock === 0}>Add to cart</Button>
+                                <Button variant="dark" type="button" disabled={product.countInStock === 0}>
+                                    Add to cart
+                                </Button>
                             </ListGroup.Item>
                         </ListGroup>
                     </Card>
