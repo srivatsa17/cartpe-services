@@ -17,12 +17,20 @@ describe("Rating component", () => {
         expect(screen.getByTestId("ratings")).toBeInTheDocument();
     });
 
-    test("Check for tooltip", () => {
+    test("Check for valid tooltip", () => {
         render(
             <Rating rating={4.5} text={text}/>
         );
         fireEvent.mouseOver(screen.getByTestId("ratings"));
         waitFor(() => expect(screen.findByText("4.5 out of 5 stars")).toBeInTheDocument());
+    });
+
+    test("Check for invalid tooltip", () => {
+        render(
+            <Rating rating={4.5} text={text}/>
+        );
+        fireEvent.mouseOver(screen.getByTestId("ratings"));
+        waitFor(() => expect(screen.findByText("4.3 out of 5 stars")).not.toBeInTheDocument());
     });
 
     test("Check for only empty stars", () => {
