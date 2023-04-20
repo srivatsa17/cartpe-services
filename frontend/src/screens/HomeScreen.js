@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Row, Col } from "react-bootstrap";
 import products from "../products";
 import Product from "../components/Product";
 
 function HomeScreen({ searchText }) {
 
-    const filteredData = products.filter((originalData) => {
-        if(searchText === "" || searchText === null) {
-            return originalData;
-        } else {
-            return originalData.name.toLowerCase().includes(searchText);
-        }
-    })
+    // Using useMemo in order to cache searchText to improve performance of searching
+    const filteredData = useMemo(() => {
+        return products.filter((originalData) => {
+            if(searchText === "" || searchText === null) {
+                return originalData;
+            } else {
+                return originalData.name.toLowerCase().includes(searchText);
+            }
+        })
+    }, [searchText]);
 
     return (
         <div>
