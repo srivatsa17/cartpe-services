@@ -27,7 +27,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
         if isProductFound:
             raise serializers.ValidationError({
-                "message" : "Product already exists with the name " + productName
+                "message" : "Product '" + productName + "' already exists and cannot be created or updated again."
             })
 
         return super().validate(attrs)
