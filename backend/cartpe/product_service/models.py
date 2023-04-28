@@ -3,7 +3,7 @@ import uuid
 from django.utils.text import slugify
 
 class Category(models.Model):
-    name = models.CharField(max_length = 255, null = False, blank = False)
+    name = models.CharField(max_length = 255, unique = True, null = False, blank = False)
     slug = models.SlugField(max_length = 255, null = True, blank = True)
     description = models.TextField(null = False, blank = False)
     created_at = models.DateTimeField(auto_now_add = True)
@@ -18,7 +18,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     sku = models.UUIDField(primary_key = False, default = uuid.uuid4, editable = False)
-    name = models.CharField(max_length = 255, unique = True, db_index = True, null = False, blank = False)
+    name = models.CharField(max_length = 255, unique = True, null = False, blank = False)
     slug = models.SlugField(max_length = 255, null = True, blank = True)
     description = models.TextField(null = False, blank = False)
     price = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)

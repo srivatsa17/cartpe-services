@@ -4,7 +4,7 @@ from rest_framework import status
 from django.urls import reverse
 import json, decimal
 from ..models import Product, Category
-from ..Products.serializers import ProductSerializer
+from ..serializers import ProductSerializer
 
 # Create your tests here.
 
