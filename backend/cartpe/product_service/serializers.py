@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework_recursive.fields import RecursiveField
+from rest_framework.validators import UniqueTogetherValidator
 from .models import Product, Category
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -23,7 +25,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         productName = attrs.get('name', '')
-        isProductFound = Product.objects.filter(name = productName).exists()
+        isProductFound = Product.objects.filter(name__iexact = productName).exists()
 
         if isProductFound:
             raise serializers.ValidationError({
@@ -40,20 +42,32 @@ class CategorySerializer(serializers.ModelSerializer):
     name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     slug = serializers.SlugField(min_length = 1, max_length = 255, read_only = True)
     description = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
+    parent = serializers.SlugRelatedField(slug_field = 'name', allow_null = True, queryset = Category.objects.all())
+    children = RecursiveField(many = True, read_only = True)
     created_at = serializers.DateTimeField(read_only = True)
     updated_at = serializers.DateTimeField(read_only = True)
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name', 'slug', 'description', 'parent', 'children', 'created_at', 'updated_at']
+        validators = [
+            UniqueTogetherValidator(
+                queryset = Category.objects.all(),
+                fields = ['name', 'parent'],
+            )
+        ]
 
     def validate(self, attrs):
         categoryName = attrs.get('name', '')
-        isCategoryFound = Category.objects.filter(name = categoryName).exists()
+        parentName = attrs.get('parent', '')
+        
+        isCategoryFound = Category.objects.filter(name__iexact = categoryName, parent = None).exists()
 
-        if isCategoryFound:
+        # Handling special condition where parent can be Null.
+        # This is not handled by UniqueTogetherValidator as there is no check for type 'None' in db by the validator.
+        if parentName is None and isCategoryFound:
             raise serializers.ValidationError({
-                "message" : "Category '" + categoryName + "' already exists and cannot be created or updated again."
+                "message" : "The fields name, parent must make a unique set."
             })
 
         return super().validate(attrs)

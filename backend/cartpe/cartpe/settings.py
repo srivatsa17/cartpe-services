@@ -107,6 +107,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    "NON_FIELD_ERRORS_KEY": "message"
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

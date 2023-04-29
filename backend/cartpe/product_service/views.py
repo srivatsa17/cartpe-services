@@ -62,7 +62,7 @@ class CategoryAPIView(generics.GenericAPIView):
     serializer_class = CategorySerializer
 
     def get(self, request):
-        categories = Category.objects.all()
+        categories = Category.objects.root_nodes()
         serializer = self.serializer_class(categories, many = True)
         return Response(serializer.data)
 
