@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 from rest_framework.validators import UniqueTogetherValidator
-from .models import Product, Category
+from .models import Product, Category, Brand
 
 class ProductSerializer(serializers.ModelSerializer):
     sku = serializers.UUIDField(format='hex_verbose', read_only = True)
@@ -9,7 +9,7 @@ class ProductSerializer(serializers.ModelSerializer):
     slug = serializers.SlugField(min_length = 1, max_length = 255, read_only = True)
     description = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     price = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False)
-    brand = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
+    brand = serializers.SlugRelatedField(slug_field = 'name', queryset = Brand.objects.all())
     stock_count = serializers.IntegerField(min_value = 0)
     discount = serializers.IntegerField(min_value = 0, max_value = 100)
     category = serializers.SlugRelatedField(slug_field = 'name', queryset = Category.objects.all())
@@ -75,3 +75,29 @@ class CategorySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         category = Category.objects.create(**validated_data)
         return category
+
+class BrandSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
+    slug = serializers.SlugField(min_length = 1, max_length = 255, read_only = True)
+    description = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
+    created_at = serializers.DateTimeField(read_only = True)
+    updated_at = serializers.DateTimeField(read_only = True)
+
+    class Meta:
+        model = Brand
+        fields = ['id', 'name', 'slug', 'description', 'created_at', 'updated_at']
+    
+    def validate(self, attrs):
+        brandName = attrs.get('name', '')
+        isBrandFound = Brand.objects.filter(name__iexact = brandName).exists()
+
+        if isBrandFound:
+            raise serializers.ValidationError({
+                "message" : "Brand '" + brandName + "' already exists and cannot be created or updated again."
+            })
+
+        return super().validate(attrs)
+    
+    def create(self, validated_data):
+        brand = Brand.objects.create(**validated_data)
+        return brand
