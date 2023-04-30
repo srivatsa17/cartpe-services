@@ -8,15 +8,18 @@ from .models import Product, Category
 # Create your views here.
 
 class RoutesAPIView(generics.GenericAPIView):
+    queryset = routes
+
     def get(self, request):
-        return Response(routes)
+        return Response(self.get_queryset())
 
 class ProductAPIView(generics.GenericAPIView):
 
     serializer_class = ProductSerializer
+    queryset = Product.objects.all()
 
     def get(self, request):
-        products = Product.objects.all()
+        products = self.get_queryset()
         serializer = self.serializer_class(products, many = True)
         return Response(serializer.data)
 
@@ -60,9 +63,10 @@ class ProductByIdAPIView(generics.GenericAPIView):
 class CategoryAPIView(generics.GenericAPIView):
 
     serializer_class = CategorySerializer
+    queryset = Category.objects.root_nodes()
 
     def get(self, request):
-        categories = Category.objects.root_nodes()
+        categories = self.get_queryset()
         serializer = self.serializer_class(categories, many = True)
         return Response(serializer.data)
 
