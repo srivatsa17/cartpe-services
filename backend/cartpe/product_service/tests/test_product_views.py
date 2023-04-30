@@ -3,7 +3,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 import json, decimal
-from ..models import Product, Category
+from ..models import Product, Category, Brand
 from ..serializers import ProductSerializer
 
 # Create your tests here.
@@ -15,8 +15,8 @@ class GetAllProductsTest(APITestCase):
     """ Test module for GET all products API """
 
     def setUp(self) -> None:
-        Product.objects.create(name = "iphone 13", description = "ok product", brand = "apple", price = 70000, stock_count = 1)
-        Product.objects.create(name = "pixel 7", description = "good product", brand = "google", price = 50000, stock_count = 10)
+        Product.objects.create(name = "iphone 13", description = "ok product", price = 70000, stock_count = 1)
+        Product.objects.create(name = "pixel 7", description = "good product", price = 50000, stock_count = 10)
 
     def test_get_all_products(self) -> None:
         response = client.get(reverse('products'))
@@ -30,8 +30,8 @@ class GetProductByIdTest(APITestCase):
     """ Test module for GET product by id API """
 
     def setUp(self) -> None:
-        self.iphone = Product.objects.create(name = "iphone 13", description = "ok product", brand = "apple", price = 70000, stock_count = 1)
-        self.pixel = Product.objects.create(name = "pixel 7", description = "good product", brand = "google", price = 50000, stock_count = 10)
+        self.iphone = Product.objects.create(name = "iphone 13", description = "ok product", price = 70000, stock_count = 1)
+        self.pixel = Product.objects.create(name = "pixel 7", description = "good product", price = 50000, stock_count = 10)
 
     def test_get_product_by_id_with_valid_id(self) -> None:
         response = client.get(reverse('product_by_id', kwargs = { 'id' : self.pixel.id }))
@@ -52,6 +52,7 @@ class PostProductTest(APITestCase):
 
     def setUp(self) -> None:
         self.category = Category.objects.create(name = "Electronics")
+        self.brand = Brand.objects.create(name = "Cannon")
         self.validData = { "name":"DSLR", "description":"Amazing", "brand":"Cannon", "category":"Electronics", "price":929.99, "stock_count":5, "discount":0 }
         self.dataWithNoNameField = { "description":"Amazing", "brand":"Cannon", "category":"Electronics", "price":929.99, "stock_count":5, "discount":0 }
         self.dataWithNoDescriptionField = { "name":"DSLR", "brand":"Cannon", "category":"Electronics", "price":929.99, "stock_count":5, "discount":0 }
@@ -121,7 +122,7 @@ class UpdateProductByIdTest(APITestCase):
 
     def setUp(self) -> None:
         self.category = Category.objects.create(name = "Electronics")
-        self.pixel = Product.objects.create(name="pixel 7", description="good product", brand="google" , price=50000, stock_count=10, discount=0)
+        self.pixel = Product.objects.create(name="pixel 7", description="good product", price=50000, stock_count=10, discount=0)
         self.updateId = { "id" : 20 }
         self.updateName = { "name" : "abc" }
         self.updateSku = { "sku" : "a42c3fa7-a0be-45a9-ae06-61835f2cf64e" }
@@ -172,9 +173,10 @@ class UpdateProductByIdTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_product_brand(self) -> None:
+        self.brand = Brand.objects.create(name = "apple")
         response = client.patch(reverse('product_by_id', kwargs={'id' : self.pixel.id}), data = json.dumps(self.updateBrand), content_type = 'application/json')
 
-        self.assertEqual(response.data['brand'], "apple")
+        self.assertEqual(str(response.data['brand']), "apple")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_product_stock_count(self) -> None:
@@ -220,7 +222,7 @@ class DeleteProductByIdTest(APITestCase):
     """ Test module for Delete a product API """
 
     def setUp(self) -> None:
-        self.pixel = Product.objects.create(name = "pixel 7", description = "good product", brand = "google", price = 50000, stock_count = 10)
+        self.pixel = Product.objects.create(name = "pixel 7", description = "good product", price = 50000, stock_count = 10)
 
     def test_delete_with_existing_id(self) -> None:
         response = client.delete(reverse('product_by_id', kwargs={'id': self.pixel.id}))
