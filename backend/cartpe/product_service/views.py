@@ -5,6 +5,7 @@ from .routes import routes
 from .serializers import ProductSerializer, CategorySerializer, BrandSerializer
 from .models import Product, Category, Brand
 from django_filters.rest_framework import DjangoFilterBackend
+from .filters import ProductFilter
 
 # Create your views here.
 
@@ -18,9 +19,11 @@ class ProductAPIView(generics.GenericAPIView):
 
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    filter_backends = [ DjangoFilterBackend ]
+    filterset_class = ProductFilter
 
     def get(self, request):
-        products = self.get_queryset()
+        products = self.filter_queryset(self.get_queryset())
         serializer = self.serializer_class(products, many = True)
         return Response(serializer.data)
 
