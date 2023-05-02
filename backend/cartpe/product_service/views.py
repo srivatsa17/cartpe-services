@@ -1,9 +1,9 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, ParseError
 from .routes import routes
-from .serializers import ProductSerializer, CategorySerializer, BrandSerializer
-from .models import Product, Category, Brand
+from .serializers import ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer
+from .models import Product, Category, Brand, Image
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import ProductFilter
 
@@ -112,7 +112,7 @@ class CategoryByIdAPIView(generics.GenericAPIView):
         category.delete()
         response = { "message" : "Category '" + category.name + "' deleted successfully." }
         return Response(response, status = status.HTTP_204_NO_CONTENT)
-    
+
 class BrandAPIView(generics.GenericAPIView):
 
     serializer_class = BrandSerializer
@@ -129,7 +129,7 @@ class BrandAPIView(generics.GenericAPIView):
             serializer.save()
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    
+
 class BrandByIdAPIView(generics.GenericAPIView):
 
     serializer_class = BrandSerializer
@@ -158,4 +158,73 @@ class BrandByIdAPIView(generics.GenericAPIView):
         brand = self.get_object(id)
         brand.delete()
         response = { "message" : "Brand '" + brand.name + "' deleted successfully." }
+        return Response(response, status = status.HTTP_204_NO_CONTENT)
+
+class ProductImageAPIView(generics.GenericAPIView):
+
+    serializer_class = ProductImageSerializer
+
+    def get_object(self, id):
+        try:
+            return Product.objects.get(id = id)
+        except Product.DoesNotExist:
+            response = { "message" : "Unable to find product with id " + str(id) }
+            raise NotFound(response)
+
+    def get_queryset(self):
+        if not self.request.query_params:
+            response = { "message" : "Please make sure query params are sent in the format ?product=<id>." }
+            raise ParseError(response)
+
+        productPathParam = self.request.query_params.get('product')
+
+        if not productPathParam.isnumeric():
+            response = { "message" : "Please enter a valid integer for product id." }
+            raise ParseError(response)
+
+        product = self.get_object(productPathParam)
+        images = Image.objects.filter(product = product)
+        return images
+
+    def get(self, request):
+        images = self.get_queryset()
+        serializer = self.serializer_class(images, many = True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        images = self.get_queryset()
+        serializer = self.serializer_class(data = request.data, context = self.request.query_params)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class ProductImageByIdAPIView(generics.GenericAPIView):
+
+    serializer_class = ProductImageSerializer
+
+    def get_object(self, id):
+        try:
+            return Image.objects.get(id = id)
+        except Image.DoesNotExist:
+            response = { "message" : "Unable to find image with id " + str(id) }
+            raise NotFound(response)
+
+    def get(self, request, id):
+        image = self.get_object(id)
+        serializer = self.serializer_class(image, many = False)
+        return Response(serializer.data)
+
+    def patch(self, request, id):
+        image = self.get_object(id)
+        serializer = self.serializer_class(image, data = request.data, context = { 'imageId':id }, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        image = self.get_object(id)
+        image.delete()
+        response = { "message" : "Image '" + str(image) + "' deleted successfully." }
         return Response(response, status = status.HTTP_204_NO_CONTENT)

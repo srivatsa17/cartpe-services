@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 from rest_framework.validators import UniqueTogetherValidator
-from .models import Product, Category, Brand
+from .models import Product, Category, Brand, Image
 
 class ProductSerializer(serializers.ModelSerializer):
     sku = serializers.UUIDField(format='hex_verbose', read_only = True)
@@ -101,3 +101,36 @@ class BrandSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         brand = Brand.objects.create(**validated_data)
         return brand
+    
+class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(allow_empty_file = False)
+    is_featured = serializers.BooleanField(default = None)
+    product = serializers.PrimaryKeyRelatedField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True)
+    updated_at = serializers.DateTimeField(read_only = True)
+
+    class Meta:
+        model = Image
+        fields = ['id', 'image', 'is_featured', 'product', 'created_at', 'updated_at']
+    
+    def validate(self, attrs):
+        is_featured = attrs.get('is_featured')
+        productId = self.context.get('product')
+        
+        # productId will be None for Patch request since we wont send any query params for product.
+        # in that case, we send imageId as a context from views to get the productId from Image model.
+        if productId is None:
+            productId = Image.objects.get(id = self.context.get('imageId')).product.id
+
+        if is_featured and Image.objects.filter(product = productId, is_featured = True).exists():
+            raise serializers.ValidationError({
+                "message" : "is_featured=True cannot be set as there exists a featured image for productId " + str(productId)
+            })
+
+        return super().validate(attrs)
+    
+    def create(self, validated_data):
+        productId = self.context.get('product')
+        product = Product.objects.get(id = productId)
+        validated_data['product'] = product
+        return super().create(validated_data)
