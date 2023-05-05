@@ -61,7 +61,6 @@ class ProductByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         product = self.get_object(id)
         product.delete()
-
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class CategoryAPIView(generics.GenericAPIView):
@@ -110,7 +109,6 @@ class CategoryByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         category = self.get_object(id)
         category.delete()
-    
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class BrandAPIView(generics.GenericAPIView):
@@ -157,7 +155,6 @@ class BrandByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         brand = self.get_object(id)
         brand.delete()
-
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class ProductImageAPIView(generics.GenericAPIView):
@@ -226,5 +223,4 @@ class ProductImageByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         image = self.get_object(id)
         image.delete()
-
         return Response(status = status.HTTP_204_NO_CONTENT)
