@@ -20,7 +20,7 @@ class DeleteImageTest(APITestCase):
         self.sampleImage = SimpleUploadedFile("test_image1.jpg", b"binary data for image", content_type="image/jpeg")
         self.image1 = Image.objects.create(image=self.sampleImage, is_featured=True, product=self.product)
 
-    def test_delete_with_existing_id(self) -> None:
+    def test_with_existing_id(self) -> None:
         expectedStatusCode = status.HTTP_204_NO_CONTENT
 
         url = self.get_url(self.image1.id)
@@ -29,7 +29,7 @@ class DeleteImageTest(APITestCase):
 
         self.assertEqual(receivedStatusCode, expectedStatusCode)
 
-    def test_delete_with_nonexisting_id(self) -> None:
+    def test_with_nonexisting_id(self) -> None:
         expectedResponse = "Unable to find image with id 1000"
         expectedStatusCode = status.HTTP_404_NOT_FOUND
 

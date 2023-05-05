@@ -19,15 +19,12 @@ class DeleteBrandByIdTest(APITestCase):
         self.google = Brand.objects.create(name = "google", description = "good brand")
 
     def test_with_existing_id(self) -> None:
-        expectedResponse = "Brand 'google' deleted successfully."
         expectedStatusCode = status.HTTP_204_NO_CONTENT
 
         url = self.get_url(self.google.id)
         response = client.delete(url)
-        receivedResponse = response.data['message']
         receivedStatusCode = response.status_code
 
-        self.assertEqual(receivedResponse, expectedResponse)
         self.assertEqual(receivedStatusCode, expectedStatusCode)
 
     def test_with_nonexisting_id(self) -> None:

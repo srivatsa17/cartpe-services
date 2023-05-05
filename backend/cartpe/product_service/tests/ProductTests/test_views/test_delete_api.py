@@ -18,15 +18,12 @@ class DeleteProductByIdTest(APITestCase):
         self.pixel = Product.objects.create(name = "pixel 7", description = "good product", price = 50000, stock_count = 10)
 
     def test_with_existing_id(self) -> None:
-        expectedResponse = "Product 'pixel 7' deleted successfully."
         expectedStatusCode = status.HTTP_204_NO_CONTENT
 
         url = self.get_url(self.pixel.id)
         response = client.delete(url)
-        receivedResponse = response.data['message']
         receivedStatusCode = response.status_code
 
-        self.assertEqual(receivedResponse, expectedResponse)
         self.assertEqual(receivedStatusCode, expectedStatusCode)
 
     def test_with_nonexisting_id(self) -> None:

@@ -1,11 +1,11 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, ParseError
-from .routes import routes
-from .serializers import ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer
-from .models import Product, Category, Brand, Image
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import ProductFilter
+from product_service.routes import routes
+from product_service.serializers import ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer
+from product_service.models import Product, Category, Brand, Image
+from product_service.filters import ProductFilter
 
 # Create your views here.
 
@@ -61,8 +61,8 @@ class ProductByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         product = self.get_object(id)
         product.delete()
-        response = { "message" : "Product '" + product.name + "' deleted successfully." }
-        return Response(response, status = status.HTTP_204_NO_CONTENT)
+
+        return Response(status = status.HTTP_204_NO_CONTENT)
 
 class CategoryAPIView(generics.GenericAPIView):
 
@@ -110,8 +110,8 @@ class CategoryByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         category = self.get_object(id)
         category.delete()
-        response = { "message" : "Category '" + category.name + "' deleted successfully." }
-        return Response(response, status = status.HTTP_204_NO_CONTENT)
+    
+        return Response(status = status.HTTP_204_NO_CONTENT)
 
 class BrandAPIView(generics.GenericAPIView):
 
@@ -157,8 +157,8 @@ class BrandByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         brand = self.get_object(id)
         brand.delete()
-        response = { "message" : "Brand '" + brand.name + "' deleted successfully." }
-        return Response(response, status = status.HTTP_204_NO_CONTENT)
+
+        return Response(status = status.HTTP_204_NO_CONTENT)
 
 class ProductImageAPIView(generics.GenericAPIView):
 
@@ -226,5 +226,5 @@ class ProductImageByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         image = self.get_object(id)
         image.delete()
-        response = { "message" : "Image '" + str(image) + "' deleted successfully." }
-        return Response(response, status = status.HTTP_204_NO_CONTENT)
+
+        return Response(status = status.HTTP_204_NO_CONTENT)
