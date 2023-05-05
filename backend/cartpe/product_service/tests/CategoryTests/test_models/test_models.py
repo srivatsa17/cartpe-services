@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ..models import Category
+from product_service.models import Category
 
 class ProductModelTest(TestCase):
     def setUp(self) -> None:
@@ -7,4 +7,7 @@ class ProductModelTest(TestCase):
 
     def test_str_is_equal_to_title(self):
         product = Category.objects.get(name = "Men")
-        self.assertEqual(str(product), product.name)
+        expectedResponse = product.name
+        receivedResponse = str(product)
+
+        self.assertEqual(receivedResponse, expectedResponse)
