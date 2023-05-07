@@ -1,0 +1,8 @@
+#product-link-by-name{
+    color: black;
+    text-decoration: none;
+}
+
+#rupee-icon {
+    transform : translateY(-3px);
+}
