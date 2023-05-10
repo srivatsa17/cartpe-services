@@ -1,0 +1,9 @@
+.ratings {
+    color: #ed811d;
+    transform: translateY(-3px);
+    font-size: 18px;
+}
+
+.ratings span {
+    margin: 0.12rem;
+}
