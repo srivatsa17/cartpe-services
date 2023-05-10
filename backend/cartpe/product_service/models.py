@@ -65,7 +65,7 @@ class Product(models.Model):
         super(Product, self).save(*args, **kwargs)
 
 class Image(models.Model):
-    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_images')
     image = models.ImageField(max_length = 255, null = False, blank = False)
     is_featured = models.BooleanField(default = False)
     created_at = models.DateTimeField(auto_now_add = True)

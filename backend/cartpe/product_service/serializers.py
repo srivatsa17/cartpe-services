@@ -3,6 +3,39 @@ from rest_framework_recursive.fields import RecursiveField
 from rest_framework.validators import UniqueTogetherValidator
 from .models import Product, Category, Brand, Image
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(allow_empty_file = False)
+    is_featured = serializers.BooleanField(default = None)
+    product = serializers.PrimaryKeyRelatedField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True)
+    updated_at = serializers.DateTimeField(read_only = True)
+
+    class Meta:
+        model = Image
+        fields = ['id', 'image', 'is_featured', 'product', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        is_featured = attrs.get('is_featured')
+        productId = self.context.get('product')
+
+        # productId will be None for Patch request since we wont send any query params for product.
+        # in that case, we send imageId as a context from views to get the productId from Image model.
+        if productId is None:
+            productId = Image.objects.get(id = self.context.get('imageId')).product.id
+
+        if is_featured and Image.objects.filter(product = productId, is_featured = True).exists():
+            raise serializers.ValidationError({
+                "message" : "is_featured=True cannot be set as there exists a featured image for productId " + str(productId)
+            })
+
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        productId = self.context.get('product')
+        product = Product.objects.get(id = productId)
+        validated_data['product'] = product
+        return super().create(validated_data)
+
 class ProductSerializer(serializers.ModelSerializer):
     sku = serializers.UUIDField(format='hex_verbose', read_only = True)
     name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
@@ -13,14 +46,15 @@ class ProductSerializer(serializers.ModelSerializer):
     stock_count = serializers.IntegerField(min_value = 0)
     discount = serializers.IntegerField(min_value = 0, max_value = 100)
     category = serializers.SlugRelatedField(slug_field = 'name', queryset = Category.objects.all())
+    product_images = ProductImageSerializer(many = True, read_only = True)
     created_at = serializers.DateTimeField(read_only = True)
     updated_at = serializers.DateTimeField(read_only = True)
 
     class Meta:
         model = Product
         fields = [
-            'id', 'sku', 'name', 'slug', 'description', 'price', 'brand', 'stock_count', 'discount', 'discounted_price', 'selling_price', 'category', 'created_at',
-            'updated_at'
+            'id', 'sku', 'name', 'slug', 'description', 'price', 'brand', 'stock_count', 'discount', 'discounted_price', 'selling_price',
+            'category', 'product_images', 'created_at', 'updated_at'
         ]
 
     def validate(self, attrs):
@@ -44,12 +78,13 @@ class CategorySerializer(serializers.ModelSerializer):
     description = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     parent = serializers.SlugRelatedField(slug_field = 'name', allow_null = True, queryset = Category.objects.all())
     children = RecursiveField(many = True, read_only = True)
+    products = ProductSerializer(many = True, read_only = True)
     created_at = serializers.DateTimeField(read_only = True)
     updated_at = serializers.DateTimeField(read_only = True)
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'slug', 'description', 'parent', 'children', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'slug', 'description', 'parent', 'children', 'products', 'created_at', 'updated_at']
         validators = [
             UniqueTogetherValidator(
                 queryset = Category.objects.all(),
@@ -60,7 +95,7 @@ class CategorySerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         categoryName = attrs.get('name', '')
         parentName = attrs.get('parent', '')
-        
+
         isCategoryFound = Category.objects.filter(name__iexact = categoryName, parent = None).exists()
 
         # Handling special condition where parent can be Null.
@@ -86,7 +121,7 @@ class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         fields = ['id', 'name', 'slug', 'description', 'created_at', 'updated_at']
-    
+
     def validate(self, attrs):
         brandName = attrs.get('name', '')
         isBrandFound = Brand.objects.filter(name__iexact = brandName).exists()
@@ -97,40 +132,7 @@ class BrandSerializer(serializers.ModelSerializer):
             })
 
         return super().validate(attrs)
-    
+
     def create(self, validated_data):
         brand = Brand.objects.create(**validated_data)
         return brand
-    
-class ProductImageSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(allow_empty_file = False)
-    is_featured = serializers.BooleanField(default = None)
-    product = serializers.PrimaryKeyRelatedField(read_only = True)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
-
-    class Meta:
-        model = Image
-        fields = ['id', 'image', 'is_featured', 'product', 'created_at', 'updated_at']
-    
-    def validate(self, attrs):
-        is_featured = attrs.get('is_featured')
-        productId = self.context.get('product')
-        
-        # productId will be None for Patch request since we wont send any query params for product.
-        # in that case, we send imageId as a context from views to get the productId from Image model.
-        if productId is None:
-            productId = Image.objects.get(id = self.context.get('imageId')).product.id
-
-        if is_featured and Image.objects.filter(product = productId, is_featured = True).exists():
-            raise serializers.ValidationError({
-                "message" : "is_featured=True cannot be set as there exists a featured image for productId " + str(productId)
-            })
-
-        return super().validate(attrs)
-    
-    def create(self, validated_data):
-        productId = self.context.get('product')
-        product = Product.objects.get(id = productId)
-        validated_data['product'] = product
-        return super().create(validated_data)
