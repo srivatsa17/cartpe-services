@@ -1,7 +1,7 @@
 from django.test import TestCase
 from product_service.models import Attribute, AttributeValue
 
-class ProductModelTest(TestCase):
+class AttributeValueModelTest(TestCase):
     def setUp(self) -> None:
         self.color = Attribute.objects.create(name="Color")
         self.greenColor = AttributeValue.objects.create(value="Green", attribute=self.color)
