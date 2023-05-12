@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 from rest_framework.validators import UniqueTogetherValidator
-from .models import Product, Category, Brand, Image
+from product_service.models import Product, Category, Brand, Image, Attribute, AttributeValue
 
 class ProductImageSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(allow_empty_file = False)
@@ -36,6 +36,21 @@ class ProductImageSerializer(serializers.ModelSerializer):
         validated_data['product'] = product
         return super().create(validated_data)
 
+class AttributeValueSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(min_length = 1, max_length = 255, trim_whitespace = True)
+
+    class Meta:
+        model = AttributeValue
+        fields = ['id', 'value']
+
+class AttributeSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(min_length = 1, max_length = 255, trim_whitespace = True)
+    attribute_values = AttributeValueSerializer(many = True, read_only = True)
+
+    class Meta:
+        model = Attribute
+        fields = ['id', 'name', 'attribute_values']
+
 class ProductSerializer(serializers.ModelSerializer):
     sku = serializers.UUIDField(format='hex_verbose', read_only = True)
     name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
@@ -46,6 +61,7 @@ class ProductSerializer(serializers.ModelSerializer):
     stock_count = serializers.IntegerField(min_value = 0)
     discount = serializers.IntegerField(min_value = 0, max_value = 100)
     category = serializers.SlugRelatedField(slug_field = 'name', queryset = Category.objects.all())
+    attributes = AttributeSerializer(many = True, read_only = True)
     product_images = ProductImageSerializer(many = True, read_only = True)
     created_at = serializers.DateTimeField(read_only = True)
     updated_at = serializers.DateTimeField(read_only = True)
@@ -53,8 +69,8 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'id', 'sku', 'name', 'slug', 'description', 'price', 'brand', 'stock_count', 'discount', 'discounted_price', 'selling_price',
-            'category', 'product_images', 'created_at', 'updated_at'
+            'id', 'sku', 'name', 'slug', 'description', 'price', 'brand', 'stock_count', 'discount', 'discounted_price',
+            'selling_price', 'category', 'attributes', 'product_images', 'created_at', 'updated_at'
         ]
 
     def validate(self, attrs):

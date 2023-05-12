@@ -36,6 +36,19 @@ class Brand(models.Model):
         self.slug = slugify(self.name)
         super(Brand, self).save(*args, **kwargs)
 
+class Attribute(models.Model):
+    name = models.CharField(max_length = 255, null = True, blank = True)
+
+    def __str__(self) -> str:
+        return self.name
+
+class AttributeValue(models.Model):
+    value = models.CharField(max_length = 255, null = True, blank = True)
+    attribute = models.ForeignKey(Attribute, on_delete = models.CASCADE, null = True, blank = True, related_name = 'attribute_values')
+
+    def __str__(self) -> str:
+        return self.value
+
 class Product(models.Model):
     sku = models.UUIDField(primary_key = False, default = uuid.uuid4, editable = False)
     name = models.CharField(max_length = 255, unique = True, null = False, blank = False)
@@ -46,6 +59,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete = models.SET_NULL, null = True, blank = True, related_name = 'products')
     discount = models.PositiveSmallIntegerField(default = 0, null = False, blank = False)
     stock_count = models.PositiveIntegerField(default = 0, null = False, blank = False)
+    attributes = models.ManyToManyField(Attribute, blank = True, related_name = 'products')
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
