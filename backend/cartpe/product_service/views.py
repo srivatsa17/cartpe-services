@@ -18,7 +18,7 @@ class RoutesAPIView(generics.GenericAPIView):
 class ProductAPIView(generics.GenericAPIView):
 
     serializer_class = ProductSerializer
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category', 'brand').prefetch_related('attributes').all()
     filter_backends = [ DjangoFilterBackend ]
     filterset_class = ProductFilter
 
