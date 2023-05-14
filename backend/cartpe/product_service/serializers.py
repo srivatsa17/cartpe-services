@@ -92,6 +92,7 @@ class CategorySerializer(serializers.ModelSerializer):
     name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     slug = serializers.SlugField(min_length = 1, max_length = 255, read_only = True)
     description = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
+    level = serializers.IntegerField(read_only = True)
     parent = serializers.SlugRelatedField(slug_field = 'name', allow_null = True, queryset = Category.objects.all())
     children = RecursiveField(many = True, read_only = True)
     products = ProductSerializer(many = True, read_only = True)
@@ -100,7 +101,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'slug', 'description', 'parent', 'children', 'products', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'slug', 'description', 'level', 'parent', 'children', 'products', 'created_at', 'updated_at']
         validators = [
             UniqueTogetherValidator(
                 queryset = Category.objects.all(),
