@@ -8,8 +8,8 @@ import products from "../products";
 import "../css/ProductScreen.css";
 
 function ProductScreen() {
-    const { id } = useParams();
-    const product = products.find((p) => p._id === id)
+    const { slug } = useParams();
+    const product = products.find((p) => p.slug === slug)
     let navigate = useNavigate();
 
     return (

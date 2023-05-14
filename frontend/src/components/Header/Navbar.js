@@ -1,24 +1,16 @@
-import React, { useState } from 'react';
-import { Navbar, Container, Nav, NavDropdown, FormControl, Form } from 'react-bootstrap';
+import React from 'react';
+import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
 import { FaShoppingCart, FaRegHeart, FaRegUser } from 'react-icons/fa';
-import '../css/Header.css';
+import '../../css/Header/Navbar.css';
 import { LinkContainer } from 'react-router-bootstrap';
+import SearchBar from './SearchBar';
 
-function Header({ searchText }) {
+function Header() {
     const brandLogo = "/images/cartpe-logo.png";
-
-    const [show, setShow] = useState(false);
-    const showProfileDropdown = () => {
-        setShow(!show);
-    }
-
-    const hideProfileDropdown = () => {
-        setShow(false);
-    }
 
     return (
         <header>
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className='p-3' data-testid="navbar">
+            <Navbar collapseOnSelect expand="xl" bg="dark" variant="dark" className='p-3' data-testid="navbar">
                 <Container>
                     <LinkContainer to="/">
                         <Navbar.Brand>
@@ -31,7 +23,52 @@ function Header({ searchText }) {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className='me-auto'>
                             <NavDropdown
-                                title="Categories"
+                                title="Men"
+                                id="collapsible-nav-dropdown"
+                                data-testid="categories-dropdown"
+                            >
+                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.2">
+                                    Another action
+                                </NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item href="#action/3.4">
+                                    Separated link
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                            <NavDropdown
+                                title="Women"
+                                id="collapsible-nav-dropdown"
+                                data-testid="categories-dropdown"
+                            >
+                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.2">
+                                    Another action
+                                </NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item href="#action/3.4">
+                                    Separated link
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                            <NavDropdown
+                                title="Kids"
+                                id="collapsible-nav-dropdown"
+                                data-testid="categories-dropdown"
+                            >
+                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.2">
+                                    Another action
+                                </NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item href="#action/3.4">
+                                    Separated link
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                            <NavDropdown
+                                title="Electronics"
                                 id="collapsible-nav-dropdown"
                                 data-testid="categories-dropdown"
                             >
@@ -48,17 +85,9 @@ function Header({ searchText }) {
                         </Nav>
 
                         <Nav>
-                            <Form className="d-flex py-2">
-                                <FormControl
-                                    type="search"
-                                    placeholder="Search"
-                                    className="me-2 searchBar"
-                                    aria-label="Search"
-                                    data-testid="Searchbar"
-                                    onChange={searchText}
-                                />
-                            </Form>
+                            <SearchBar />
                         </Nav>
+                        
 
                         <Nav className="justify-content-end">
                             <NavDropdown
@@ -69,9 +98,9 @@ function Header({ searchText }) {
                                 }
                                 id="collapsible-nav-dropdown"
                                 data-testid="profile-dropdown"
-                                show={show}
-                                onMouseEnter={showProfileDropdown}
-                                onMouseLeave={hideProfileDropdown}
+                                // show={show}
+                                // onMouseEnter={showProfileDropdown}
+                                // onMouseLeave={hideProfileDropdown}
                             >
                                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                                 <NavDropdown.Item href="#action/3.2">
