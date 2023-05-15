@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from product_service.routes import routes
 from product_service.serializers import ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer
 from product_service.models import Product, Category, Brand, Image
-from product_service.filters import ProductFilter
+from product_service.filters import ProductFilter, CategoryFilter
 
 # Create your views here.
 
@@ -72,8 +72,8 @@ class CategoryAPIView(generics.GenericAPIView):
 
     serializer_class = CategorySerializer
     queryset = Category.objects.root_nodes()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name']
+    filter_backends = [ DjangoFilterBackend ]
+    filterset_class = CategoryFilter
 
     def get(self, request):
         categories = self.filter_queryset(self.get_queryset())
