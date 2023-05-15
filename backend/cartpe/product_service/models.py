@@ -19,7 +19,10 @@ class Category(MPTTModel):
         return str(self.name)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        if self.parent:
+            self.slug = slugify("%s %s" % (self.parent.get_root(), self.name))
+        else:
+            self.slug = slugify(self.name)
         super(Category, self).save(*args, **kwargs)
 
 class Brand(models.Model):
