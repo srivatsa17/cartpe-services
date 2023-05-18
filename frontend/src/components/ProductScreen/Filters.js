@@ -1,5 +1,6 @@
 import React from "react";
 import { Row, Col } from 'react-bootstrap';
+import { FaRupeeSign } from "react-icons/fa";
 import '../../css/ProductSearchScreen/Filters.css';
 
 function getUniqueValues(products, excludedCategory) {
@@ -23,6 +24,27 @@ function getUniqueValues(products, excludedCategory) {
         uniqueCategories,
         uniqueAttributes
     };
+}
+
+function PriceRange({ min_value, max_value }) {
+    if(min_value === null) {
+        return (
+            <>
+                Under <FaRupeeSign className="rupee-icon"/>{max_value}
+            </>
+        )
+    } else if(max_value === null) {
+        return (
+            <>
+                Above <FaRupeeSign className="rupee-icon"/>{min_value}
+            </>
+        )
+    }
+    return (
+        <>
+            <FaRupeeSign className="rupee-icon"/>{min_value} - <FaRupeeSign className="rupee-icon"/>{max_value}
+        </>
+    )
 }
 
 function Filters({ products, category }) {
@@ -50,6 +72,14 @@ function Filters({ products, category }) {
         )
     })
 
+    const priceRanges = [
+        {"min_value" : null, "max_value" : 1000},
+        {"min_value" : 1000, "max_value" : 5000},
+        {"min_value" : 5000, "max_value" : 10000},
+        {"min_value" : 10000, "max_value" : 20000},
+        {"min_value" : 20000, "max_value" : null}
+    ]
+
     const colors = uniqueAttributes?.color?.map((color, index) => {
         return (
             <div key={index} className="filter-type">
@@ -59,7 +89,6 @@ function Filters({ products, category }) {
             </div>
         )
     }) || []
-    
 
     const discounts = Array.from({ length: 9 }, (_, index) => (index + 1) * 10);
 
@@ -88,10 +117,27 @@ function Filters({ products, category }) {
                     <hr />
                 </>
             }
-            <Row>
-                <h6>PRICE RANGE</h6>
-            </Row>
-            <hr />
+            {
+                priceRanges.length > 0 &&
+                <>
+                    <Row>
+                        <h6>PRICE RANGE</h6>
+                        {
+                            priceRanges.map((priceRange, index) => {
+                                return (
+                                    <div key={index} className="filter-type">
+                                        <input type="checkbox" />
+                                        <div className="filter-item">
+                                            <PriceRange min_value={priceRange.min_value} max_value={priceRange.max_value}/>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
+                    </Row>
+                    <hr />
+                </>
+            }
             {
                 uniqueAttributes?.color?.length > 0 &&
                 <>

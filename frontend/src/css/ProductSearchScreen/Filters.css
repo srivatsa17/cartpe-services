@@ -19,3 +19,8 @@
     display: inline-block;
     transform: translate(5px, 2px);
 }
+
+.rupee-icon {
+    transform : translateY(-2px);
+    height: 14px;
+}
