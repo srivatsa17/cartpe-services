@@ -4,7 +4,7 @@ import { Row, Col, Button, Card, ListGroup } from 'react-bootstrap';
 import { FaRupeeSign } from "react-icons/fa";
 import Rating from '../components/Rating';
 import ImageSlider from "../components/ImageSlider";
-import products from "../products";
+import products from "../categories";
 import "../css/ProductScreen.css";
 
 function ProductScreen() {

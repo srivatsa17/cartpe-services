@@ -2,30 +2,31 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { FaSearch } from 'react-icons/fa';
 import { GrClose } from 'react-icons/gr';
-import categories from "../../products";
+import categories from "../../categories";
 import '../../css/Header/SearchBar.css';
+
+function getCategoriesList( categoriesSearchList, categories ) {
+    categories.map((category) => {
+        if(category.children.length > 0) {
+            getCategoriesList(categoriesSearchList, category.children)
+        }
+        if(category.level !== 0) {
+            categoriesSearchList.push(category)
+        }
+        return categoriesSearchList
+    })
+}
 
 function SearchBar() {
 
     const [filteredData, setFilteredData] = useState([]);
     const [searchText, setSearchText] = useState("");
-    const searchRef = useRef(null);
-    const temp_arr = []
-    
-    function recursiveCall(categories) {
-        categories.forEach((category) => {
-            if(category.children.length) {
-                recursiveCall(category.children)
-            }
-            if(category.level !== 0) {
-                temp_arr.push(category)
-            }
-        })
-        return temp_arr
-    }
-    
-    const categoriesList = recursiveCall(categories);
-    console.log(categoriesList);
+    const searchResultsRef = useRef(null);
+    const categoriesSearchList = []
+
+    useEffect(() => {
+        getCategoriesList(categoriesSearchList, categories);
+    })
 
     const handleInputChange = (event) => {
         const inputValue = event.target.value.toLowerCase().trim();
@@ -34,7 +35,7 @@ function SearchBar() {
             setFilteredData([]);
         } else {
             setSearchText(inputValue);
-            const filter = categoriesList.filter((category) => {
+            const filter = categoriesSearchList?.filter((category) => {
                 return category.name.toLowerCase().includes(inputValue);
             })
             setFilteredData(filter);
@@ -48,7 +49,7 @@ function SearchBar() {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
+            if (searchResultsRef.current && !searchResultsRef.current.contains(event.target)) {
                 clearSearchInput();
             }
         };
@@ -57,7 +58,7 @@ function SearchBar() {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [searchRef]);
+    }, [searchResultsRef]);
 
     return (
         <div className="searchContainer">
@@ -68,22 +69,25 @@ function SearchBar() {
                     value={searchText}
                     onChange={handleInputChange}
                 />
-                {
-                    ! searchText.length ? (
-                        <FaSearch className="searchIcon"/>
-                    ) : (
-                        <GrClose className="searchIcon" id="clearButton" onClick={clearSearchInput}/>
-                    )
-                }
+                <div>
+                    {
+                        ! searchText.length ? (
+                            <FaSearch className="searchIcon"/>
+                        ) : (
+                            <GrClose className="searchIcon" id="clearButton" onClick={clearSearchInput}/>
+                        )
+                    }
+                </div>
             </div>
             {
                 filteredData.length !== 0 && (
-                    <div className="searchResults" ref={searchRef}>
+                    <div className="searchResults" ref={searchResultsRef}>
                     {
                         filteredData.map((category, index) => {
                             return (
                                 <Link
-                                    to={`/product/${category.slug}`}
+                                    to={`/${category.slug}`}
+                                    state={{ category : category }}
                                     className="searchItem"
                                     key={index}
                                     onClick={clearSearchInput}

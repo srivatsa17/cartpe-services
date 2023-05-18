@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './components/Header/Navbar';
 import Footer from './components/Footer';
 import HomeScreen from './screens/HomeScreen';
+import ProductSearchScreen from './screens/ProductSearchScreen';
 import ProductScreen from './screens/ProductScreen';
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
                 <Container>
                     <Routes>
                         <Route path='/' element={<HomeScreen />} exact />
-                        <Route path='/product/:slug' element={<ProductScreen />} />
+                        <Route path='/:slug' element={<ProductSearchScreen />}/>
+                        <Route path='/products/:slug' element={<ProductScreen />} />
                     </Routes>
                 </Container>
             </main>
