@@ -48,7 +48,7 @@ function PriceRange({ min_value, max_value }) {
 }
 
 function Filters({ products, category }) {
-    const { uniqueBrands, uniqueCategories, uniqueAttributes } = getUniqueValues(products, category.name);
+    const { uniqueBrands, uniqueCategories, uniqueAttributes } = getUniqueValues(products, category);
 
     // console.log('brands:', uniqueBrands);
     // console.log('categories:', uniqueCategories);

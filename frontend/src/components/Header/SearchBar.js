@@ -86,8 +86,7 @@ function SearchBar() {
                         filteredData.map((category, index) => {
                             return (
                                 <Link
-                                    to={`/${category.slug}`}
-                                    state={{ category : category }}
+                                    to={{ pathname: `/${category.slug}`, search: `searchItem=${category.name}`}}
                                     className="searchItem"
                                     key={index}
                                     onClick={clearSearchInput}

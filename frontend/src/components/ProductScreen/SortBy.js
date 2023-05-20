@@ -1,28 +1,37 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useSearchParams } from 'react-router-dom';
 import { Col } from 'react-bootstrap';
 import { SlArrowDown } from 'react-icons/sl';
 import '../../css/ProductSearchScreen/SortBy.css';
 
-function SortBy() {
+const sortByOptions = [
+    { value : "name", label : "Recommended"},
+    { value : "new", label : "What's New"},
+    { value : "popularity", label : "Popularity"},
+    { value : "discount", label : "Better discount"},
+    { value : "price_desc", label : "Price: High to Low"},
+    { value : "price_asc", label : "Price: Low to High"},
+    { value : "rating", label : "Customer Rating"}
+];
+
+function SortBy({ handleSort }) {
     const sortByRef = useRef(null);
     const [showSortByMenu, setShowSortByMenu] = useState(false);
     const [selectedSortByValue, setSelectedSortByValue] = useState(null);
-
+    const [queryParams, setQueryParams] = useSearchParams();
     const sortByTextPlaceholder = "Sort By: ";
-
-    const sortByOptions = [
-        { value : "What's New", label : "What's New"},
-        { value : "Popularity", label : "Popularity"},
-        { value : "Better discount", label : "Better discount"},
-        { value : "Price: High to Low", label : "Price: High to Low"},
-        { value : "Price: Low to High", label : "Price: Low to High"},
-        { value : "Customer Rating", label : "Customer Rating"}
-    ]
 
     const getSortByDisplay = () => {
         if(selectedSortByValue) {
             return selectedSortByValue.label;
-        }
+        } else {
+            const defaultSortByValue = sortByOptions.find((option) => option.value === queryParams.get('sort'));
+            if(defaultSortByValue) {
+                return defaultSortByValue.label;
+            } else {
+                return "";
+            }
+        } 
     }
 
     useEffect(() => {
@@ -43,21 +52,21 @@ function SortBy() {
 
     const onSortByItemClick = (option) => {
         setSelectedSortByValue(option);
+        queryParams.set('sort', option.value);
+        setQueryParams(queryParams, { replace: true });
         getSortByDisplay();
+        handleSort(option.value);
     }
 
     const isSortByItemSelected = (option) => {
-        if(! selectedSortByValue) {
-            return false;
-        }
-        return selectedSortByValue.value === option.value;
+        return selectedSortByValue && selectedSortByValue.value === option.value;
     }
 
     return (
         <Col className="sort-by-container" ref={sortByRef}>
             <div className="sort-by-input" onMouseOver={handleSortByMenuOnMouseOver}>
                 <div className="sort-by-selected-value">
-                    {sortByTextPlaceholder}<strong>{ getSortByDisplay() }</strong>
+                    {sortByTextPlaceholder}<strong>{getSortByDisplay()}</strong>
                 </div>
                 <div className="sort-by-tools">
                     <div className="sort-by-tool">
