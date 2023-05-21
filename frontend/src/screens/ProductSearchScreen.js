@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Container, Row, Col } from 'react-bootstrap';
 import { parseISO } from 'date-fns';
 import axios from 'axios';
-import SortBy from "../components/ProductScreen/SortBy";
+import SortBy from "../components/ProductScreen/SortBy/SortBy";
 import Filters from "../components/ProductScreen/Filters";
 import '../css/ProductSearchScreen/ProductSearchScreen.css';
 

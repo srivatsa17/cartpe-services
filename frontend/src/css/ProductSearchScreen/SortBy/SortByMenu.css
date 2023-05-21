@@ -1,0 +1,21 @@
+.sort-by-menu {
+    position: absolute;
+    transform: translate(-10px, 20px);
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: auto;
+    max-height: 150px;
+    background-color: #fff;
+    z-index: 1;
+}
+
+.sort-by-items {
+    padding: 5px 5px 5px 10px;
+    cursor: pointer;
+}
+
+.sort-by-items:hover {
+    background-color: rgb(214, 212, 212);
+    font-weight: bold;
+}
