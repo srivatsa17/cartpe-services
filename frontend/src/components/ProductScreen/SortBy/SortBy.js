@@ -15,7 +15,7 @@ const sortByOptions = [
     { value : "rating", label : "Customer Rating"}
 ];
 
-function SortBy({ handleSort }) {
+function SortBy() {
     const sortByRef = useRef(null);
     const [showSortByMenu, setShowSortByMenu] = useState(false);
     const [selectedSortByValue, setSelectedSortByValue] = useState(null);
@@ -41,7 +41,6 @@ function SortBy({ handleSort }) {
         setSelectedSortByValue(option.label);
         queryParams.set('sort', option.value);
         setQueryParams(queryParams, { replace: true });
-        handleSort(option.value);
     }
 
     return (
