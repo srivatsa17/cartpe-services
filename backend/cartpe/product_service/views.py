@@ -23,6 +23,7 @@ class ProductAPIView(generics.GenericAPIView):
                     .select_related('category', 'brand')
                     .prefetch_related('attributes__attribute_values', 'product_images')
                     .all()
+                    .order_by('name')
                 )
     filter_backends = [ DjangoFilterBackend ]
     filterset_class = ProductFilter
