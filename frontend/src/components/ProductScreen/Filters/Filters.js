@@ -1,26 +1,90 @@
-import React, { useState } from "react";
-import { Col } from 'react-bootstrap';
-import '../../../css/ProductSearchScreen/Filters.css';
-import FilterDiscounts from "./FilterDiscounts";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Col } from 'react-bootstrap';
+import FilterCategories from "./FilterCategories";
+import FilterBrands from "./FilterBrands";
+import FilterDiscounts from "./FilterDiscounts";
+import '../../../css/ProductSearchScreen/Filters.css';
 
-function Filters() {
-    const [discount, setDiscount] = useState(null);
+function Filters({ uniqueCategories, uniqueBrands, discountRanges }) {
     const [queryParams, setQueryParams] = useSearchParams();
+    const filteredCategories = queryParams.get('categories');
+    const filteredBrands = queryParams.get('brands');
+    const filteredDiscount = queryParams.get('discount');
+
+    const [discount, setDiscount] = useState(filteredDiscount ?? null);
+    const [selectedCategories, setSelectedCategories] = useState(filteredCategories?.split(',') ?? []);
+    const [selectedBrands, setSelectedBrands] = useState(filteredBrands?.split(',') ?? []);
+
+    useEffect(() => {
+        setSelectedCategories(filteredCategories?.split(',') ?? []);
+        setDiscount(filteredDiscount ?? null);
+        setSelectedBrands(filteredBrands?.split(',') ?? [])
+    }, [filteredCategories, filteredDiscount, filteredBrands]);
 
     const handleDiscounts = (discountValue) => {
         setDiscount(discountValue)
         if(discountValue) {
             queryParams.set('discount', discountValue)
         } else {
-            queryParams.delete('discount')
+            queryParams.delete('discount', { replace : true })
         }
         setQueryParams(queryParams)
     }
 
+    const handleCategories = (category) => {
+        if (selectedCategories.includes(category)) {
+            setSelectedCategories(selectedCategories.filter((_category) => _category !== category));
+        } else {
+            setSelectedCategories([...selectedCategories, category]);
+        }
+    }
+
+    const handleBrands = (brand) => {
+        if (selectedBrands.includes(brand)) {
+            setSelectedBrands(selectedBrands.filter((_brand) => _brand !== brand));
+        } else {
+            setSelectedBrands([...selectedBrands, brand]);
+        }
+    }
+
     return (
-        <Col className="filters-types-container" xs={5} sm={5} md={4} lg={3} xl={2} xxl={2}>
-            <FilterDiscounts discount={discount} handleDiscounts={handleDiscounts}/>
+        <Col className="filters-types-container" xs={8} sm={6} md={4} lg={3} xl={2} xxl={2}>
+            {
+                uniqueCategories.length > 0 &&
+                <>
+                    <FilterCategories
+                        uniqueCategories={uniqueCategories}
+                        selectedCategories={selectedCategories}
+                        setSelectedCategories={setSelectedCategories}
+                        handleCategories={handleCategories}
+                    />
+                    <hr />
+                </>
+            }
+            {
+                uniqueBrands.length > 0 &&
+                <>
+                    <FilterBrands
+                        uniqueBrands={uniqueBrands}
+                        selectedBrands={selectedBrands}
+                        setSelectedBrands={setSelectedBrands}
+                        handleBrands={handleBrands}
+                    />
+                    <hr />
+                </>
+            }
+            {
+                discountRanges.length > 0 &&
+                <>
+                    <FilterDiscounts
+                        discountRanges={discountRanges}
+                        discount={discount}
+                        handleDiscounts={handleDiscounts}
+                    />
+                    <hr />
+                </>
+            }
         </Col>
     );
 }

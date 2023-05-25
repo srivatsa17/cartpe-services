@@ -87,6 +87,7 @@ function SearchBar() {
                             return (
                                 <Link
                                     to={{ pathname: `/${category.slug}`, search: `searchItem=${category.name}`}}
+                                    state={{ resetSortTitle: true }}
                                     className="searchItem"
                                     key={index}
                                     onClick={clearSearchInput}

@@ -7,28 +7,50 @@ import SortBy from "../components/ProductScreen/SortBy/SortBy";
 import Filters from "../components/ProductScreen/Filters/Filters";
 import '../css/ProductSearchScreen/ProductSearchScreen.css';
 
+function getUniqueCategories(products) {
+    return [...new Set(products.map((product) => product.category))]
+}
+
+function getUniqueBrands(products) {
+    return [ ...new Set(products.map((product) => product.brand))]
+}
+
+function getDiscountRanges() {
+    return Array.from({ length: 9 }, (_, index) => (index + 1) * 10);
+}
+
 function ProductSearchScreen() {
     const [products, setProducts] = useState([]);
     const [queryParams] = useSearchParams();
-    const category = queryParams.get('searchItem');
-    const discount = queryParams.get('discount');
-    const sortBy = queryParams.get('sort');
+    const uniqueCategories = getUniqueCategories(products)
+    const uniqueBrands = getUniqueBrands(products);
+    const discountRanges = getDiscountRanges();
+
+    const searchedCategory = queryParams.get('searchItem') ?? "";
+    const filteredCategories = queryParams.get('categories')?.split(',') ?? [];
+    const filteredBrands = queryParams.get('brands')?.split(',') ?? [];
+    const filteredDiscount = queryParams.get('discount') ?? null;
+    const sortBy = queryParams.get('sort') ?? null;
 
     useEffect(() => {
         axios.get('https://mocki.io/v1/00263173-72a7-48fd-87b9-f70a90ec64b2', {
         params: {
-            category : category ?? ""
+            category : searchedCategory ?? ""
         }}).then((response) => {
-            setProducts(response.data);
+            setProducts(response.data ?? []);
         })
-    }, [category])
+    }, [searchedCategory])
 
-    const filterDiscount = (product) => {
-        if (discount) {
-            return product.discount > discount;
-        } else {
-            return product;
-        }
+    const handleFilterCategories = (product) => {
+        return filteredCategories.length > 0 ? filteredCategories.includes(product.category) : true;
+    }
+
+    const handleFilterBrands = (product) => {
+        return filteredBrands.length > 0 ? filteredBrands.includes(product.brand) : true;
+    }
+
+    const handleFilterDiscount = (product) => {
+        return filteredDiscount ? product.discount > filteredDiscount : true;
     };
 
     const sortProduct = (a, b) => {
@@ -41,39 +63,45 @@ function ProductSearchScreen() {
         }
     }
 
-    const filteredAndSortedProducts = products.filter(filterDiscount).sort(sortProduct);
+    const filteredAndSortedProducts = products
+                                    .filter(handleFilterCategories)
+                                    .filter(handleFilterBrands)
+                                    .filter(handleFilterDiscount)
+                                    .sort(sortProduct);
 
     return (
-        <div>
-            <Container>
-                <Row>
-                    <Col>
-                        <strong>{category}</strong> - {filteredAndSortedProducts.length} items
-                    </Col>
-                </Row>
-                <Row className="filters-text-and-sort-by-row">
-                    <Col className="filters-text-container" xs={6} sm={6} md={8} lg={9} xl={9} xxl={9}>
-                        <h5>FILTERS</h5>
-                    </Col>
-                    <SortBy />
-                </Row>
-                <hr />
-                <Row>
-                    <Filters />
-                    <Col>
-                        {
-                            filteredAndSortedProducts?.map((product, index) => {
-                                return (
-                                    <div key={index}>
-                                        {product.name} - {product.price} - {product.discount} - {product.created_at}
-                                    </div>
-                                )
-                            })
-                        }
-                    </Col>
-                </Row>
-            </Container>
-        </div>
+        <Container>
+            <Row>
+                <Col>
+                    <strong>{searchedCategory}</strong> - {filteredAndSortedProducts.length} items
+                </Col>
+            </Row>
+            <Row className="filters-text-and-sort-by-row">
+                <Col className="filters-text-container" xs={6} sm={6} md={8} lg={9} xl={9} xxl={9}>
+                    <h5>FILTERS</h5>
+                </Col>
+                <SortBy />
+            </Row>
+            <hr />
+            <Row>
+                <Filters
+                    uniqueCategories={uniqueCategories}
+                    uniqueBrands={uniqueBrands}
+                    discountRanges={discountRanges}
+                />
+                <Col>
+                    {
+                        filteredAndSortedProducts?.map((product, index) => {
+                            return (
+                                <div key={index}>
+                                    {product.name} - {product.price} - {product.discount} - {product.created_at}
+                                </div>
+                            )
+                        })
+                    }
+                </Col>
+            </Row>
+        </Container>
     );
 }
 
