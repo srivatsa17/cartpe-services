@@ -21,6 +21,7 @@ function FilterDiscounts({ discountRanges, discount, handleDiscounts }) {
         <CollapsibleList
             defaultVisible={discountFilterApplied}
             title="DISCOUNT RANGES"
+            tooltipTitle="Discounts"
         >
         {
             discountRanges.map((discountOption, index) => {

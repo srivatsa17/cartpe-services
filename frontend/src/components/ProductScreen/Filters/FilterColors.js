@@ -12,6 +12,7 @@ function FilterColors({ uniqueColors, selectedColors, setSelectedColors, handleC
         <CollapsibleList
             defaultVisible={isColorsFiltersApplied}
             title="COLORS"
+            tooltipTitle="Colors"
             actionButton={
                 <FilterButtonToggle
                     visible={selectedColors.length > 0}

@@ -30,6 +30,24 @@ function getUniqueColors(products) {
     }, {})['color'];
 }
 
+function getMinAndMaxPrice(products) {
+    let maxPrice = products[0]?.price;
+    let minPrice = products[0]?.price;
+  
+    for (let i = 0; i < products.length; i++) {
+        const price = products[i].price;
+        if (price > maxPrice) {
+            maxPrice = price;
+        }
+        if (price < minPrice) {
+            minPrice = price;
+        }
+    }
+    
+    return { maxPrice, minPrice };
+}
+  
+
 function ProductSearchScreen() {
     const [products, setProducts] = useState([]);
     const [queryParams] = useSearchParams();
@@ -37,12 +55,14 @@ function ProductSearchScreen() {
     const uniqueBrands = getUniqueBrands(products);
     const uniqueColors = getUniqueColors(products) ?? [];
     const discountRanges = getDiscountRanges();
+    const minAndMaxPrices = getMinAndMaxPrice(products);
 
     const searchedCategory = queryParams.get('searchItem') ?? "";
     const filteredCategories = queryParams.get('categories')?.split(',') ?? [];
     const filteredBrands = queryParams.get('brands')?.split(',') ?? [];
     const filteredColors = queryParams.get('colors')?.split(',') ?? [];
     const filteredDiscount = queryParams.get('discount') ?? null;
+    const filteredMaxPrice = queryParams.get('maxPrice') ?? null;
     const sortBy = queryParams.get('sort') ?? null;
 
     useEffect(() => {
@@ -75,6 +95,10 @@ function ProductSearchScreen() {
         return filteredDiscount ? product.discount > filteredDiscount : true;
     };
 
+    const handleFilterPrice = (product) => {
+        return filteredMaxPrice ? product.price <= filteredMaxPrice : true;
+    }
+
     const sortProduct = (a, b) => {
         switch(sortBy) {
             case 'new' : return parseISO(b.created_at) - parseISO(a.created_at);
@@ -90,6 +114,7 @@ function ProductSearchScreen() {
                                     .filter(handleFilterBrands)
                                     .filter(handleFilterColors)
                                     .filter(handleFilterDiscount)
+                                    .filter(handleFilterPrice)
                                     .sort(sortProduct);
 
     return (
@@ -112,6 +137,7 @@ function ProductSearchScreen() {
                     uniqueBrands={uniqueBrands}
                     uniqueColors={uniqueColors}
                     discountRanges={discountRanges}
+                    minAndMaxPrices={minAndMaxPrices}
                 />
                 <Col>
                     {

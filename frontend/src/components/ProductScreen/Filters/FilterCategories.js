@@ -12,6 +12,7 @@ function FilterCategories({ uniqueCategories, selectedCategories, setSelectedCat
         <CollapsibleList
             defaultVisible={isCategoryFiltersApplied}
             title="CATEGORIES"
+            tooltipTitle="Categories"
             actionButton={
                 <FilterButtonToggle
                     visible={selectedCategories.length > 0}

@@ -5,26 +5,30 @@ import FilterCategories from "./FilterCategories";
 import FilterBrands from "./FilterBrands";
 import FilterColors from "./FilterColors";
 import FilterDiscounts from "./FilterDiscounts";
-import '../../../css/ProductSearchScreen/Filters.css';
+import FilterPrices from "./FilterPrices";
+import '../../../css/ProductSearchScreen/Filters/Filters.css';
 
-function Filters({ uniqueCategories, uniqueBrands, uniqueColors, discountRanges }) {
+function Filters({ uniqueCategories, uniqueBrands, uniqueColors, discountRanges, minAndMaxPrices }) {
     const [queryParams, setQueryParams] = useSearchParams();
     const filteredCategories = queryParams.get('categories');
     const filteredBrands = queryParams.get('brands');
     const filteredColors = queryParams.get('colors');
     const filteredDiscount = queryParams.get('discount');
+    const filteredPrice = queryParams.get('maxPrice');
 
     const [discount, setDiscount] = useState(filteredDiscount ?? null);
     const [selectedCategories, setSelectedCategories] = useState(filteredCategories?.split(',') ?? []);
     const [selectedBrands, setSelectedBrands] = useState(filteredBrands?.split(',') ?? []);
     const [selectedColors, setSelectedColors] = useState(filteredColors?.split(',') ?? []);
+    const [selectedPrice, setSelectedPrice] = useState(filteredPrice ?? null);
 
     useEffect(() => {
         setSelectedCategories(filteredCategories?.split(',') ?? []);
         setSelectedBrands(filteredBrands?.split(',') ?? []);
         setSelectedColors(filteredColors?.split(',') ?? []);
         setDiscount(filteredDiscount ?? null);
-    }, [filteredCategories, filteredColors, filteredBrands, filteredDiscount]);
+        setSelectedPrice(filteredPrice ?? null);
+    }, [filteredCategories, filteredColors, filteredBrands, filteredDiscount, filteredPrice]);
 
     const handleCategories = (category) => {
         if (selectedCategories.includes(category)) {
@@ -58,6 +62,17 @@ function Filters({ uniqueCategories, uniqueBrands, uniqueColors, discountRanges 
             queryParams.delete('discount', { replace : true })
         }
         setQueryParams(queryParams)
+    }
+
+    const handlePrices = (event) => {
+        const maxPrice = event.target.value;
+        setSelectedPrice(maxPrice);
+        if(maxPrice && maxPrice > minAndMaxPrices.minPrice) {
+            queryParams.set('maxPrice', maxPrice);
+        } else {
+            queryParams.delete('maxPrice')
+        }
+        setQueryParams(queryParams);
     }
 
     return (
@@ -105,6 +120,17 @@ function Filters({ uniqueCategories, uniqueBrands, uniqueColors, discountRanges 
                         discountRanges={discountRanges}
                         discount={discount}
                         handleDiscounts={handleDiscounts}
+                    />
+                    <hr />
+                </>
+            }
+            {
+                minAndMaxPrices.minPrice && minAndMaxPrices.maxPrice &&
+                <>
+                    <FilterPrices 
+                        minAndMaxPrices={minAndMaxPrices}
+                        selectedPrice={selectedPrice}
+                        handlePrices={handlePrices}
                     />
                     <hr />
                 </>

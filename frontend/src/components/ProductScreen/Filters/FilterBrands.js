@@ -12,6 +12,7 @@ function FilterBrands({ uniqueBrands, selectedBrands, setSelectedBrands, handleB
         <CollapsibleList
             defaultVisible={isBrandFiltersApplied}
             title="BRANDS"
+            tooltipTitle="Brands"
             actionButton={
                 <FilterButtonToggle
                     visible={selectedBrands.length > 0}
