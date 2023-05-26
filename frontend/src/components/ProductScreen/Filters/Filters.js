@@ -3,34 +3,28 @@ import { useSearchParams } from "react-router-dom";
 import { Col } from 'react-bootstrap';
 import FilterCategories from "./FilterCategories";
 import FilterBrands from "./FilterBrands";
+import FilterColors from "./FilterColors";
 import FilterDiscounts from "./FilterDiscounts";
 import '../../../css/ProductSearchScreen/Filters.css';
 
-function Filters({ uniqueCategories, uniqueBrands, discountRanges }) {
+function Filters({ uniqueCategories, uniqueBrands, uniqueColors, discountRanges }) {
     const [queryParams, setQueryParams] = useSearchParams();
     const filteredCategories = queryParams.get('categories');
     const filteredBrands = queryParams.get('brands');
+    const filteredColors = queryParams.get('colors');
     const filteredDiscount = queryParams.get('discount');
 
     const [discount, setDiscount] = useState(filteredDiscount ?? null);
     const [selectedCategories, setSelectedCategories] = useState(filteredCategories?.split(',') ?? []);
     const [selectedBrands, setSelectedBrands] = useState(filteredBrands?.split(',') ?? []);
+    const [selectedColors, setSelectedColors] = useState(filteredColors?.split(',') ?? []);
 
     useEffect(() => {
         setSelectedCategories(filteredCategories?.split(',') ?? []);
+        setSelectedBrands(filteredBrands?.split(',') ?? []);
+        setSelectedColors(filteredColors?.split(',') ?? []);
         setDiscount(filteredDiscount ?? null);
-        setSelectedBrands(filteredBrands?.split(',') ?? [])
-    }, [filteredCategories, filteredDiscount, filteredBrands]);
-
-    const handleDiscounts = (discountValue) => {
-        setDiscount(discountValue)
-        if(discountValue) {
-            queryParams.set('discount', discountValue)
-        } else {
-            queryParams.delete('discount', { replace : true })
-        }
-        setQueryParams(queryParams)
-    }
+    }, [filteredCategories, filteredColors, filteredBrands, filteredDiscount]);
 
     const handleCategories = (category) => {
         if (selectedCategories.includes(category)) {
@@ -46,6 +40,24 @@ function Filters({ uniqueCategories, uniqueBrands, discountRanges }) {
         } else {
             setSelectedBrands([...selectedBrands, brand]);
         }
+    }
+
+    const handleColors = (color) => {
+        if (selectedColors.includes(color)) {
+            setSelectedColors(selectedColors.filter((_color) => _color !== color));
+        } else {
+            setSelectedColors([...selectedColors, color]);
+        }
+    }
+
+    const handleDiscounts = (discountValue) => {
+        setDiscount(discountValue)
+        if(discountValue) {
+            queryParams.set('discount', discountValue)
+        } else {
+            queryParams.delete('discount', { replace : true })
+        }
+        setQueryParams(queryParams)
     }
 
     return (
@@ -70,6 +82,18 @@ function Filters({ uniqueCategories, uniqueBrands, discountRanges }) {
                         selectedBrands={selectedBrands}
                         setSelectedBrands={setSelectedBrands}
                         handleBrands={handleBrands}
+                    />
+                    <hr />
+                </>
+            }
+            {
+                uniqueColors.length > 0 && 
+                <>
+                    <FilterColors 
+                        uniqueColors={uniqueColors}
+                        selectedColors={selectedColors}
+                        setSelectedColors={setSelectedColors}
+                        handleColors={handleColors}
                     />
                     <hr />
                 </>

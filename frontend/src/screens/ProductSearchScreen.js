@@ -19,16 +19,29 @@ function getDiscountRanges() {
     return Array.from({ length: 9 }, (_, index) => (index + 1) * 10);
 }
 
+function getUniqueColors(products) {
+    return products.reduce((result, product) => {
+        product.attributes.map((attribute) => {
+            const attributeName = attribute.name;
+            const attributeValues = attribute.attribute_values.map(value => value.value);
+            return result[attributeName] = [...new Set([...(result[attributeName] || []), ...attributeValues])];
+        });
+        return result;
+    }, {})['color'];
+}
+
 function ProductSearchScreen() {
     const [products, setProducts] = useState([]);
     const [queryParams] = useSearchParams();
     const uniqueCategories = getUniqueCategories(products)
     const uniqueBrands = getUniqueBrands(products);
+    const uniqueColors = getUniqueColors(products) ?? [];
     const discountRanges = getDiscountRanges();
 
     const searchedCategory = queryParams.get('searchItem') ?? "";
     const filteredCategories = queryParams.get('categories')?.split(',') ?? [];
     const filteredBrands = queryParams.get('brands')?.split(',') ?? [];
+    const filteredColors = queryParams.get('colors')?.split(',') ?? [];
     const filteredDiscount = queryParams.get('discount') ?? null;
     const sortBy = queryParams.get('sort') ?? null;
 
@@ -49,6 +62,15 @@ function ProductSearchScreen() {
         return filteredBrands.length > 0 ? filteredBrands.includes(product.brand) : true;
     }
 
+    const handleFilterColors = (product) => {
+        return  filteredColors.length > 0
+                ? product.attributes.some((attribute) =>
+                    attribute.attribute_values.some((value) =>
+                        filteredColors.includes(value.value)
+                    )
+                ) : true
+    }
+
     const handleFilterDiscount = (product) => {
         return filteredDiscount ? product.discount > filteredDiscount : true;
     };
@@ -66,6 +88,7 @@ function ProductSearchScreen() {
     const filteredAndSortedProducts = products
                                     .filter(handleFilterCategories)
                                     .filter(handleFilterBrands)
+                                    .filter(handleFilterColors)
                                     .filter(handleFilterDiscount)
                                     .sort(sortProduct);
 
@@ -87,6 +110,7 @@ function ProductSearchScreen() {
                 <Filters
                     uniqueCategories={uniqueCategories}
                     uniqueBrands={uniqueBrands}
+                    uniqueColors={uniqueColors}
                     discountRanges={discountRanges}
                 />
                 <Col>
