@@ -1,69 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { Container, Row, Col } from 'react-bootstrap';
 import { parseISO } from 'date-fns';
 import axios from 'axios';
 import SortBy from "../components/ProductScreen/SortBy/SortBy";
 import Filters from "../components/ProductScreen/Filters/Filters";
 import '../css/ProductSearchScreen/ProductSearchScreen.css';
-
-function getUniqueCategories(products) {
-    return [...new Set(products.map((product) => product.category))]
-}
-
-function getUniqueBrands(products) {
-    return [ ...new Set(products.map((product) => product.brand))]
-}
-
-function getDiscountRanges() {
-    return Array.from({ length: 9 }, (_, index) => (index + 1) * 10);
-}
-
-function getUniqueColors(products) {
-    return products.reduce((result, product) => {
-        product.attributes.map((attribute) => {
-            const attributeName = attribute.name;
-            const attributeValues = attribute.attribute_values.map(value => value.value);
-            return result[attributeName] = [...new Set([...(result[attributeName] || []), ...attributeValues])];
-        });
-        return result;
-    }, {})['color'];
-}
-
-function getMinAndMaxPrice(products) {
-    let maxPrice = products[0]?.price;
-    let minPrice = products[0]?.price;
-  
-    for (let i = 0; i < products.length; i++) {
-        const price = products[i].price;
-        if (price > maxPrice) {
-            maxPrice = price;
-        }
-        if (price < minPrice) {
-            minPrice = price;
-        }
-    }
-    
-    return { maxPrice, minPrice };
-}
-  
+import { getUniqueFilterValues } from '../utils/ProductSearchScreen/getUniqueFilterValues';
+import { useFilterSearchParams } from "../utils/ProductSearchScreen/useFilterSearchParams";
 
 function ProductSearchScreen() {
     const [products, setProducts] = useState([]);
-    const [queryParams] = useSearchParams();
-    const uniqueCategories = getUniqueCategories(products)
-    const uniqueBrands = getUniqueBrands(products);
-    const uniqueColors = getUniqueColors(products) ?? [];
-    const discountRanges = getDiscountRanges();
-    const minAndMaxPrices = getMinAndMaxPrice(products);
-
-    const searchedCategory = queryParams.get('searchItem') ?? "";
-    const filteredCategories = queryParams.get('categories')?.split(',') ?? [];
-    const filteredBrands = queryParams.get('brands')?.split(',') ?? [];
-    const filteredColors = queryParams.get('colors')?.split(',') ?? [];
-    const filteredDiscount = queryParams.get('discount') ?? null;
-    const filteredMaxPrice = queryParams.get('maxPrice') ?? null;
-    const sortBy = queryParams.get('sort') ?? null;
+    const { uniqueCategories, uniqueBrands, uniqueColors, discountRanges, minAndMaxPrices } = getUniqueFilterValues(products);
+    const { searchedCategory, filteredCategories, filteredBrands, filteredColors, filteredDiscount, filteredMaxPrice, sortBy } = useFilterSearchParams();
 
     useEffect(() => {
         axios.get('https://mocki.io/v1/00263173-72a7-48fd-87b9-f70a90ec64b2', {
