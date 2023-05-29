@@ -4,6 +4,7 @@ import { parseISO } from 'date-fns';
 import axios from 'axios';
 import SortBy from "../components/ProductScreen/SortBy/SortBy";
 import Filters from "../components/ProductScreen/Filters/Filters";
+import Product from "../components/ProductScreen/ProductCard/Product";
 import '../css/ProductSearchScreen/ProductSearchScreen.css';
 import { getUniqueFilterValues } from '../utils/ProductSearchScreen/getUniqueFilterValues';
 import { useFilterSearchParams } from "../utils/ProductSearchScreen/useFilterSearchParams";
@@ -14,7 +15,7 @@ function ProductSearchScreen() {
     const { searchedCategory, filteredCategories, filteredBrands, filteredColors, filteredDiscount, filteredMaxPrice, sortBy } = useFilterSearchParams();
 
     useEffect(() => {
-        axios.get('https://mocki.io/v1/00263173-72a7-48fd-87b9-f70a90ec64b2', {
+        axios.get('https://mocki.io/v1/0a41f252-f421-4152-910d-09d03916168e', {
         params: {
             category : searchedCategory ?? ""
         }}).then((response) => {
@@ -88,15 +89,18 @@ function ProductSearchScreen() {
                     minAndMaxPrices={minAndMaxPrices}
                 />
                 <Col>
+                    <Row>
                     {
                         filteredAndSortedProducts?.map((product, index) => {
                             return (
-                                <div key={index}>
-                                    {product.name} - {product.price} - {product.discount} - {product.created_at}
-                                </div>
+                                <Col key={index} sm={12} md={10} lg={6} xl={4}>
+                                    {/* {product.name} - {product.price} - {product.discount} - {product.created_at} */}
+                                    <Product product={product} />
+                                </Col>
                             )
                         })
                     }
+                    </Row>
                 </Col>
             </Row>
         </Container>

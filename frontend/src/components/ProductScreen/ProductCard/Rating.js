@@ -1,7 +1,7 @@
 import React from "react";
 import { BsStarFill, BsStarHalf, BsStar } from 'react-icons/bs';
 import { Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import '../css/Rating.css';
+import '../../../css/ProductSearchScreen/ProductCard/Rating.css';
 
 function createStars(ratingObj) {
     var stars = [];
@@ -47,7 +47,7 @@ function createStars(ratingObj) {
 function Rating({ rating, text }) {
     return (
         <Row>
-            <Col>
+            <div className="rating-review-container">
                 <OverlayTrigger
                     key="bottom"
                     placement="bottom"
@@ -61,13 +61,13 @@ function Rating({ rating, text }) {
                         { createStars({ rating }) }
                     </div>
                 </OverlayTrigger>
-            </Col>
 
-            <Col>
-                {
-                    text && <span data-testid="review-count">{ text }</span>
-                }
-            </Col>
+                <div className="review-count">
+                    {
+                        text && <span data-testid="review-count">{ text }</span>
+                    }
+                </div>
+            </div>
         </Row>
     );
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Row, Col, Button, Card, ListGroup } from 'react-bootstrap';
 import { FaRupeeSign } from "react-icons/fa";
-import Rating from '../components/Rating';
+import Rating from "../components/ProductScreen/ProductCard/Rating";
 import ImageSlider from "../components/ImageSlider";
 import products from "../categories";
 import "../css/ProductScreen.css";

@@ -1,3 +1,7 @@
+.rating-review-container {
+    display: flex;
+}
+
 .ratings {
     color: #ed811d;
     transform: translateY(-3px);
@@ -6,4 +10,8 @@
 
 .ratings span {
     margin: 0.12rem;
+}
+
+.review-count {
+    padding: 0 0 0 10px;
 }
