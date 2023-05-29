@@ -76,7 +76,7 @@ function Filters({ uniqueCategories, uniqueBrands, uniqueColors, discountRanges,
     }
 
     return (
-        <Col className="filters-types-container" xs={5} sm={5} md={4} lg={3} xl={2} xxl={2}>
+        <Col className="filters-types-container" xs={8} sm={8} md={5} lg={3} xl={2} xxl={2}>
             {
                 uniqueCategories.length > 0 &&
                 <>

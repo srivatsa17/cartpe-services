@@ -93,8 +93,7 @@ function ProductSearchScreen() {
                     {
                         filteredAndSortedProducts?.map((product, index) => {
                             return (
-                                <Col key={index} sm={12} md={10} lg={6} xl={4}>
-                                    {/* {product.name} - {product.price} - {product.discount} - {product.created_at} */}
+                                <Col key={index} xs={12} sm={12} md={12} lg={6} xl={4}>
                                     <Product product={product} />
                                 </Col>
                             )
