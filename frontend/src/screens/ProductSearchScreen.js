@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from 'react-bootstrap';
 import { parseISO } from 'date-fns';
 import axios from 'axios';
-import SortBy from "../components/ProductScreen/SortBy/SortBy";
-import Filters from "../components/ProductScreen/Filters/Filters";
-import Product from "../components/ProductScreen/ProductCard/Product";
+import SortBy from "../components/ProductSearchScreen/SortBy/SortBy";
+import Filters from "../components/ProductSearchScreen/Filters/Filters";
+import Product from "../components/ProductSearchScreen/ProductCard/Product";
 import '../css/ProductSearchScreen/ProductSearchScreen.css';
 import { getUniqueFilterValues } from '../utils/ProductSearchScreen/getUniqueFilterValues';
 import { useFilterSearchParams } from "../utils/ProductSearchScreen/useFilterSearchParams";
@@ -15,7 +15,8 @@ function ProductSearchScreen() {
     const { searchedCategory, filteredCategories, filteredBrands, filteredColors, filteredDiscount, filteredMaxPrice, sortBy } = useFilterSearchParams();
 
     useEffect(() => {
-        axios.get('https://mocki.io/v1/0a41f252-f421-4152-910d-09d03916168e', {
+        // Replace with get all products url with filter applied for category
+        axios.get('https://mocki.io/v1/af7e74d1-7072-4804-ab1c-acd661956ea3', {
         params: {
             category : searchedCategory ?? ""
         }}).then((response) => {

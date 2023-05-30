@@ -1,18 +1,12 @@
 import React, { useState, useRef } from "react";
 import { Image, Row } from "react-bootstrap";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import "../css/ImageSlider.css";
+import "../../css/ProductScreen/ImageSlider.css";
 
 function ImageSlider({ product }) {
-    // Get these images dynamically from db for the product passed as a prop.
-    const productImages = [
-        {imageURL : "/images/alexa.jpg"},
-        {imageURL : "/images/airpods.jpg"},
-        {imageURL : "/images/camera.jpg"},
-        {imageURL : "/images/mouse.jpg"},
-        {imageURL : "/images/phone.jpg"},
-        {imageURL : "/images/playstation.jpg"}
-    ];
+    const productImages = product.product_images;
+    const isFeaturedImageObj = productImages.find((image) => image.is_featured === true);
+    const [featuredImage, setFeaturedImage] = useState(isFeaturedImageObj.image);
 
     const scrollOffset = 145;
     const scrollSlider = useRef(null);
@@ -28,7 +22,6 @@ function ImageSlider({ product }) {
         scrollSlider.current.scrollLeft += scrollOffset;
     }
 
-    const [featuredImage, setFeaturedImage] = useState(product.image);
     const handleFeaturedImage = (e) => {
         // document.getElementById('featured-image').src = e.target.src;
         // We are doing the same above line using useState in React.
@@ -60,11 +53,11 @@ function ImageSlider({ product }) {
                     />
                     <div className="slider" data-testid="slider" ref={scrollSlider}>
                         {
-                            productImages.map((image, imageId) => {
+                            productImages.map((productImage, imageId) => {
                                 return (
                                     <Image
                                         key={imageId}
-                                        src={image.imageURL}
+                                        src={productImage.image}
                                         id="product-images"
                                         data-testid="product-images"
                                         onMouseOver={handleFeaturedImage}

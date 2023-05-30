@@ -4,10 +4,18 @@ import Rating from "./Rating";
 import { Link } from "react-router-dom";
 import { FaRupeeSign } from "react-icons/fa";
 import "../../../css/ProductSearchScreen/ProductCard/Product.css";
+import secureLocalStorage from "react-secure-storage";
 
 function Product({ product }) {
     const productLink = `/products/${product.slug}`;
     const featuredImageObj = product.product_images.find((image) => image.is_featured === true)
+    
+    const handleProductStorage = () => {
+        if(secureLocalStorage.getItem('product')) {
+            secureLocalStorage.removeItem('product');
+        }
+        secureLocalStorage.setItem('product', product);
+    }
 
     return (
         <Card className="my-3 rounded">
@@ -15,7 +23,7 @@ function Product({ product }) {
                 to={productLink}
                 data-testid="product-link-by-image"
             >
-                <Card.Img src={featuredImageObj.image} alt="product-image"></Card.Img>
+                <Card.Img src={featuredImageObj.image} alt="product-image" onClick={handleProductStorage}></Card.Img>
             </Link>
             <Card.Body>
                 <Link
@@ -24,7 +32,7 @@ function Product({ product }) {
                     data-testid="product-link-by-name"
                 >
                     <Card.Title as="div">
-                        <div className="product-title">{product.name}</div>
+                        <div className="product-title" onClick={handleProductStorage}>{product.name}</div>
                     </Card.Title>
                 </Link>
 
