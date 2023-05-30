@@ -10,7 +10,7 @@ function Product({ product }) {
     const featuredImageObj = product.product_images.find((image) => image.is_featured === true)
 
     return (
-        <Card className="my-3 p-3 rounded">
+        <Card className="my-3 rounded">
             <Link
                 to={productLink}
                 data-testid="product-link-by-image"

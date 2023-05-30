@@ -53,7 +53,7 @@ function Rating({ rating, text }) {
                     placement="bottom"
                     overlay={
                         <Tooltip id="tooltip-bottom">
-                            <strong>{rating} out of 5 stars</strong>
+                            <strong>{rating ?? 0} out of 5 stars</strong>
                         </Tooltip>
                     }
                 >
