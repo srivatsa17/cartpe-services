@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Container, Row, Col } from 'react-bootstrap';
 import { parseISO } from 'date-fns';
-import axios from 'axios';
 import SortBy from "../components/ProductSearchScreen/SortBy/SortBy";
 import Filters from "../components/ProductSearchScreen/Filters/Filters";
 import Product from "../components/ProductSearchScreen/ProductCard/Product";
+import Loader from "../components/Loader/Loader";
+import ErrorMessage from "../components/ErrorMessages/ErrorMessage";
 import '../css/ProductSearchScreen/ProductSearchScreen.css';
 import { getUniqueFilterValues } from '../utils/ProductSearchScreen/getUniqueFilterValues';
 import { useFilterSearchParams } from "../utils/ProductSearchScreen/useFilterSearchParams";
+import { useDispatch, useSelector } from 'react-redux';
+import { getProducts } from '../actions/productActions';
 
 function ProductSearchScreen() {
-    const [products, setProducts] = useState([]);
-    const { uniqueCategories, uniqueBrands, uniqueColors, discountRanges, minAndMaxPrices } = getUniqueFilterValues(products);
+    const dispatch = useDispatch()
+    const productList = useSelector(state => state.productList)
+    const { products, error, loading } = productList;
+
+    const { uniqueCategories, uniqueBrands, uniqueColors, discountRanges, minAndMaxPrices } = getUniqueFilterValues(products ?? []);
     const { searchedCategory, filteredCategories, filteredBrands, filteredColors, filteredDiscount, filteredMaxPrice, sortBy } = useFilterSearchParams();
 
     useEffect(() => {
-        // Replace with get all products url with filter applied for category
-        axios.get('https://mocki.io/v1/af7e74d1-7072-4804-ab1c-acd661956ea3', {
-        params: {
-            category : searchedCategory ?? ""
-        }}).then((response) => {
-            setProducts(response.data ?? []);
-        })
-    }, [searchedCategory])
+        dispatch(getProducts(searchedCategory))
+    }, [dispatch, searchedCategory])
 
     const handleFilterCategories = (product) => {
         return filteredCategories.length > 0 ? filteredCategories.includes(product.category) : true;
@@ -60,7 +60,7 @@ function ProductSearchScreen() {
     }
 
     const filteredAndSortedProducts = products
-                                    .filter(handleFilterCategories)
+                                    ?.filter(handleFilterCategories)
                                     .filter(handleFilterBrands)
                                     .filter(handleFilterColors)
                                     .filter(handleFilterDiscount)
@@ -69,40 +69,46 @@ function ProductSearchScreen() {
 
     return (
         <Container>
-            <Row>
-                <Col>
-                    <strong>{searchedCategory}</strong> - {filteredAndSortedProducts.length} items
-                </Col>
-            </Row>
-            <Row className="filters-text-and-sort-by-row">
-                <Col className="filters-text-container" xs={6} sm={6} md={8} lg={9} xl={9} xxl={9}>
-                    <h5>FILTERS</h5>
-                </Col>
-                <SortBy />
-            </Row>
-            <hr />
-            <Row>
-                <Filters
-                    uniqueCategories={uniqueCategories}
-                    uniqueBrands={uniqueBrands}
-                    uniqueColors={uniqueColors}
-                    discountRanges={discountRanges}
-                    minAndMaxPrices={minAndMaxPrices}
-                />
-                <Col>
-                    <Row>
-                    {
-                        filteredAndSortedProducts?.map((product, index) => {
-                            return (
-                                <Col key={index} xs={12} sm={12} md={12} lg={6} xl={4}>
-                                    <Product product={product} />
-                                </Col>
-                            )
-                        })
-                    }
-                    </Row>
-                </Col>
-            </Row>
+            {   loading ?
+                <Loader /> : error ?
+                    <ErrorMessage variant='danger'>{error}</ErrorMessage> :
+                    <>
+                        <Row>
+                            <Col>
+                                <strong>{searchedCategory}</strong> - {filteredAndSortedProducts.length} items
+                            </Col>
+                        </Row>
+                        <Row className="filters-text-and-sort-by-row">
+                            <Col className="filters-text-container" xs={6} sm={6} md={8} lg={9} xl={9} xxl={9}>
+                                <h5>FILTERS</h5>
+                            </Col>
+                            <SortBy />
+                        </Row>
+                        <hr />
+                        <Row>
+                            <Filters
+                                uniqueCategories={uniqueCategories}
+                                uniqueBrands={uniqueBrands}
+                                uniqueColors={uniqueColors}
+                                discountRanges={discountRanges}
+                                minAndMaxPrices={minAndMaxPrices}
+                            />
+                            <Col>
+                                <Row>
+                                {
+                                    filteredAndSortedProducts?.map((product, index) => {
+                                        return (
+                                            <Col key={index} xs={12} sm={12} md={12} lg={6} xl={4}>
+                                                <Product product={product} />
+                                            </Col>
+                                        )
+                                    })
+                                }
+                                </Row>
+                            </Col>
+                        </Row>
+                    </>
+            }
         </Container>
     );
 }
