@@ -4,9 +4,12 @@ import { FaShoppingCart, FaRegHeart, FaRegUser } from 'react-icons/fa';
 import '../../css/Header/Navbar.css';
 import { LinkContainer } from 'react-router-bootstrap';
 import SearchBar from './SearchBar';
+import { useSelector } from 'react-redux';
 
 function Header() {
     const brandLogo = "/images/cartpe-logo.png";
+    const cart = useSelector(state => state.cart);
+    const { cartItems } = cart;
 
     return (
         <header>
@@ -126,9 +129,13 @@ function Header() {
                             <Nav.Item>
                                 <LinkContainer to="/cart">
                                     <Nav.Link>
-                                        <span>
-                                            <FaShoppingCart className='icons'/> Cart
-                                        </span>
+                                        {
+                                            <div className="cart-icon-container">
+                                                <FaShoppingCart className='cart-icon'/>
+                                                { cartItems.length > 0 && <span className="cart-quantity">{cartItems.length}</span> }
+                                                <span>Cart</span>
+                                            </div>
+                                        }
                                     </Nav.Link>
                                 </LinkContainer>
                             </Nav.Item>

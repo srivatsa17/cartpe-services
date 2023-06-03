@@ -1,3 +1,110 @@
+.brand-name {
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.product-name {
+    font-size: 26px;
+    font-weight: 200;
+    color: #697177;
+}
+
+.price-container {
+    display: flex;
+    font-size: 22px;
+}
+
+.price-container #product-original-price {
+    padding: 0 0 0 10px;
+    text-decoration: line-through solid 2px;
+    color: #697177;
+}
+
+.price-container #product-discount-percent {
+    padding: 0 0 0 10px;
+    color: #0F9549
+}
+
+.product-availability {
+    font-size: 18px;
+}
+
+.button-container {
+    display: flex;
+    padding: 20px 0 20px 15px;
+    column-gap: 10px;
+}
+
+.add-to-cart-button {
+    width: 200px;
+    height: 50px;
+    background-color: #fff;
+    border: #F5A524 2px solid;
+    border-radius: 10px;
+    color: #F5A524;
+}
+
+.add-to-cart-button:hover {
+    background-color: #F5A524;
+    border: #F5A524 2px solid;
+    color: #fff;
+}
+
+button:disabled.add-to-cart-button:hover,
+button[disabled] {
+    border: 2px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.wishlist-button {
+    width: 200px;
+    height: 50px;
+    background-color: #fff;
+    border: #F31260 2px solid;
+    border-radius: 10px;
+    color: #F31260;
+}
+
+.wishlist-button:hover {
+    background-color: #F31260;
+    border: #F31260 2px solid;
+    color: #fff;
+}
+
 #rupee-icon {
     transform : translateY(-2px);
+}
+
+.delivery-options-title {
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.delivery-truck-icon {
+    margin: 0 0 0 10px;
+}
+
+.delivery-details {
+    font-size: 18px;
+}
+
+.delivery-details div {
+    padding: 5px 0 0 0;
+}
+
+.delivery-details-icons {
+    margin-right: 10px;
+}
+
+.product-details #title {
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.product-details #description {
+    font-size: 18px;
+    color: #697177;
+    padding: 10px 0 0 0;
 }
