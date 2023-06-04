@@ -3,7 +3,7 @@ import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './components/Header/Navbar';
-import Footer from './components/Footer';
+import Footer from './components/Footer/Footer';
 import HomeScreen from './screens/HomeScreen';
 import ProductSearchScreen from './screens/ProductSearchScreen';
 import ProductScreen from './screens/ProductScreen';
