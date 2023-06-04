@@ -4,9 +4,11 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import "../../css/ProductScreen/ImageSlider.css";
 
 function ImageSlider({ product }) {
-    const productImages = product.product_images;
-    const isFeaturedImageObj = productImages.find((image) => image.is_featured === true);
-    const [featuredImage, setFeaturedImage] = useState(isFeaturedImageObj.image);
+    const defaultImage = "/frontend/public/images/camera.jpg";  // Change defaultImage
+    const productImages = product?.product_images ?? [];
+    const isFeaturedImageObjExist = productImages.find((image) => image.is_featured === true);
+    const imageToShowcase = isFeaturedImageObjExist ? isFeaturedImageObjExist.image : defaultImage;
+    const [featuredImage, setFeaturedImage] = useState(imageToShowcase);
 
     const scrollOffset = 145;
     const scrollSlider = useRef(null);
