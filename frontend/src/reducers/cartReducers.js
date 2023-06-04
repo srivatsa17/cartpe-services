@@ -1,17 +1,38 @@
-import { ADD_CART_ITEM } from "../constants/cartConstants";
+import { ADD_CART_ITEM, UPDATE_CART_ITEM, REMOVE_CART_ITEM } from "../constants/cartConstants";
 
 export const cartReducer = (state = { cartItems: []}, action) => {
+    const payload = action.payload;
+
     switch(action.type) {
         case ADD_CART_ITEM:
-            const productToAdd = action.payload;
-            const isProductInCart = state.cartItems.some((cartItem) => cartItem.product.id === productToAdd.product.id)
-            if(! isProductInCart) {
+            const isProductInCart = state.cartItems.some((cartItem) => cartItem.product.id === payload.product.id)
+            if(!isProductInCart) {
                 return {
                     ...state,
-                    cartItems: [...state.cartItems, productToAdd]
+                    cartItems: [...state.cartItems, payload]
                 }
             }
             break
+
+        case UPDATE_CART_ITEM:
+            return {
+                ...state,
+                cartItems: state.cartItems.map((cartItem) => {
+                    if (cartItem.product.id === payload.product.id) {
+                        return {
+                            ...cartItem,
+                            quantity: payload.quantity
+                        };
+                    }
+                    return cartItem;
+                })
+            }
+
+        case REMOVE_CART_ITEM:
+            return {
+                ...state,
+                cartItems: state.cartItems.filter((cartItem) => cartItem.product.id !== payload)
+            }
 
         default:
             return state

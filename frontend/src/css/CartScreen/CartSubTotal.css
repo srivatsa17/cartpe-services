@@ -1,0 +1,32 @@
+.cart-subtotal-title {
+    font-size: 26px;
+}
+
+.cart-subtotal-mrp-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#rupee-icon {
+    transform : translateY(-2px);
+}
+
+.cart-subtotal-discounted-price-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cart-subtotal-discounted-price {
+    color: #0F9549;
+}
+
+.cart-subtotal-selling-price-container {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.checkout-button {
+    width: 100%;
+}
