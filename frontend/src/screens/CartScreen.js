@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Row, Col, ListGroup, Alert } from "react-bootstrap";
+import CartQuantityDetails from "../components/CartScreen/CartQuantityDetails";
 import CartSubTotal from "../components/CartScreen/CartSubTotal";
 import CartItemDetails from "../components/CartScreen/CartItemDetails";
 import "../css/CartScreen/CartScreen.css";
@@ -14,6 +15,10 @@ function CartScreen() {
             <Col xs={8} sm={8} md={8} lg={8} xl={8}>
                 <div className="shopping-cart-title">SHOPPING CART</div>
                 <br />
+
+                <CartQuantityDetails cartItems={cartItems}/>
+                <br />
+
                 {
                     cartItems.length === 0 ?
                     <Alert variant="warning">
