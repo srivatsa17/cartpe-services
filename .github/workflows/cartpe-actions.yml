@@ -79,9 +79,12 @@ jobs:
         -   name: Collect coverage report
             run: coverage report -m
 
+        -   name: Generate coverage report
+            run: coverage xml
+
         -   name: Upload coverage reports to Codecov
             uses: codecov/codecov-action@v3
             with:
                 token: ${{ secrets.CODECOV_TOKEN }}
-                directory: 'backend/cartpe/coverage'
-                files: coverage_binary
+                directory: 'backend/cartpe/'
+                files: coverage.xml
