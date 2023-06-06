@@ -31,6 +31,11 @@ jobs:
     
         -   name: Run tests and collect coverage
             run: npm test
+
+        -   name: Upload coverage report to Codecov
+            uses: codecov/codecov-action@v3
+            with:
+                token: ${{ secrets.CODECOV_TOKEN }}
     
     Test-backend:
         runs-on:  ubuntu-latest
