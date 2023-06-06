@@ -4,7 +4,7 @@ import { FaRupeeSign } from "react-icons/fa";
 import "../../css/CartScreen/CartSubTotal.css";
 
 function CartSubTotal({ cartItems }) {
-    const totalCartItemsQuantity = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
+    const totalCartItemsQuantity = cartItems.length;
     const totalMRP = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity * cartItem.product.price, 0).toFixed(2);
     const minusSign = "-";
     const totalDiscountPrice = cartItems.reduce(

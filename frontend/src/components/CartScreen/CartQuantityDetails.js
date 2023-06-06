@@ -5,7 +5,7 @@ import "../../css/CartScreen/CartQuantityDetails.css";
 
 function CartQuantityDetails({ cartItems }) {
     const dispatch = useDispatch();
-    const totalCartItemsQuantity = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
+    const totalCartItemsQuantity = cartItems.length;
     const isCartEmpty = (cartItems.length === 0);
 
     return (
