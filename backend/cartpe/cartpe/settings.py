@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_filters',
 
     'product_service.apps.ProductServiceConfig',
+    'auth_service.apps.AuthServiceConfig',
 ]
 
 MIDDLEWARE = [
