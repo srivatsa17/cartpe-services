@@ -3,5 +3,6 @@ from . import views
 
 urlpatterns = [
     path('routes', views.RoutesAPIView.as_view(), name="auth-routes"),
-    path('register', views.RegisterUserAPIView.as_view(), name="register")
+    path('register', views.RegisterUserAPIView.as_view(), name="register"),
+    path('verify-email', views.VerifyUserEmailAPIView.as_view(), name="verify-email"),
 ]

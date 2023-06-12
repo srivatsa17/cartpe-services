@@ -1,7 +1,7 @@
 authBaseUrl = 'api/v1/users'
 routes = [
     authBaseUrl + '/register',              # Create a user[POST]
-    authBaseUrl + '/verify-email',          # Verify email for a user[GET]
+    authBaseUrl + '/verify-email',          # Verify email for a user[PATCH]
     authBaseUrl + '/login',                 # Login a user[POST]
     authBaseUrl + '/logout',                # Logout a user[POST]
     authBaseUrl + '/change-password',       # Change password for user[POST]

@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
 
     'rest_framework',
     'django_filters',
@@ -46,8 +45,6 @@ INSTALLED_APPS = [
     'product_service.apps.ProductServiceConfig',
     'auth_service.apps.AuthServiceConfig',
 ]
-
-SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

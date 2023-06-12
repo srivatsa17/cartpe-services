@@ -1,5 +1,4 @@
 from django.core.mail import EmailMultiAlternatives
-from django.contrib.sites.models import Site
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.template.loader import render_to_string
@@ -19,7 +18,7 @@ def send_verification_email(user_email):
             return { "status" : 400 }
 
         user = User.objects.get(email = user_email)
-        current_site = Site.objects.get_current().domain
+        current_site = "127.0.0.1:3000"             # TODO: To be changed once frontend url is configured
 
         message = {
             'subject' : email_subject,

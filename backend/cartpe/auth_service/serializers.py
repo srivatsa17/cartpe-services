@@ -1,5 +1,8 @@
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from auth_service.models import User
+from auth_service.token import account_activation_token
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(min_length = 3, max_length = 255, allow_blank = False)
@@ -27,4 +30,31 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
+        return user
+
+class EmailVerificationSerializer(serializers.Serializer):
+    uidb64 = serializers.CharField(min_length = 1, max_length = 20)
+    token = serializers.CharField(min_length = 10, max_length = 100)
+
+    class Meta:
+        fields = ['uidb64', 'token']
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        uidb64 = attrs.get('uidb64', '')
+        token = attrs.get('token', '')
+
+        pk = urlsafe_base64_decode(uidb64).decode()
+        if not pk.isnumeric():
+            raise ValidationError("Invalid type received for user id")
+
+        if not User.objects.filter(pk = pk).exists():
+            raise ValidationError("Unable to find user")
+
+        user = User.objects.get(pk = pk)
+        isTokenValid = account_activation_token.check_token(user, token)
+
+        if not isTokenValid:
+            raise ValidationError("Invalid or expired token")
+
         return user
