@@ -1,6 +1,7 @@
 from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth import authenticate
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from auth_service.models import User
 from auth_service.token import account_activation_token
 
@@ -62,3 +63,31 @@ class EmailVerificationSerializer(serializers.Serializer):
             raise ValidationError("Invalid or expired token")
 
         return user
+    
+class LoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(min_length = 3, max_length = 255, write_only = True, allow_blank = False)
+    password = serializers.CharField(min_length = 6, max_length = 68, write_only = True, trim_whitespace = True)
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'tokens']
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        email = attrs.get('email', '')
+        password = attrs.get('password', '')
+
+        user = authenticate(email = email, password = password)
+
+        if not user:
+            raise AuthenticationFailed("Invalid credentials, try again")
+        
+        if not user.is_active:
+            raise AuthenticationFailed("Account disabled")
+
+        if not user.is_verified:
+            raise AuthenticationFailed("Email is not verified")
+
+        return {
+            'tokens' : user.tokens
+        }

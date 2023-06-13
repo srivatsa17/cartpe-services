@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
-from auth_service.serializers import RegisterUserSerializer, EmailVerificationSerializer
+from auth_service.serializers import RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer
 from auth_service.tasks import send_verification_email_task
 from auth_service.routes import routes
 
@@ -40,4 +40,13 @@ class VerifyUserEmailAPIView(generics.GenericAPIView):
                 "isEmailVerified" : user.is_verified
             }
             return Response(response, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    
+class LoginAPIView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
