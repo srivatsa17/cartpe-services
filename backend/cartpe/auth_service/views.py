@@ -35,5 +35,9 @@ class VerifyUserEmailAPIView(generics.GenericAPIView):
             user = serializer.validated_data
             user.is_verified = True
             user.save()
-            return Response(status = status.HTTP_200_OK)
+            response = {
+                "message" : "Email Verified Successfully",
+                "isEmailVerified" : user.is_verified
+            }
+            return Response(response, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

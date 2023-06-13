@@ -44,7 +44,11 @@ class EmailVerificationSerializer(serializers.Serializer):
         uidb64 = attrs.get('uidb64', '')
         token = attrs.get('token', '')
 
-        pk = urlsafe_base64_decode(uidb64).decode()
+        try:
+            pk = urlsafe_base64_decode(uidb64).decode()
+        except Exception:
+            raise ValidationError("Error occurred while decoding base64 user id")
+        
         if not pk.isnumeric():
             raise ValidationError("Invalid type received for user id")
 

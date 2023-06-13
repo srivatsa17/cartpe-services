@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.contrib.sites.models import Site
 from unittest.mock import patch, Mock
 from auth_service.email import send_verification_email
 
@@ -8,15 +7,14 @@ class SendVerificationEmailTest(TestCase):
 
     def setUp(self) -> None:
         self.user_email = 'testuser@example.com'
-        self.current_site = Site(domain='example.com')
+        self.current_site = "127.0.0.1:3000"
 
     @patch('auth_service.email.EmailMultiAlternatives.send')
     def test_send_verification_email_success(self, mock_send):
         user = Mock()
         user.pk = 123
 
-        with patch('auth_service.email.Site.objects.get_current') as mock_get_current_site, \
-            patch('auth_service.email.User.objects.filter') as mock_user_filter, \
+        with patch('auth_service.email.User.objects.filter') as mock_user_filter, \
             patch('auth_service.email.User.objects.get') as mock_user_get, \
             patch('auth_service.email.render_to_string') as mock_render_to_string:
 
@@ -25,9 +23,6 @@ class SendVerificationEmailTest(TestCase):
 
             # Mock the get method to return the user
             mock_user_get.return_value = user
-
-            # Mock the get_current method to return the current site
-            mock_get_current_site.return_value = self.current_site
 
             # Mock the render_to_string method to return the HTML content
             mock_render_to_string.return_value = '<html><body>Verification Email</body></html>'
@@ -74,8 +69,7 @@ class SendVerificationEmailTest(TestCase):
         mock_send = mock_email_instance.send
         mock_send.side_effect = Exception('Email sending failed')
 
-        with patch('auth_service.email.Site.objects.get_current') as mock_get_current, \
-            patch('auth_service.email.User.objects.filter') as mock_filter, \
+        with patch('auth_service.email.User.objects.filter') as mock_filter, \
             patch('auth_service.email.User.objects.get') as mock_get, \
             patch('auth_service.email.render_to_string') as mock_render_to_string:
 
@@ -84,9 +78,6 @@ class SendVerificationEmailTest(TestCase):
 
             # Mock the get method to return the user
             mock_get.return_value = user
-
-            # Mock the get_current method to return the current site
-            mock_get_current.return_value = self.current_site
 
             # Mock the render_to_string method to return the HTML content
             mock_render_to_string.return_value = '<html><body>Verification Email</body></html>'
