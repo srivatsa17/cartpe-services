@@ -49,7 +49,7 @@ class EmailVerificationSerializer(serializers.Serializer):
             pk = urlsafe_base64_decode(uidb64).decode()
         except Exception:
             raise ValidationError("Error occurred while decoding base64 user id")
-        
+
         if not pk.isnumeric():
             raise ValidationError("Invalid type received for user id")
 
@@ -63,7 +63,7 @@ class EmailVerificationSerializer(serializers.Serializer):
             raise ValidationError("Invalid or expired token")
 
         return user
-    
+
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(min_length = 3, max_length = 255, write_only = True, allow_blank = False)
     password = serializers.CharField(min_length = 6, max_length = 68, write_only = True, trim_whitespace = True)
@@ -77,16 +77,17 @@ class LoginSerializer(serializers.ModelSerializer):
         email = attrs.get('email', '')
         password = attrs.get('password', '')
 
+        # authenticate() checks for user.is_active field as well.
+        # If user.is_active is False, authenticate method returns None, denying the login for inactive users.
         user = authenticate(email = email, password = password)
 
         if not user:
-            raise AuthenticationFailed("Invalid credentials, try again")
-        
-        if not user.is_active:
-            raise AuthenticationFailed("Account disabled")
+            raise AuthenticationFailed(
+                "Please ensure that your credentials are valid and that the user account is enabled."
+            )
 
         if not user.is_verified:
-            raise AuthenticationFailed("Email is not verified")
+            raise AuthenticationFailed("Please ensure that your email is verified.")
 
         return {
             'tokens' : user.tokens
