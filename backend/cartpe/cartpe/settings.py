@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
+    'rest_framework_simplejwt.token_blacklist',
 
     'product_service.apps.ProductServiceConfig',
     'auth_service.apps.AuthServiceConfig',
@@ -143,10 +144,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'auth_service.User'
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
@@ -169,10 +170,6 @@ SIMPLE_JWT = {
     "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
 
     "JTI_CLAIM": "jti",
-
-    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
 # Celery settings
