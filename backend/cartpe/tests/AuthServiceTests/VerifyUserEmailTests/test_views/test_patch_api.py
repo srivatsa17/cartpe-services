@@ -1,8 +1,7 @@
-from django.test import Client
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 import json
 from auth_service.models import User
@@ -11,7 +10,7 @@ from auth_service.token import account_activation_token
 CONTENT_TYPE = 'application/json'
 
 # Initialize the APIClient app
-client = Client()
+client = APIClient()
 
 class VerifyUserEmailTest(APITestCase):
     """ Test module for PATCH request for VerifyUserEmailAPIView API """

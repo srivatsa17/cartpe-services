@@ -1,12 +1,11 @@
-from django.test import Client
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Category
 from product_service.serializers import CategorySerializer
 
 # Initialize the APIClient app
-client = Client()
+client = APIClient()
 
 class GetAllCategoriesTest(APITestCase):
     """ Test module for GET request for CategoryAPIView API """

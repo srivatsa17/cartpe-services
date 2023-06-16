@@ -1,6 +1,5 @@
-from django.test import Client
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 import json
 from product_service.models import Category, Brand
@@ -8,7 +7,7 @@ from product_service.models import Category, Brand
 CONTENT_TYPE = 'application/json'
 
 # Initialize the APIClient app
-client = Client()
+client = APIClient()
 
 class PostProductTest(APITestCase):
     """ Test module for POST request for ProductAPIView API """

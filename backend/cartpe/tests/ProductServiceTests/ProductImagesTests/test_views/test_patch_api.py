@@ -1,9 +1,8 @@
 import os
-from django.test import Client
 from django.urls import reverse
 from django.test.client import encode_multipart
 from django.core.files.uploadedfile import SimpleUploadedFile
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Product, Image
 from io import BytesIO
@@ -14,7 +13,7 @@ BOUNDARY = 'BoUnDaRyStRiNg'
 MULTIPART_CONTENT = 'multipart/form-data; boundary=%s' % BOUNDARY
 
 # Initialize the APIClient app
-client = Client()
+client = APIClient()
 
 class UpdateImageTest(APITestCase):
     """ Test module for PATCH request for ProductImageByIdAPIView API """

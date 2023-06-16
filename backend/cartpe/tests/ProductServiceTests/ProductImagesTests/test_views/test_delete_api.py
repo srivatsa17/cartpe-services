@@ -1,12 +1,11 @@
-from django.test import Client
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Product, Image
 
 # Initialize the APIClient app
-client = Client()
+client = APIClient()
 
 class DeleteImageTest(APITestCase):
     """ Test module for DELETE request for ProductImageByIdAPIView API """

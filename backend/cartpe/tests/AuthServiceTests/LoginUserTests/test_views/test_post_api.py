@@ -1,7 +1,5 @@
-from django.test import Client
 from django.urls import reverse
-from unittest.mock import patch
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 import json
 from auth_service.models import User
@@ -9,7 +7,7 @@ from auth_service.models import User
 CONTENT_TYPE = 'application/json'
 
 # Initialize the APIClient app
-client = Client()
+client = APIClient()
 
 class PostLoginUserTest(APITestCase):
     """ Test module for POST request for LoginAPIView API """

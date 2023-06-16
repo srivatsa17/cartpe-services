@@ -92,3 +92,9 @@ class LoginSerializer(serializers.ModelSerializer):
         return {
             'tokens' : user.tokens
         }
+    
+class LogoutSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()
+
+    class Meta:
+        fields = ['refresh_token']

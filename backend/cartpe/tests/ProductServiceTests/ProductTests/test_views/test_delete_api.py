@@ -1,11 +1,10 @@
-from django.test import Client
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Product
 
 # Initialize the APIClient app
-client = Client()
+client = APIClient()
 
 class DeleteProductByIdTest(APITestCase):
     """ Test module for DELETE request for ProductByIdAPIView API """
