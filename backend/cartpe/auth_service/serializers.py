@@ -5,9 +5,12 @@ from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from auth_service.models import User
 from auth_service.token import account_activation_token
 
+MIN_PASSWORD_LENGTH = 6
+MAX_PASSWORD_LENGTH = 70
+
 class RegisterUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(min_length = 3, max_length = 255, allow_blank = False)
-    password = serializers.CharField(min_length = 6, max_length = 68, write_only = True, trim_whitespace = True)
+    password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
 
     class Meta:
         model = User
@@ -66,7 +69,7 @@ class EmailVerificationSerializer(serializers.Serializer):
 
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(min_length = 3, max_length = 255, write_only = True, allow_blank = False)
-    password = serializers.CharField(min_length = 6, max_length = 68, write_only = True, trim_whitespace = True)
+    password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
 
     class Meta:
         model = User
@@ -92,9 +95,42 @@ class LoginSerializer(serializers.ModelSerializer):
         return {
             'tokens' : user.tokens
         }
-    
+
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
 
     class Meta:
         fields = ['refresh_token']
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
+    new_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
+    confirm_new_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
+
+    class Meta:
+        model = User
+        fields = ['old_password', 'new_password', 'confirm_new_password']
+
+    def containsLetterAndNumber(self, input):
+        return input.isalnum() and not input.isalpha() and not input.isdigit()
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        user = self.context.get('user', '')
+        old_password = attrs.get('old_password', '')
+        new_password = attrs.get('new_password', '')
+        confirm_new_password = attrs.get('confirm_new_password', '')
+
+        if not user.check_password(old_password):
+            raise ValidationError("Old password is incorrect.")
+
+        if old_password == new_password:
+            raise ValidationError("New password is same as Old password.")
+
+        if not self.containsLetterAndNumber(new_password):
+            raise ValidationError("Password should contain alphabets and digits.")
+
+        if new_password != confirm_new_password:
+            raise ValidationError("New passwords not matching.")
+
+        return attrs

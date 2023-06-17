@@ -3,7 +3,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from auth_service.serializers import (
-    RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, LogoutSerializer
+    RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, LogoutSerializer,
+    ChangePasswordSerializer
 )
 from auth_service.tasks import send_verification_email_task
 from auth_service.routes import routes
@@ -65,4 +66,18 @@ class LogoutAPIView(generics.GenericAPIView):
             refresh_token = RefreshToken(serializer.validated_data['refresh_token'])
             refresh_token.blacklist()
             return Response(status = status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class ChangePasswordAPIView(generics.GenericAPIView):
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
+        serializer = self.serializer_class(data = request.data, context = {'user' : user})
+        if serializer.is_valid():
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            response = { "message" : "Password updated successfully." }
+            return Response(response, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
