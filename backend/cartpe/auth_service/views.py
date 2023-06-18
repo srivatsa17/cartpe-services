@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from auth_service.serializers import (
     RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, LogoutSerializer,
-    ChangePasswordSerializer
+    ChangePasswordSerializer, DeactivateAccountSerializer
 )
 from auth_service.tasks import send_verification_email_task
 from auth_service.routes import routes
@@ -72,12 +72,34 @@ class ChangePasswordAPIView(generics.GenericAPIView):
     serializer_class = ChangePasswordSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_object(self):
+        return self.request.user
+
     def patch(self, request):
-        user = request.user
+        user = self.get_object()
         serializer = self.serializer_class(data = request.data, context = {'user' : user})
         if serializer.is_valid():
             user.set_password(serializer.validated_data['new_password'])
             user.save()
             response = { "message" : "Password updated successfully." }
+            return Response(response, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class DeactivateAccountAPIView(generics.GenericAPIView):
+    serializer_class = DeactivateAccountSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def patch(self, request):
+        user = self.get_object()
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            refresh_token = RefreshToken(serializer.validated_data['refresh_token'])
+            refresh_token.blacklist()
+            user.is_active = False
+            user.save()
+            response = { "message" : "Account deactivated successfully." }
             return Response(response, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

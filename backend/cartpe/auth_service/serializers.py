@@ -134,3 +134,9 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
             raise ValidationError("New passwords not matching.")
 
         return attrs
+
+class DeactivateAccountSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()
+
+    class Meta:
+        fields = ['refresh_token']
