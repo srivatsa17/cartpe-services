@@ -6,6 +6,7 @@ import ProductSearchScreen from './screens/ProductSearchScreen';
 import ProductScreen from './screens/ProductScreen';
 import CartScreen from './screens/CartScreen';
 import UserRegisterScreen from './screens/UserRegisterScreen';
+import UserLoginScreen from './screens/UserLoginScreen';
 import RouteWithNavbar from './RouteWithNavbar';
 import RouteWithoutNavbar from './RouteWithoutNavbar';
 
@@ -16,6 +17,7 @@ function App() {
             <Routes>
                 <Route element={<RouteWithoutNavbar />}>
                     <Route path='/user/register' element={<UserRegisterScreen />}/>
+                    <Route path='/user/login' element={<UserLoginScreen />}/>
                 </Route>
                 <Route element={<RouteWithNavbar />} >
                     <Route path='/' element={<HomeScreen />} exact />
