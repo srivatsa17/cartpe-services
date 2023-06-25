@@ -125,10 +125,10 @@ function UserLoginScreen() {
                 >
                     Login
                 </Button>
-                <div className="forgot-password-link-container">
+                <div className="reset-password-link-container">
                     Can't remember password?
-                    <Link to="/user/forgot-password" className="forgot-password-link-button">
-                        Forgot password
+                    <Link to="/user/reset-password" className="reset-password-link-button">
+                        Reset password
                     </Link>
                 </div>
                 <div className="register-link-container">
