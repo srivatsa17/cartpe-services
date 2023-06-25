@@ -8,6 +8,7 @@ import CartScreen from './screens/CartScreen';
 import UserRegisterScreen from './screens/UserRegisterScreen';
 import UserLoginScreen from './screens/UserLoginScreen';
 import UserResetPasswordScreen from './screens/UserResetPasswordScreen';
+import UserResetPasswordConfirmScreen from './screens/UserResetPasswordConfirmScreen';
 import RouteWithNavbar from './RouteWithNavbar';
 import RouteWithoutNavbar from './RouteWithoutNavbar';
 
@@ -19,7 +20,8 @@ function App() {
                 <Route element={<RouteWithoutNavbar />}>
                     <Route path='/user/register' element={<UserRegisterScreen />}/>
                     <Route path='/user/login' element={<UserLoginScreen />}/>
-                    <Route path='/user/reset-password' element={<UserResetPasswordScreen />}/>
+                    <Route path='/user/reset-password' element={<UserResetPasswordScreen />} exact/>
+                    <Route path='/user/reset-password-confirm/:id/:token' element={<UserResetPasswordConfirmScreen />} />
                 </Route>
                 <Route element={<RouteWithNavbar />} >
                     <Route path='/' element={<HomeScreen />} exact />
