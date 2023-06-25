@@ -87,6 +87,7 @@ function UserLoginScreen() {
                             className={password.length > 0 && (isPasswordValid ? 'is-valid' : 'is-invalid')}
                             value={password}
                             onChange={handlePasswordChange}
+                            required
                         />
                         <InputGroup.Text
                             className="show-password-icon"
