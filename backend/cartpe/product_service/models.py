@@ -19,7 +19,10 @@ class Category(MPTTModel):
         return str(self.name)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        if self.parent:
+            self.slug = slugify("%s %s" % (self.parent.get_root(), self.name))
+        else:
+            self.slug = slugify(self.name)
         super(Category, self).save(*args, **kwargs)
 
 class Brand(models.Model):
@@ -36,6 +39,19 @@ class Brand(models.Model):
         self.slug = slugify(self.name)
         super(Brand, self).save(*args, **kwargs)
 
+class Attribute(models.Model):
+    name = models.CharField(max_length = 255, null = True, blank = True)
+
+    def __str__(self) -> str:
+        return self.name
+
+class AttributeValue(models.Model):
+    value = models.CharField(max_length = 255, null = True, blank = True)
+    attribute = models.ForeignKey(Attribute, on_delete = models.CASCADE, null = True, blank = True, related_name = 'attribute_values')
+
+    def __str__(self) -> str:
+        return self.value
+
 class Product(models.Model):
     sku = models.UUIDField(primary_key = False, default = uuid.uuid4, editable = False)
     name = models.CharField(max_length = 255, unique = True, null = False, blank = False)
@@ -46,6 +62,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete = models.SET_NULL, null = True, blank = True, related_name = 'products')
     discount = models.PositiveSmallIntegerField(default = 0, null = False, blank = False)
     stock_count = models.PositiveIntegerField(default = 0, null = False, blank = False)
+    attributes = models.ManyToManyField(Attribute, blank = True, related_name = 'products')
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -65,7 +82,7 @@ class Product(models.Model):
         super(Product, self).save(*args, **kwargs)
 
 class Image(models.Model):
-    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_images')
     image = models.ImageField(max_length = 255, null = False, blank = False)
     is_featured = models.BooleanField(default = False)
     created_at = models.DateTimeField(auto_now_add = True)
