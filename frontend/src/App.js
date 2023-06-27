@@ -5,10 +5,10 @@ import HomeScreen from './screens/HomeScreen';
 import ProductSearchScreen from './screens/ProductSearchScreen';
 import ProductScreen from './screens/ProductScreen';
 import CartScreen from './screens/CartScreen';
-import UserRegisterScreen from './screens/UserRegisterScreen';
-import UserLoginScreen from './screens/UserLoginScreen';
-import UserResetPasswordScreen from './screens/UserResetPasswordScreen';
-import UserResetPasswordConfirmScreen from './screens/UserResetPasswordConfirmScreen';
+import UserRegisterScreen from './screens/AuthService/UserRegisterScreen';
+import UserLoginScreen from './screens/AuthService/UserLoginScreen';
+import UserResetPasswordScreen from './screens/AuthService/UserResetPasswordScreen';
+import UserResetPasswordConfirmScreen from './screens/AuthService/UserResetPasswordConfirmScreen';
 import RouteWithNavbar from './RouteWithNavbar';
 import RouteWithoutNavbar from './RouteWithoutNavbar';
 

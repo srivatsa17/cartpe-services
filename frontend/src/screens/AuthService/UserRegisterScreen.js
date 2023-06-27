@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { Button, Row, Col, Form, InputGroup, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import "../css/UserLoginScreen.css";
+import "../../css/AuthService/Register/UserRegisterScreen.css";
 
-function UserLoginScreen() {
-    const loginUserImage = "/images/login.png"
+function UserRegisterScreen() {
+    const registerUserImage = "/images/register.jpg"
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -51,13 +51,13 @@ function UserLoginScreen() {
     }
 
     return (
-        <Row className="login-user-container">
+        <Row className="register-user-container">
             <Col xs={6} sm={6} md={6} lg={6} xl={6}>
-                <Image className="login-user-image" src={loginUserImage} alt="login" />
+                <Image className="register-user-image" src={registerUserImage} alt="register" />
             </Col>
             <Col lg={5} xl={4}>
-                <div className="login-heading">
-                    Login to <span id="brand-name">CartPe</span>!
+                <div className="sign-up-heading">
+                    Register with <span id="brand-name">CartPe</span>!
                 </div>
                 <Form.Group>
                     <Form.Label className="email-label">Email</Form.Label>
@@ -120,26 +120,17 @@ function UserLoginScreen() {
                 </Form.Group>
                 <Button
                     variant="dark"
-                    className="login-button"
+                    className="register-button"
                     disabled={!(isEmailValid && isPasswordValid)}
                 >
-                    Login
+                    Register
                 </Button>
-                <div className="reset-password-link-container">
-                    Can't remember password?
-                    <Link to="/user/reset-password" className="reset-password-link-button">
-                        Reset password
-                    </Link>
-                </div>
-                <div className="register-link-container">
-                    Don't have an account?
-                    <Link to="/user/register" className="register-link-button">
-                        Register
-                    </Link>
+                <div className="login-link-container">
+                    Already having an account? <Link to="/user/login" className="login-link-button">Login</Link>
                 </div>
             </Col>
         </Row>
     );
 }
 
-export default UserLoginScreen;
+export default UserRegisterScreen;

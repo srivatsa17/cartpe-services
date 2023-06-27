@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Row, Col, Form, InputGroup, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import "../css/UserResetPasswordConfirmScreen.css";
+import "../../css/AuthService/ResetPassword/UserResetPasswordConfirmScreen.css";
 
 function UserResetPasswordConfirmScreen() {
     const resetPasswordConfirmImage = "/images/reset-password-confirm.jpg";
