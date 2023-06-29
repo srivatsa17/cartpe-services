@@ -3,6 +3,7 @@ import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { productListReducer, productDetailsReducer } from './reducers/productReducers';
 import { cartReducer } from './reducers/cartReducers';
+import { userLoginReducer } from './reducers/authReducers';
 import secureLocalStorage from "react-secure-storage";
 
 const loadState = () => {
@@ -31,7 +32,8 @@ const persistedState = loadState();
 const reducer = combineReducers({
     productList: productListReducer,
     productDetails: productDetailsReducer,
-    cart: cartReducer
+    cart: cartReducer,
+    userDetails: userLoginReducer,
 })
 
 // const initialState = {}

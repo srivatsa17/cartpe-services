@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { Button, Row, Col, Form, InputGroup, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { useDispatch } from "react-redux";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { loginUser } from '../../actions/authActions';
 import "../../css/AuthService/Login/UserLoginScreen.css";
 
 function UserLoginScreen() {
-    const loginUserImage = "/images/login.png"
+    const loginUserImage = "/images/login.png";
+    const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -122,6 +125,7 @@ function UserLoginScreen() {
                     variant="dark"
                     className="login-button"
                     disabled={!(isEmailValid && isPasswordValid)}
+                    onClick={() => dispatch(loginUser(email, password))}
                 >
                     Login
                 </Button>
