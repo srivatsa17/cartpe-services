@@ -1,0 +1,94 @@
+name: CI/CD
+
+on:
+    push:
+        branches: ["Development", "master"]
+    pull_request:
+        branches: ["Development"]
+
+jobs:
+    Test-frontend:
+        runs-on:  ubuntu-latest
+        defaults:
+            run:
+                working-directory: 'frontend'
+        strategy:
+            matrix:
+                node-version: [18.x]
+        steps:
+        -   name: Checkout Repository
+            uses: actions/checkout@v3
+
+        -   name: Setup Node.js ${{ matrix.node-version }}
+            uses: actions/setup-node@v3
+            with:
+                node-version: ${{ matrix.node-version }}
+                cache: 'npm'
+                cache-dependency-path: '**/package-lock.json'
+
+        -   name: Install dependencies
+            run: npm ci
+    
+        -   name: Run tests and collect coverage
+            run: npm test
+
+        -   name: Upload coverage report to Codecov
+            uses: codecov/codecov-action@v3
+            with:
+                token: ${{ secrets.CODECOV_TOKEN }}
+    
+    Test-backend:
+        runs-on:  ubuntu-latest
+        defaults:
+            run:
+                working-directory: 'backend/cartpe'
+        strategy:
+            max-parallel: 4
+            matrix:
+                python-version: ["3.8", "3.9", "3.10", "3.11"]
+        services:
+            postgres:
+                image: postgres:latest
+                env:
+                    POSTGRES_DB: testdb
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: root123
+                ports:
+                    - 5432:5432
+                # Set health checks to wait until postgres has started
+                options:
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+        steps:
+        -   uses: actions/checkout@v3
+        -   name: Set up Python ${{ matrix.python-version }}
+            uses: actions/setup-python@v3
+            with:
+                python-version: ${{ matrix.python-version }}
+
+        -   name: Install Dependencies
+            run: |
+                python3 -m pip install --upgrade pip
+                pip3 install -r requirements.txt
+
+        -   name: Migrate the db models
+            run: |
+                python3 manage.py makemigrations
+                python3 manage.py migrate
+
+        -   name: Run Tests
+            run: coverage run manage.py test
+
+        -   name: Collect coverage report
+            run: coverage report -m
+
+        -   name: Generate coverage report in xml format for Codecov
+            run: coverage xml
+
+        -   name: Upload coverage report to Codecov
+            uses: codecov/codecov-action@v3
+            with:
+                token: ${{ secrets.CODECOV_TOKEN }}
+                files: coverage.xml
