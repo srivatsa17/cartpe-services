@@ -1,33 +1,35 @@
-import React, { useState } from 'react';
-import { Container } from 'react-bootstrap';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Header from './components/Header';
-import Footer from './components/Footer';
 import HomeScreen from './screens/HomeScreen';
+import ProductSearchScreen from './screens/ProductSearchScreen';
 import ProductScreen from './screens/ProductScreen';
+import CartScreen from './screens/CartScreen';
+import UserRegisterScreen from './screens/AuthService/UserRegisterScreen';
+import UserLoginScreen from './screens/AuthService/UserLoginScreen';
+import UserResetPasswordScreen from './screens/AuthService/UserResetPasswordScreen';
+import UserResetPasswordConfirmScreen from './screens/AuthService/UserResetPasswordConfirmScreen';
+import RouteWithNavbar from './RouteWithNavbar';
+import RouteWithoutNavbar from './RouteWithoutNavbar';
 
 function App() {
-    // Searching for product in Header component as an event change and sending it as a prop to HomeScreen.
-    // It is sent from here as we are communicating from parent to child component.
-    const [searchText, setSearchText] = useState("");
-    var handleChange = (event) => {
-        setSearchText(event.target.value.toLowerCase().trim());
-    };
 
     return (
         <Router>
-            <Header searchText={handleChange}/>
-            <main className='py-3'>
-                <Container>
-                    <Routes>
-                        <Route path='/' element={<HomeScreen searchText={searchText} />} exact />
-                        <Route path='/product/:id' element={<ProductScreen />} />
-                    </Routes>
-                </Container>
-            </main>
-            <hr/>
-            <Footer />
+            <Routes>
+                <Route element={<RouteWithoutNavbar />}>
+                    <Route path='/user/register' element={<UserRegisterScreen />}/>
+                    <Route path='/user/login' element={<UserLoginScreen />}/>
+                    <Route path='/user/reset-password' element={<UserResetPasswordScreen />} exact/>
+                    <Route path='/user/reset-password-confirm/:id/:token' element={<UserResetPasswordConfirmScreen />} />
+                </Route>
+                <Route element={<RouteWithNavbar />} >
+                    <Route path='/' element={<HomeScreen />} exact />
+                    <Route path='/:slug' element={<ProductSearchScreen />}/>
+                    <Route path='/products/:slug/:id/buy' element={<ProductScreen />} />
+                    <Route path='/cart' element={<CartScreen />} />
+                </Route>
+            </Routes>
         </Router>
     );
 }

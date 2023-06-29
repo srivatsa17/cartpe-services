@@ -1,0 +1,34 @@
+.icons {
+    transform: translateY(-2px)
+}
+
+.brandLogo {
+    height: 30px;
+    transform: translateY(-2px);
+}
+
+.cart-icon-container {
+    display: flex;
+    position: relative;
+    width: 60px;
+    column-gap: 10px;
+}
+
+.cart-icon {
+    transform: translate(2px, 4px);
+}
+
+.cart-quantity {
+    display: flex;
+    position: absolute;
+    top: -8px;
+    right: 30px;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+}
