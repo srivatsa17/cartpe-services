@@ -1,7 +1,7 @@
-import React from "react";
-import { useSearchParams } from "react-router-dom";
 import CollapsibleList from "./CollapsibleList";
 import FilterButtonToggle from "./FilterButtonToggle";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
 
 function FilterColors({ uniqueColors, selectedColors, setSelectedColors, handleColors }) {
     const [queryParams, setQueryParams] = useSearchParams();

@@ -1,7 +1,8 @@
-import React, { useState, useRef } from "react";
-import { Image, Row } from "react-bootstrap";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import "../../css/ProductScreen/ImageSlider.css";
+
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { Image, Row } from "react-bootstrap";
+import React, { useRef, useState } from "react";
 
 function ImageSlider({ product }) {
     const defaultImage = "/frontend/public/images/camera.jpg";  // Change defaultImage

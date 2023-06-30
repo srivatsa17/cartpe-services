@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import '../../css/Header/SearchBar.css';
+
+import React, { useEffect, useRef, useState } from 'react';
+
 import { FaSearch } from 'react-icons/fa';
 import { GrClose } from 'react-icons/gr';
+import { Link } from "react-router-dom";
 import categories from "../../categories";
-import '../../css/Header/SearchBar.css';
 
 function getCategoriesList( categoriesSearchList, categories ) {
     categories.map((category) => {

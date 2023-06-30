@@ -1,10 +1,13 @@
 import { Spinner } from "react-bootstrap";
 
-function Loader() {
+function Loader({ as, animation, size, role, variant }) {
     return (
         <Spinner
-            animation="border"
-            role="status"
+            as={as}
+            animation={animation}
+            role={role}
+            size={size}
+            variant={variant}
         />
     )
 }

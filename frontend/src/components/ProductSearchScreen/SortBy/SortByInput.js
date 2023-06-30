@@ -1,7 +1,9 @@
+import '../../../css/ProductSearchScreen/SortBy/SortByInput.css';
+
+import { useLocation, useSearchParams } from 'react-router-dom';
+
 import React from 'react';
 import { SlArrowDown } from 'react-icons/sl';
-import { useSearchParams, useLocation } from 'react-router-dom';
-import '../../../css/ProductSearchScreen/SortBy/SortByInput.css';
 
 function SortByInput({ handleSortByMenuOnMouseOver, selectedSortByValue, sortByOptions }) {
     const location = useLocation();

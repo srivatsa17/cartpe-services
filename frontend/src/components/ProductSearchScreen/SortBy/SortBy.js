@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useSearchParams } from 'react-router-dom';
-import { Col } from 'react-bootstrap';
 import '../../../css/ProductSearchScreen/SortBy/SortBy.css';
+
+import React, { useEffect, useRef, useState } from "react";
+
+import { Col } from 'react-bootstrap';
 import SortByInput from "./SortByInput";
 import SortByMenu from "./SortByMenu";
+import { useSearchParams } from 'react-router-dom';
 
 const sortByOptions = [
     { value : "name", label : "Recommended"},

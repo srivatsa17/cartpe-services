@@ -1,7 +1,8 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { emptyCart } from "../../actions/cartActions";
 import "../../css/CartScreen/CartQuantityDetails.css";
+
+import React from "react";
+import { emptyCart } from "../../actions/cartActions";
+import { useDispatch } from "react-redux";
 
 function CartQuantityDetails({ cartItems }) {
     const dispatch = useDispatch();

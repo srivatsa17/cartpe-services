@@ -1,10 +1,13 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Row, Col, ListGroup, Alert } from "react-bootstrap";
+import "../css/CartScreen/CartScreen.css";
+
+import { Alert, Col, ListGroup, Row } from "react-bootstrap";
+
+import CartItemDetails from "../components/CartScreen/CartItemDetails";
 import CartQuantityDetails from "../components/CartScreen/CartQuantityDetails";
 import CartSubTotal from "../components/CartScreen/CartSubTotal";
-import CartItemDetails from "../components/CartScreen/CartItemDetails";
-import "../css/CartScreen/CartScreen.css";
+import { HOME_SCREEN } from "../constants/routes";
+import React from "react";
+import { useSelector } from "react-redux";
 
 function CartScreen() {
     const cart = useSelector(state => state.cart);
@@ -22,7 +25,7 @@ function CartScreen() {
                 {
                     cartItems.length === 0 ?
                     <Alert variant="warning">
-                        Cart is empty. <Alert.Link href="/">Continue shopping</Alert.Link>
+                        Cart is empty. <Alert.Link href={HOME_SCREEN}>Continue shopping</Alert.Link>
                     </Alert>
                     :
                     <ListGroup >

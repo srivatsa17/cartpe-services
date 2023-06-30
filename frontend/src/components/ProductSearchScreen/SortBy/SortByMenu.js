@@ -1,5 +1,6 @@
-import React from 'react';
 import '../../../css/ProductSearchScreen/SortBy/SortByMenu.css'
+
+import React from 'react';
 
 function SortByMenu({ showSortByMenu, handleSortByItemClick, sortByOptions }) {
 

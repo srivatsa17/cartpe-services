@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+
 import CollapsibleList from "./CollapsibleList";
+import { useSearchParams } from "react-router-dom";
 
 function FilterDiscounts({ discountRanges, discount, handleDiscounts }) {
     const [isChecked, setIsChecked] = useState(false)

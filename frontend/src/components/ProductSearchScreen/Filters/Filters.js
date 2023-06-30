@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import '../../../css/ProductSearchScreen/Filters/Filters.css';
+
+import React, { useEffect, useState } from "react";
+
 import { Col } from 'react-bootstrap';
-import FilterCategories from "./FilterCategories";
 import FilterBrands from "./FilterBrands";
+import FilterCategories from "./FilterCategories";
 import FilterColors from "./FilterColors";
 import FilterDiscounts from "./FilterDiscounts";
 import FilterPrices from "./FilterPrices";
-import '../../../css/ProductSearchScreen/Filters/Filters.css';
+import { useSearchParams } from "react-router-dom";
 
 function Filters({ uniqueCategories, uniqueBrands, uniqueColors, discountRanges, minAndMaxPrices }) {
     const [queryParams, setQueryParams] = useSearchParams();

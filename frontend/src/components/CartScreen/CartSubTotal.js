@@ -1,7 +1,9 @@
-import React from "react";
-import { ListGroup, Button } from "react-bootstrap";
-import { FaRupeeSign } from "react-icons/fa";
 import "../../css/CartScreen/CartSubTotal.css";
+
+import { Button, ListGroup } from "react-bootstrap";
+
+import { FaRupeeSign } from "react-icons/fa";
+import React from "react";
 
 function CartSubTotal({ cartItems }) {
     const totalCartItemsQuantity = cartItems.length;

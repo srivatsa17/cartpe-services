@@ -1,7 +1,7 @@
-import React from "react";
-import { useSearchParams } from "react-router-dom";
 import CollapsibleList from "./CollapsibleList";
 import { FaRupeeSign } from "react-icons/fa";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
 
 function getRupeeSymbol() {
     return (

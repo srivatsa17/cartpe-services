@@ -1,9 +1,10 @@
-import React from "react";
-import { Card } from "react-bootstrap";
-import Rating from "./Rating";
-import { Link } from "react-router-dom";
-import { FaRupeeSign } from "react-icons/fa";
 import "../../../css/ProductSearchScreen/ProductCard/Product.css";
+
+import { Card } from "react-bootstrap";
+import { FaRupeeSign } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import Rating from "./Rating";
+import React from "react";
 
 function Product({ product }) {
     const productLink = `/products/${product.slug}/${product.id}/buy`;

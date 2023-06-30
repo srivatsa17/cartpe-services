@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import "../css/ProductScreen/ProductScreen.css";
+
+import { BsCashStack, BsTruck } from "react-icons/bs";
+import { Col, ListGroup, Row } from 'react-bootstrap';
+import { FaExchangeAlt, FaRupeeSign } from "react-icons/fa";
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { getProductDetails } from "../actions/productActions";
-import { addToCart } from "../actions/cartActions";
-import { Row, Col, ListGroup } from 'react-bootstrap';
-import { FaRupeeSign, FaExchangeAlt } from "react-icons/fa";
-import { BsTruck, BsCashStack } from "react-icons/bs";
-import { TbTruckDelivery } from "react-icons/tb";
-import Rating from "../components/ProductSearchScreen/ProductCard/Rating";
+
+import AddedToCartAlert from "../components/CartScreen/AddedToCartAlert";
+import ErrorMessage from "../components/ErrorMessages/ErrorMessage";
 import ImageSlider from "../components/ProductScreen/ImageSlider";
 import Loader from "../components/Loader/Loader";
-import ErrorMessage from "../components/ErrorMessages/ErrorMessage";
-import AddedToCartAlert from "../components/CartScreen/AddedToCartAlert";
-import "../css/ProductScreen/ProductScreen.css";
+import Rating from "../components/ProductSearchScreen/ProductCard/Rating";
+import { TbTruckDelivery } from "react-icons/tb";
+import { addToCart } from "../actions/cartActions";
+import { getProductDetails } from "../actions/productActions";
 
 function getDeliveryDate() {
     var today = new Date();

@@ -1,16 +1,18 @@
-import React, { useEffect } from "react";
-import { Container, Row, Col } from 'react-bootstrap';
-import { parseISO } from 'date-fns';
-import SortBy from "../components/ProductSearchScreen/SortBy/SortBy";
-import Filters from "../components/ProductSearchScreen/Filters/Filters";
-import Product from "../components/ProductSearchScreen/ProductCard/Product";
-import Loader from "../components/Loader/Loader";
-import ErrorMessage from "../components/ErrorMessages/ErrorMessage";
 import '../css/ProductSearchScreen/ProductSearchScreen.css';
-import { getUniqueFilterValues } from '../utils/ProductSearchScreen/getUniqueFilterValues';
-import { useFilterSearchParams } from "../utils/ProductSearchScreen/useFilterSearchParams";
+
+import { Col, Container, Row } from 'react-bootstrap';
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
+
+import ErrorMessage from "../components/ErrorMessages/ErrorMessage";
+import Filters from "../components/ProductSearchScreen/Filters/Filters";
+import Loader from "../components/Loader/Loader";
+import Product from "../components/ProductSearchScreen/ProductCard/Product";
+import SortBy from "../components/ProductSearchScreen/SortBy/SortBy";
 import { getProducts } from '../actions/productActions';
+import { getUniqueFilterValues } from '../utils/ProductSearchScreen/getUniqueFilterValues';
+import { parseISO } from 'date-fns';
+import { useFilterSearchParams } from "../utils/ProductSearchScreen/useFilterSearchParams";
 
 function ProductSearchScreen() {
     const dispatch = useDispatch()

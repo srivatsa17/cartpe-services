@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Row, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import '../../../css/ProductSearchScreen/Filters/CollapsibleList.css';
+
+import { OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import React, { useState } from "react";
 
 function CollapsibleList({ title, tooltipTitle, children, actionButton, defaultVisible }) {
     const [visible, setVisible] = useState(defaultVisible);

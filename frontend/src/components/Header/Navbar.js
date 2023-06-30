@@ -1,8 +1,11 @@
-import React from 'react';
-import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
-import { FaShoppingCart, FaRegHeart, FaRegUser } from 'react-icons/fa';
 import '../../css/Header/Navbar.css';
+
+import { CART_SCREEN, HOME_SCREEN, WISHLIST_SCREEN } from '../../constants/routes';
+import { Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
+import { FaRegHeart, FaRegUser, FaShoppingCart } from 'react-icons/fa';
+
 import { LinkContainer } from 'react-router-bootstrap';
+import React from 'react';
 import SearchBar from './SearchBar';
 import { useSelector } from 'react-redux';
 
@@ -15,7 +18,7 @@ function Header() {
         <header>
             <Navbar collapseOnSelect expand="xl" bg="dark" variant="dark" className='p-3' data-testid="navbar">
                 <Container>
-                    <LinkContainer to="/">
+                    <LinkContainer to={HOME_SCREEN}>
                         <Navbar.Brand>
                             <img src={brandLogo} alt="brandLogo" className="brandLogo" />
                         </Navbar.Brand>
@@ -117,7 +120,7 @@ function Header() {
                             </NavDropdown>
 
                             <Nav.Item>
-                                <LinkContainer to="/wishlist">
+                                <LinkContainer to={WISHLIST_SCREEN}>
                                     <Nav.Link>
                                         <span>
                                             <FaRegHeart className='icons'/> Wishlist
@@ -127,7 +130,7 @@ function Header() {
                             </Nav.Item>
 
                             <Nav.Item>
-                                <LinkContainer to="/cart">
+                                <LinkContainer to={CART_SCREEN}>
                                     <Nav.Link>
                                         {
                                             <div className="cart-icon-container">

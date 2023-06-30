@@ -1,5 +1,6 @@
-import React from "react";
 import '../../../css/ProductSearchScreen/Filters/FilterButtonToggle.css';
+
+import React from "react";
 
 function FilterButtonToggle({ visible, active, onApply, onClear }) {
     if(active) {

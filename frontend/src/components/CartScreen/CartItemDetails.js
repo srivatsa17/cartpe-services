@@ -1,10 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { Row, Col, Image, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { FaRupeeSign, FaTrash } from "react-icons/fa";
-import { updateCartQuantity, removeFromCart } from "../../actions/cartActions";
 import "../../css/CartScreen/CartItemDetails.css";
+
+import { Col, Image, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
+import { FaRupeeSign, FaTrash } from "react-icons/fa";
+import { removeFromCart, updateCartQuantity } from "../../actions/cartActions";
+
+import { Link } from "react-router-dom";
+import React from "react";
+import { useDispatch } from "react-redux";
 
 function CartItemDetails({ cartItem, featuredImage }) {
     const maxCartItemQuantity = Array.from({ length: 10 }, (_, index) => (index + 1));

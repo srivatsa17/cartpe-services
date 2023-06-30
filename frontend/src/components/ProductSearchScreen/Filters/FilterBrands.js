@@ -1,7 +1,7 @@
-import React from "react";
-import { useSearchParams } from "react-router-dom";
 import CollapsibleList from "./CollapsibleList";
 import FilterButtonToggle from "./FilterButtonToggle";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
 
 function FilterBrands({ uniqueBrands, selectedBrands, setSelectedBrands, handleBrands }) {
     const [queryParams, setQueryParams] = useSearchParams();

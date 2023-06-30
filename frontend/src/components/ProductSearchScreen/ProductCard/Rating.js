@@ -1,7 +1,9 @@
-import React from "react";
-import { BsStarFill, BsStarHalf, BsStar } from 'react-icons/bs';
-import { Row, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import '../../../css/ProductSearchScreen/ProductCard/Rating.css';
+
+import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
+import { OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+
+import React from "react";
 
 function createStars(ratingObj) {
     var stars = [];
