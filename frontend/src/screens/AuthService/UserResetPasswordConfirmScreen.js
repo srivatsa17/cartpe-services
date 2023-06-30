@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Button, Row, Col, Form, InputGroup, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import "../../css/AuthService/ResetPassword/UserResetPasswordConfirmScreen.css";
+
+import { Button, Col, Form, Image, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import React, { useState } from "react";
 
 function UserResetPasswordConfirmScreen() {
     const resetPasswordConfirmImage = "/images/reset-password-confirm.jpg";

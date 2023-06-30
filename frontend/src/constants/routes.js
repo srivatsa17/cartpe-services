@@ -1,0 +1,10 @@
+export const REGISTER_USER_SCREEN = '/user/register'
+export const LOGIN_USER_SCREEN = '/user/login'
+export const RESET_PASSWORD_SCREEN = '/user/reset-password'
+export const RESET_PASSWORD_CONFIRM_SCREEN = '/user/reset-password-confirm/:id/:token'
+
+export const HOME_SCREEN = '/'
+export const PRODUCT_SCREEN = '/products/:slug/:id/buy'
+export const PRODUCT_SEARCH_SCREEN = '/:slug'
+export const CART_SCREEN = '/cart'
+export const WISHLIST_SCREEN = '/wishlist'

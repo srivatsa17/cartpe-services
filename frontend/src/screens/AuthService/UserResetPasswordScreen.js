@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Button, Row, Col, Form, Image } from 'react-bootstrap';
 import "../../css/AuthService/ResetPassword/UserResetPasswordScreen.css";
+
+import { Button, Col, Form, Image, Row } from 'react-bootstrap';
+import React, { useState } from "react";
 
 function UserResetPasswordScreen() {
     const resetPasswordUserImage = "/images/reset-password.jpg"

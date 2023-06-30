@@ -1,8 +1,10 @@
+import { Button, Row, Col, Form, InputGroup, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import "../../css/AuthService/Register/UserRegisterScreen.css";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import { Button, Row, Col, Form, InputGroup, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import "../../css/AuthService/Register/UserRegisterScreen.css";
+
+import { LOGIN_USER_SCREEN } from "../../constants/routes";
 
 function UserRegisterScreen() {
     const registerUserImage = "/images/register.jpg"
@@ -126,7 +128,7 @@ function UserRegisterScreen() {
                     Register
                 </Button>
                 <div className="login-link-container">
-                    Already having an account? <Link to="/user/login" className="login-link-button">Login</Link>
+                    Already having an account? <Link to={LOGIN_USER_SCREEN} className="login-link-button">Login</Link>
                 </div>
             </Col>
         </Row>
