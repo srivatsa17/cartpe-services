@@ -1,33 +1,17 @@
-import { legacy_createStore as createStore, combineReducers, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import { productListReducer, productDetailsReducer } from './reducers/productReducers';
+import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux';
+import { productDetailsReducer, productListReducer } from './reducers/productReducers';
+
 import { cartReducer } from './reducers/cartReducers';
-import { userLoginReducer } from './reducers/authReducers';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import secureLocalStorage from "react-secure-storage";
+import thunk from 'redux-thunk';
+import { userLoginReducer } from './reducers/authReducers';
 
-const loadState = () => {
-    try {
-        const serializedState = secureLocalStorage.getItem('state');
-        if(serializedState === null) {
-            return undefined;
-        }
-        return JSON.parse(serializedState);
-    } catch (e) {
-        return undefined;
-    }
-};
+const cartItemsFromStorage = secureLocalStorage.getItem('cartItems') ? 
+                            JSON.parse(secureLocalStorage.getItem('cartItems')) : []
 
-const saveState = (state) => {
-    try {
-        const serializedState = JSON.stringify(state);
-        secureLocalStorage.setItem('state', serializedState);
-    } catch (e) {
-        return {}
-    }
-};
-
-const persistedState = loadState();
+const userDetailsFromStorage = secureLocalStorage.getItem('userDetails') ? 
+                            JSON.parse(secureLocalStorage.getItem('userDetails')) : {}
 
 const reducer = combineReducers({
     productList: productListReducer,
@@ -36,14 +20,17 @@ const reducer = combineReducers({
     userDetails: userLoginReducer,
 })
 
-// const initialState = {}
+const persistedState = {
+    cart: {
+        cartItems: cartItemsFromStorage,
+    },
+    userDetails: {
+        isLoggedIn: userDetailsFromStorage.isLoggedIn ?? false
+    }
+}
 
 const middleWare = [thunk]
 
 const store = createStore(reducer, persistedState, composeWithDevTools(applyMiddleware(...middleWare)));
-
-store.subscribe(() => {
-    saveState(store.getState());
-})
 
 export default store
