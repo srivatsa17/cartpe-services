@@ -15,7 +15,7 @@ function CartScreen() {
 
     return (
         <Row>
-            <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+            <Col xs={12} sm={12} md={12} lg={7} xl={8} className="pb-4">
                 <div className="shopping-cart-title">SHOPPING CART</div>
                 <br />
 
