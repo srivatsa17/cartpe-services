@@ -1,31 +1,39 @@
 import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux';
 import { productDetailsReducer, productListReducer } from './reducers/productReducers';
+import { userLoginReducer, userRegisterReducer } from './reducers/authReducers';
 
 import { cartReducer } from './reducers/cartReducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import secureLocalStorage from "react-secure-storage";
 import thunk from 'redux-thunk';
-import { userLoginReducer } from './reducers/authReducers';
 
 const cartItemsFromStorage = secureLocalStorage.getItem('cartItems') ? 
                             JSON.parse(secureLocalStorage.getItem('cartItems')) : []
 
-const userDetailsFromStorage = secureLocalStorage.getItem('userDetails') ? 
-                            JSON.parse(secureLocalStorage.getItem('userDetails')) : {}
+const userLoginDetailsFromStorage = secureLocalStorage.getItem('userLoginDetails') ? 
+                            JSON.parse(secureLocalStorage.getItem('userLoginDetails')) : {}
+
+const userRegisterDetailsFromStorage = secureLocalStorage.getItem('userRegisterDetails') ?
+                            JSON.parse(secureLocalStorage.getItem('userRegisterDetails')) : {}
 
 const reducer = combineReducers({
     productList: productListReducer,
     productDetails: productDetailsReducer,
     cart: cartReducer,
-    userDetails: userLoginReducer,
+    userLoginDetails: userLoginReducer,
+    userRegisterDetails: userRegisterReducer,
 })
 
 const persistedState = {
     cart: {
         cartItems: cartItemsFromStorage,
     },
-    userDetails: {
-        isLoggedIn: userDetailsFromStorage.isLoggedIn ?? false
+    userLoginDetails: {
+        isLoggedIn: userLoginDetailsFromStorage.isLoggedIn ?? false
+    },
+    userRegisterDetails: {
+        isUserRegistered: userRegisterDetailsFromStorage.isUserRegistered ?? false,
+        isUserVerified: userRegisterDetailsFromStorage.isUserVerified ?? false,
     }
 }
 

@@ -17,7 +17,7 @@ import { useFilterSearchParams } from "../utils/ProductSearchScreen/useFilterSea
 function ProductSearchScreen() {
     const dispatch = useDispatch()
     const productList = useSelector(state => state.productList)
-    const { products, error, loading } = productList;
+    const { products, error, isLoading } = productList;
 
     const { uniqueCategories, uniqueBrands, uniqueColors, discountRanges, minAndMaxPrices } = getUniqueFilterValues(products ?? []);
     const { searchedCategory, filteredCategories, filteredBrands, filteredColors, filteredDiscount, filteredMaxPrice, sortBy } = useFilterSearchParams();
@@ -71,7 +71,7 @@ function ProductSearchScreen() {
 
     return (
         <Container>
-            {   loading ?
+            {   isLoading ?
                 <Loader /> : error ?
                     <AlertMessage variant="danger">
                         {error}

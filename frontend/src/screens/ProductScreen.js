@@ -33,7 +33,7 @@ function ProductScreen() {
     
     const dispatch = useDispatch();
     const productDetails = useSelector(state => state.productDetails);
-    const {product, loading, error} = productDetails;
+    const {product, isLoading, error} = productDetails;
     
     const cart = useSelector(state => state.cart);
     const { cartItems } = cart;
@@ -62,7 +62,7 @@ function ProductScreen() {
     
     return (
         <>
-        {   loading ? <Loader /> : error ?
+        {   isLoading ? <Loader /> : error ?
                 <AlertMessage variant="danger" >{error}</AlertMessage> :
             <div>
                 <Link onClick={() => navigate(-1)} className="btn btn-outline-secondary my-3">

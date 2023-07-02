@@ -61,7 +61,7 @@ function UserLoginScreen() {
     }
 
     const userLoginDetails = useSelector(state => state.userLoginDetails)
-    const { error, loading, isLoggedIn } = userLoginDetails
+    const { error, isLoading, isLoggedIn } = userLoginDetails
 
     useEffect(() => {
         if(isLoggedIn === true) {
@@ -157,7 +157,7 @@ function UserLoginScreen() {
                     </InputGroup>
                 </Form.Group>
                 {
-                    loading ?
+                    isLoading ?
                     <Button
                         variant="dark"
                         className="login-button"

@@ -1,13 +1,21 @@
-import { Button, Row, Col, Form, InputGroup, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import "../../css/AuthService/Register/UserRegisterScreen.css";
+
+import { Button, Col, Form, Image, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
 
+import AlertMessage from "../../components/AlertMessages/AlertMessage";
 import { LOGIN_USER_SCREEN } from "../../constants/routes";
+import { Link } from 'react-router-dom';
+import Loader from "../../components/Loader/Loader";
+import { registerUser } from '../../actions/authActions';
 
 function UserRegisterScreen() {
     const registerUserImage = "/images/register.jpg"
+    const dispatch = useDispatch();
+
+    const [showAlertMessage, setShowAlertMessage] = useState(false)
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -52,12 +60,46 @@ function UserRegisterScreen() {
         return "";
     }
 
+    const userRegisterDetails = useSelector(state => state.userRegisterDetails)
+    const { error, isLoading, isUserRegistered, isUserVerified } = userRegisterDetails
+
+    const handleRegisterUserClick = (event) => {
+        event.preventDefault();
+        dispatch(registerUser(email, password))
+        setFormData((previousFormData) => ({
+            ...previousFormData,
+            email: '',
+            password: '',
+            isEmailValid: false,
+            isPasswordValid: false
+        }))
+        setShowAlertMessage(true)
+    }
+
     return (
         <Row className="register-user-container">
             <Col xs={6} sm={6} md={6} lg={6} xl={6}>
                 <Image className="register-user-image" src={registerUserImage} alt="register" />
             </Col>
             <Col lg={5} xl={4}>
+                {   showAlertMessage && error &&
+                    <AlertMessage variant="danger">
+                        {error}
+                    </AlertMessage>
+                }
+                {
+                    (showAlertMessage && !isLoading && isUserRegistered) ? (
+                        isUserVerified ? (
+                            <AlertMessage variant="primary">
+                                User has been verified already. Please login.
+                            </AlertMessage>
+                        ) : (
+                            <AlertMessage variant="success">
+                                User Registered successfully. Please verify your email by clicking the link sent to your mail inbox.
+                            </AlertMessage>
+                        )
+                    ) : null
+                }
                 <div className="sign-up-heading">
                     Register with <span id="brand-name">CartPe</span>!
                 </div>
@@ -120,13 +162,32 @@ function UserRegisterScreen() {
                         }
                     </InputGroup>
                 </Form.Group>
-                <Button
-                    variant="dark"
-                    className="register-button"
-                    disabled={!(isEmailValid && isPasswordValid)}
-                >
-                    Register
-                </Button>
+                {
+                    isLoading ?
+                    <Button
+                        variant="dark"
+                        className="register-button"
+                        disabled
+                    >
+                        <Loader
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        />
+                        <span className="mx-2">Loading...</span>
+                    </Button>
+                    :
+                    <Button
+                        variant="dark"
+                        className="register-button"
+                        disabled={!(isEmailValid && isPasswordValid)}
+                        onClick={handleRegisterUserClick}
+                    >
+                        Register
+                    </Button>
+                }
                 <div className="login-link-container">
                     Already having an account? <Link to={LOGIN_USER_SCREEN} className="login-link-button">Login</Link>
                 </div>
