@@ -52,11 +52,10 @@ export const registerUser = (email, password) => async (dispatch) => {
 
         const registerData = { email: email, password: password }
         const config = { headers: { 'Content-type': 'application/json' } }
-        const { responseData } = await axios.post(registerUrl, registerData, config)
-
+        const { data } = await axios.post(registerUrl, registerData, config)
         dispatch({ type: USER_REGISTER_SUCCESS })
 
-        const storageData = { isUserRegistered: true, isUserVerified: false, userDetails: responseData }
+        const storageData = { isUserRegistered: true, isUserVerified: false, userDetails: data }
         storeUserRegisteredDetailsInStorage(storageData)
 
     } catch(error) {
