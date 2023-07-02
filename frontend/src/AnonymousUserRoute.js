@@ -6,9 +6,9 @@ import React from "react";
 import secureLocalStorage from "react-secure-storage";
 
 const getUserTokenFromStorage = () => {
-    const userDetailsFromStorage = secureLocalStorage.getItem('userDetails') ?
-                            JSON.parse(secureLocalStorage.getItem('userDetails')) : {}
-    return userDetailsFromStorage.access_token;
+    const userLoginDetailsFromStorage = secureLocalStorage.getItem('userLoginDetails') ?
+                            JSON.parse(secureLocalStorage.getItem('userLoginDetails')) : {}
+    return userLoginDetailsFromStorage.access_token;
 }
 
 function AnonymousUserRoute() {

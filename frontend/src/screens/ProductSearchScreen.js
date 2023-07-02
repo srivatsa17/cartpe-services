@@ -4,7 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 
-import ErrorMessage from "../components/ErrorMessages/ErrorMessage";
+import AlertMessage from '../components/AlertMessages/AlertMessage';
 import Filters from "../components/ProductSearchScreen/Filters/Filters";
 import Loader from "../components/Loader/Loader";
 import Product from "../components/ProductSearchScreen/ProductCard/Product";
@@ -73,7 +73,10 @@ function ProductSearchScreen() {
         <Container>
             {   loading ?
                 <Loader /> : error ?
-                    <ErrorMessage variant='danger'>{error}</ErrorMessage> :
+                    <AlertMessage variant="danger">
+                        {error}
+                    </AlertMessage> 
+                    :
                     <>
                         <Row>
                             <Col>

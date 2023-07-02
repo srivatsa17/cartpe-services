@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import ErrorMessage from "../../components/ErrorMessages/ErrorMessage";
+import AlertMessage from "../../components/AlertMessages/AlertMessage";
 import Loader from "../../components/Loader/Loader";
 import { loginUser } from '../../actions/authActions';
 
@@ -60,8 +60,8 @@ function UserLoginScreen() {
         return "";
     }
 
-    const userDetails = useSelector(state => state.userDetails)
-    const { error, loading, isLoggedIn } = userDetails
+    const userLoginDetails = useSelector(state => state.userLoginDetails)
+    const { error, loading, isLoggedIn } = userLoginDetails
 
     useEffect(() => {
         if(isLoggedIn === true) {
@@ -72,6 +72,13 @@ function UserLoginScreen() {
     const handleLoginClick = (event) => {
         event.preventDefault();
         dispatch(loginUser(email, password));
+        setFormData((previousFormData) => ({
+            ...previousFormData,
+            email: '',
+            password: '',
+            isEmailValid: false,
+            isPasswordValid: false
+        }))
     }
 
     return (
@@ -80,7 +87,11 @@ function UserLoginScreen() {
                 <Image className="login-user-image" src={loginUserImage} alt="login" />
             </Col>
             <Col lg={5} xl={4}>
-                { error && <ErrorMessage>{error}</ErrorMessage> }
+                {   error && 
+                    <AlertMessage variant="danger">
+                        {error}
+                    </AlertMessage> 
+                }
                 <div className="login-heading">
                     Login to <span id="brand-name">CartPe</span>!
                 </div>

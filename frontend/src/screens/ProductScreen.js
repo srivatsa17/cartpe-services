@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 
 import AddedToCartAlert from "../components/CartScreen/AddedToCartAlert";
-import ErrorMessage from "../components/ErrorMessages/ErrorMessage";
+import AlertMessage from "../components/AlertMessages/AlertMessage";
 import ImageSlider from "../components/ProductScreen/ImageSlider";
 import Loader from "../components/Loader/Loader";
 import Rating from "../components/ProductSearchScreen/ProductCard/Rating";
@@ -63,7 +63,7 @@ function ProductScreen() {
     return (
         <>
         {   loading ? <Loader /> : error ?
-                <ErrorMessage variant="danger" >{error}</ErrorMessage> :
+                <AlertMessage variant="danger" >{error}</AlertMessage> :
             <div>
                 <Link onClick={() => navigate(-1)} className="btn btn-outline-secondary my-3">
                     Go back

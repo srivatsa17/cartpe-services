@@ -1,7 +1,7 @@
 import { Alert } from "react-bootstrap";
 import { useState } from "react";
 
-function ErrorMessage({ variant, children }) {
+function AlertMessage({ variant, children }) {
     const [, setShow] = useState(true);
 
     return (
@@ -11,4 +11,4 @@ function ErrorMessage({ variant, children }) {
     );
 }
 
-export default ErrorMessage
+export default AlertMessage
