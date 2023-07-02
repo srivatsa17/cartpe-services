@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
     push:
-        branches: ["Development", "master"]
+        branches: ["master"]
     pull_request:
-        branches: ["Development"]
+        branches: ["master", "Development"]
 
 jobs:
     Test-frontend:
