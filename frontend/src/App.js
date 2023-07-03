@@ -8,7 +8,8 @@ import {
     PRODUCT_SEARCH_SCREEN,
     REGISTER_USER_SCREEN,
     RESET_PASSWORD_CONFIRM_SCREEN,
-    RESET_PASSWORD_SCREEN
+    RESET_PASSWORD_SCREEN,
+    VERIFY_USER_EMAIL_SCREEN
 } from '../src/constants/routes';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
@@ -23,6 +24,7 @@ import UserLoginScreen from './screens/AuthService/UserLoginScreen';
 import UserRegisterScreen from './screens/AuthService/UserRegisterScreen';
 import UserResetPasswordConfirmScreen from './screens/AuthService/UserResetPasswordConfirmScreen';
 import UserResetPasswordScreen from './screens/AuthService/UserResetPasswordScreen';
+import UserVerifyEmailScreen from './screens/AuthService/UserVerifyEmailScreen';
 
 function App() {
 
@@ -31,6 +33,7 @@ function App() {
             <Routes>
                 <Route element={<AnonymousUserRoute />}>
                     <Route path={REGISTER_USER_SCREEN} element={<UserRegisterScreen />}/>
+                    <Route path={VERIFY_USER_EMAIL_SCREEN} element={<UserVerifyEmailScreen />}/>
                     <Route path={LOGIN_USER_SCREEN} element={<UserLoginScreen />}/>
                     <Route path={RESET_PASSWORD_SCREEN} element={<UserResetPasswordScreen />} exact/>
                     <Route path={RESET_PASSWORD_CONFIRM_SCREEN} element={<UserResetPasswordConfirmScreen />} />

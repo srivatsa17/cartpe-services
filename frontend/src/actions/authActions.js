@@ -4,7 +4,10 @@ import {
     USER_LOGIN_SUCCESS,
     USER_REGISTER_FAIL,
     USER_REGISTER_REQUEST,
-    USER_REGISTER_SUCCESS
+    USER_REGISTER_SUCCESS,
+    USER_VERIFY_FAIL,
+    USER_VERIFY_REQUEST,
+    USER_VERIFY_SUCCESS
 } from '../constants/authConstants'
 
 import axios from 'axios';
@@ -21,6 +24,13 @@ const storeUserLoggedInDetailsInStorage = (userTokens) => {
 
 const storeUserRegisteredDetailsInStorage = (userRegisterDetails) => {
     secureLocalStorage.setItem('userRegisterDetails', JSON.stringify(userRegisterDetails))
+}
+
+const updateUserRegisterDetailsInStorage = () => {
+    const storedData = secureLocalStorage.getItem('userRegisterDetails') ?? {}
+    const parsedData = JSON.parse(storedData)
+    parsedData.isUserVerified = true
+    secureLocalStorage.setItem('userRegisterDetails', JSON.stringify(parsedData))
 }
 
 export const loginUser = (email, password) => async (dispatch) => {
@@ -61,6 +71,27 @@ export const registerUser = (email, password) => async (dispatch) => {
     } catch(error) {
         dispatch({
             type: USER_REGISTER_FAIL,
+            payload: error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+        })
+    }
+}
+
+export const verifyUserEmail = (id, token) => async (dispatch) => {
+    const verifyUserEmailUrl = 'http://localhost:8000/api/v1/users/verify-email'
+    try {
+        dispatch({ type: USER_VERIFY_REQUEST })
+
+        const verifyUserEmailData = { uidb64: id, token: token }
+        const config = { headers: { 'Content-type': 'application/json' } }
+        await axios.patch(verifyUserEmailUrl, verifyUserEmailData, config)
+        dispatch({ type: USER_VERIFY_SUCCESS })
+        updateUserRegisterDetailsInStorage()
+
+    } catch(error) {
+        dispatch({
+            type: USER_VERIFY_FAIL,
             payload: error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
