@@ -1,40 +1,32 @@
-import { ADD_CART_ITEM, EMPTY_CART, REMOVE_CART_ITEM, UPDATE_CART_ITEM } from "../constants/cartConstants";
+import {
+    ADD_CART_ITEM_SUCCESS,
+    EMPTY_CART_SUCCESS,
+    GET_CART_ITEMS_SUCCESS,
+    REMOVE_CART_ITEM_SUCCESS,
+    UPDATE_CART_ITEM_SUCCESS
+} from "../constants/cartConstants";
 
-export const cartReducer = (state = { cartItems: []}, action) => {
+export const cartReducer = (state = { cartItems: [] }, action) => {
     const payload = action.payload;
 
     switch(action.type) {
-        case ADD_CART_ITEM:
+        case GET_CART_ITEMS_SUCCESS:
+            return payload
+
+        case ADD_CART_ITEM_SUCCESS:
             const isProductInCart = state.cartItems.some((cartItem) => cartItem.product.id === payload.product.id)
             if(!isProductInCart) {
-                return {
-                    ...state,
-                    cartItems: [...state.cartItems, payload]
-                }
+                return payload
             }
             break
 
-        case UPDATE_CART_ITEM:
-            return {
-                ...state,
-                cartItems: state.cartItems.map((cartItem) => {
-                    if (cartItem.product.id === payload.product.id) {
-                        return {
-                            ...cartItem,
-                            quantity: payload.quantity
-                        };
-                    }
-                    return cartItem;
-                })
-            }
+        case UPDATE_CART_ITEM_SUCCESS:
+            return payload
 
-        case REMOVE_CART_ITEM:
-            return {
-                ...state,
-                cartItems: state.cartItems.filter((cartItem) => cartItem.product.id !== payload)
-            }
+        case REMOVE_CART_ITEM_SUCCESS:
+            return payload
 
-        case EMPTY_CART:
+        case EMPTY_CART_SUCCESS:
             return {
                 ...state,
                 cartItems: []

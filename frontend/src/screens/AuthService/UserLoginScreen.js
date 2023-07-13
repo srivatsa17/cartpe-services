@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import AlertMessage from "../../components/AlertMessages/AlertMessage";
 import Loader from "../../components/Loader/Loader";
+import { getCartItems } from "../../actions/cartActions";
 import { loginUser } from '../../actions/authActions';
 
 function UserLoginScreen() {
@@ -66,8 +67,9 @@ function UserLoginScreen() {
     useEffect(() => {
         if(isLoggedIn === true) {
             navigate(HOME_SCREEN);
+            dispatch(getCartItems())
         }
-    }, [isLoggedIn, navigate])
+    }, [isLoggedIn, navigate, dispatch])
 
     const handleLoginClick = (event) => {
         event.preventDefault();
@@ -87,10 +89,10 @@ function UserLoginScreen() {
                 <Image className="login-user-image" src={loginUserImage} alt="login" />
             </Col>
             <Col lg={5} xl={4}>
-                {   error && 
+                {   error &&
                     <AlertMessage variant="danger">
                         {error}
-                    </AlertMessage> 
+                    </AlertMessage>
                 }
                 <div className="login-heading">
                     Login to <span id="brand-name">CartPe</span>!
