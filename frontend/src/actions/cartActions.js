@@ -16,25 +16,22 @@ import {
     UPDATE_CART_ITEM_SUCCESS
 } from '../constants/cartConstants';
 
+import { CART_ITEMS } from '../constants/localStorageConstants';
 import axiosInstance from '../utils/axios/axiosInterceptor';
-import secureLocalStorage from 'react-secure-storage';
+import saveItemInStorage from '../utils/localStorage/saveItemInStorage';
+import throwErrorResponse from '../utils/errorResponse/throwErrorResponse';
 
-const storeCartItemsInStorage = (cartItems) => {
-    secureLocalStorage.setItem('cartItems', JSON.stringify(cartItems));
-}
-
-const throwErrorResponse = (error) => {
-    return error.response && error.response.data.message ? error.response.data.message : error.message
+const cartUri = 'cart/';
+const cartByIdUri = (productId) => {
+    return `cart/${productId}`
 }
 
 export const getCartItems = () => async (dispatch, getState) => {
-    const cartUri = 'cart/'
-
     try {
         dispatch({ type: GET_CART_ITEMS_REQUEST })
         const { data } = await axiosInstance.get(cartUri)
         dispatch({ type: GET_CART_ITEMS_SUCCESS, payload: data })
-        storeCartItemsInStorage(getState().cart.cartItems)
+        saveItemInStorage(CART_ITEMS, getState().cart.cartItems)
     } catch (error) {
         dispatch({
             type: GET_CART_ITEMS_FAIL,
@@ -44,14 +41,13 @@ export const getCartItems = () => async (dispatch, getState) => {
 }
 
 export const addToCart = (product, quantity = 1) => async (dispatch, getState) => {
-    const cartUri = 'cart/'
     const cartData = { product: product, quantity: quantity }
 
     try {
         dispatch({ type: ADD_CART_ITEM_REQUEST })
         const { data } = await axiosInstance.post(cartUri, cartData)
         dispatch({ type: ADD_CART_ITEM_SUCCESS, payload: data })
-        storeCartItemsInStorage(getState().cart.cartItems)
+        saveItemInStorage(CART_ITEMS, getState().cart.cartItems)
     } catch (error) {
         dispatch({
             type: ADD_CART_ITEM_FAIL,
@@ -61,14 +57,13 @@ export const addToCart = (product, quantity = 1) => async (dispatch, getState) =
 }
 
 export const updateCartQuantity = (product, quantity) => async (dispatch, getState) => {
-    const cartByIdUri = `cart/${product.id}`
     const updateCartQuantityData = { quantity: quantity }
 
     try {
         dispatch({ type: UPDATE_CART_ITEM_REQUEST })
-        const { data } = await axiosInstance.patch(cartByIdUri, updateCartQuantityData)
+        const { data } = await axiosInstance.patch(cartByIdUri(product.id), updateCartQuantityData)
         dispatch({ type: UPDATE_CART_ITEM_SUCCESS, payload: data })
-        storeCartItemsInStorage(getState().cart.cartItems)
+        saveItemInStorage(CART_ITEMS, getState().cart.cartItems)
     } catch(error) {
         dispatch({
             type: UPDATE_CART_ITEM_FAIL,
@@ -78,13 +73,11 @@ export const updateCartQuantity = (product, quantity) => async (dispatch, getSta
 }
 
 export const removeFromCart = (productId) => async (dispatch, getState) => {
-    const cartByIdUri = `cart/${productId}`
-
     try {
         dispatch({ type: REMOVE_CART_ITEM_REQUEST })
-        const { data } = await axiosInstance.delete(cartByIdUri)
+        const { data } = await axiosInstance.delete(cartByIdUri(productId))
         dispatch({ type: REMOVE_CART_ITEM_SUCCESS, payload: data })
-        storeCartItemsInStorage(getState().cart.cartItems)
+        saveItemInStorage(CART_ITEMS, getState().cart.cartItems)
     } catch(error) {
         dispatch({
             type: REMOVE_CART_ITEM_FAIL,
@@ -94,13 +87,11 @@ export const removeFromCart = (productId) => async (dispatch, getState) => {
 }
 
 export const emptyCart = () => async (dispatch, getState) => {
-    const cartUri = 'cart/'
-
     try {
         dispatch({ type: EMPTY_CART_REQUEST })
         await axiosInstance.delete(cartUri)
         dispatch({ type: EMPTY_CART_SUCCESS })
-        storeCartItemsInStorage(getState().cart.cartItems)
+        saveItemInStorage(CART_ITEMS, getState().cart.cartItems)
     } catch(error) {
         dispatch({
             type: EMPTY_CART_FAIL,

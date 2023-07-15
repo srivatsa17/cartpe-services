@@ -3,16 +3,11 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Container } from 'react-bootstrap';
 import { HOME_SCREEN } from "./constants/routes";
 import React from "react";
-import secureLocalStorage from "react-secure-storage";
-
-const getUserTokenFromStorage = () => {
-    const userLoginDetailsFromStorage = secureLocalStorage.getItem('userLoginDetails') ?
-                            JSON.parse(secureLocalStorage.getItem('userLoginDetails')) : {}
-    return userLoginDetailsFromStorage.access_token;
-}
+import { USER_LOGIN_DETAILS } from "./constants/localStorageConstants";
+import getItemFromStorage from "./utils/localStorage/getItemFromStorage";
 
 function AnonymousUserRoute() {
-    const token = getUserTokenFromStorage();
+    const token = getItemFromStorage(USER_LOGIN_DETAILS);
 
     return (
         token ?

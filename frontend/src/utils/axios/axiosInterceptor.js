@@ -1,25 +1,10 @@
+import { USER_LOGIN_DETAILS, USER_REGISTER_DETAILS } from "../../constants/localStorageConstants";
+
 import { LOGIN_USER_SCREEN } from "../../constants/routes";
 import axios from "axios";
-import secureLocalStorage from 'react-secure-storage';
-
-const userLoginDetails = secureLocalStorage.getItem('userLoginDetails');
-
-const getUserTokensFromStorage = () => {
-    const userLoginDetailsFromStorage = userLoginDetails ? JSON.parse(userLoginDetails) : {}
-    return userLoginDetailsFromStorage
-}
-
-const saveTokens = (tokens) => {
-    const userLoginDetailsFromStorage = userLoginDetails ? JSON.parse(userLoginDetails) : {}
-    // Update the newly obtained tokens.
-    userLoginDetailsFromStorage.access_token = tokens.access
-    userLoginDetailsFromStorage.refresh_token = tokens.refresh
-    secureLocalStorage.setItem('userLoginDetails', JSON.stringify(userLoginDetailsFromStorage))
-}
-
-const clearStorage = () => {
-    secureLocalStorage.clear()
-}
+import clearStorage from "../localStorage/clearStorage";
+import getItemFromStorage from "../localStorage/getItemFromStorage";
+import updateItemInStorage from "../localStorage/updateItemInStorage";
 
 // Create the axios instance.
 const axiosInstance = axios.create({
@@ -29,7 +14,7 @@ const axiosInstance = axios.create({
 // Using axios interceptor before sending a http request
 axiosInstance.interceptors.request.use(
     (config) => {
-        const tokens = getUserTokensFromStorage();
+        const tokens = getItemFromStorage(USER_LOGIN_DETAILS);
         if (tokens) {
             config.headers.Authorization = `Bearer ${tokens.access_token}`;
         }
@@ -56,7 +41,7 @@ function createAxiosResponseInterceptor() {
                 Must be re-attached later on or the token refresh will only happen once.
             */
             axiosInstance.interceptors.response.eject(interceptor);
-            const tokens = getUserTokensFromStorage();
+            const tokens = getItemFromStorage(USER_LOGIN_DETAILS) ?? {};
             const refresh_token = tokens.refresh_token;
 
             return await axiosInstance
@@ -64,7 +49,11 @@ function createAxiosResponseInterceptor() {
                     refresh: refresh_token,
                 })
                 .then((response) => {
-                    saveTokens(response.data);
+                    const updateData = {
+                        "access_token": response.data.access,
+                        "refresh_token": response.data.refresh
+                    }
+                    updateItemInStorage(USER_REGISTER_DETAILS, updateData);
                     error.response.config.headers["Authorization"] = "Bearer " + response.data.access;
                     // Retry the initial call, but with the updated token in the headers.
                     // Resolves the promise if successful

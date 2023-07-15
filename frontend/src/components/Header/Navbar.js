@@ -3,16 +3,34 @@ import '../../css/Header/Navbar.css';
 import { CART_SCREEN, HOME_SCREEN, WISHLIST_SCREEN } from '../../constants/routes';
 import { Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { FaRegHeart, FaRegUser, FaShoppingCart } from 'react-icons/fa';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { LOGIN_USER_SCREEN } from '../../constants/routes';
 import { LinkContainer } from 'react-router-bootstrap';
-import React from 'react';
 import SearchBar from './SearchBar';
-import { useSelector } from 'react-redux';
+import { logoutUser } from '../../actions/authActions';
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
     const brandLogo = "/images/cartpe-logo.png";
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const cart = useSelector(state => state.cart);
     const { cartItems } = cart;
+
+    const loginDetails = useSelector(state => state.userLoginDetails)
+    const { isLoggedOut } = loginDetails
+
+    const handleUserLogout = () => {
+        dispatch(logoutUser())
+    }
+
+    useEffect(() => {
+        if(isLoggedOut === true) {
+            navigate(LOGIN_USER_SCREEN)
+        }
+    }, [isLoggedOut, navigate])
 
     return (
         <header>
@@ -93,7 +111,7 @@ function Header() {
                         <Nav>
                             <SearchBar />
                         </Nav>
-                        
+
 
                         <Nav className="justify-content-end">
                             <NavDropdown
@@ -114,9 +132,10 @@ function Header() {
                                 </NavDropdown.Item>
                                 <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">
-                                    Separated link
-                                </NavDropdown.Item>
+
+                                <div onClick={handleUserLogout} className="nav-buttons">
+                                    Logout
+                                </div>
                             </NavDropdown>
 
                             <Nav.Item>
