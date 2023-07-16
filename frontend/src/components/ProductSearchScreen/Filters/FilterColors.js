@@ -1,5 +1,6 @@
 import CollapsibleList from "./CollapsibleList";
 import FilterButtonToggle from "./FilterButtonToggle";
+import { Form } from "react-bootstrap";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -35,8 +36,7 @@ function FilterColors({ uniqueColors, selectedColors, setSelectedColors, handleC
             }).map((color, index) => {
                 return (
                     <div key={index} className="filter-type">
-                        <input
-                            type="checkbox"
+                        <Form.Check
                             disabled={filteredColors.includes(color)}
                             checked={selectedColors.includes(color)}
                             onChange={() => handleColors(color)}

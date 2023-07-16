@@ -1,5 +1,6 @@
 import CollapsibleList from "./CollapsibleList";
 import FilterButtonToggle from "./FilterButtonToggle";
+import { Form } from "react-bootstrap"
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -35,13 +36,12 @@ function FilterBrands({ uniqueBrands, selectedBrands, setSelectedBrands, handleB
             }).map((brand, index) => {
                 return (
                     <div key={index} className="filter-type">
-                        <input
-                            type="checkbox"
+                        <Form.Check
+                            label={brand}
                             disabled={filteredBrands.includes(brand)}
                             checked={selectedBrands.includes(brand)}
                             onChange={() => handleBrands(brand)}
                         />
-                        <div className="filter-item">{brand}</div>
                     </div>
                 )
             })

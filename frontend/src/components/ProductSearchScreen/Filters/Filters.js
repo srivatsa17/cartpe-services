@@ -61,7 +61,7 @@ function Filters({ uniqueCategories, uniqueBrands, uniqueColors, discountRanges,
         if(discountValue) {
             queryParams.set('discount', discountValue)
         } else {
-            queryParams.delete('discount', { replace : true })
+            queryParams.delete('discount')
         }
         setQueryParams(queryParams)
     }

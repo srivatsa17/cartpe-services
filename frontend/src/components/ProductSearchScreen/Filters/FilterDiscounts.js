@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import CollapsibleList from "./CollapsibleList";
+import { Form } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 
 function FilterDiscounts({ discountRanges, discount, handleDiscounts }) {
@@ -28,12 +29,11 @@ function FilterDiscounts({ discountRanges, discount, handleDiscounts }) {
             discountRanges.map((discountOption, index) => {
                 return (
                     <div key={index} className="filter-type">
-                        <input
-                            type="checkbox"
+                        <Form.Check
+                            label={`${discountOption}% and above`}
                             checked={discountOption === discountFilterApplied || discountOption === discount}
                             onChange={() => handleChange(discountOption)}
                         />
-                        <div className="filter-item">{discountOption}% and above</div>
                     </div>
                 )
             })
