@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, ParseError
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from product_service.routes import routes
 from product_service.serializers import ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer
@@ -16,7 +17,7 @@ class RoutesAPIView(generics.GenericAPIView):
         return Response(self.get_queryset())
 
 class ProductAPIView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = ProductSerializer
     queryset =  (
                     Product.objects
@@ -41,7 +42,7 @@ class ProductAPIView(generics.GenericAPIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class ProductByIdAPIView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = ProductSerializer
 
     def get_object(self, id):
