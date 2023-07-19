@@ -44,7 +44,7 @@ function ProductSearchScreen() {
     }
 
     const handleFilterDiscount = (product) => {
-        return filteredDiscount ? product.discount > filteredDiscount : true;
+        return filteredDiscount ? product.discount >= filteredDiscount : true;
     };
 
     const handleFilterPrice = (product) => {
