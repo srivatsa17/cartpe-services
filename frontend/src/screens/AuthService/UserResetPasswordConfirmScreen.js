@@ -4,8 +4,9 @@ import { Button, Col, Form, Image, InputGroup, OverlayTrigger, Row, Tooltip } fr
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import React, { useState } from "react";
 
+import { RESET_PASSWORD_CONFIRM_IMAGE } from "../../constants/imageConstants";
+
 function UserResetPasswordConfirmScreen() {
-    const resetPasswordConfirmImage = "/images/reset-password-confirm.jpg";
     const [formData, setFormData] = useState({
         newPassword: '',
         newConfirmPassword: '',
@@ -64,7 +65,7 @@ function UserResetPasswordConfirmScreen() {
         <Row className="reset-password-confirm-container">
             <Col xs={6} sm={6} md={6} lg={6} xl={6}>
                 <Image className="reset-password-confirm-image"
-                    src={resetPasswordConfirmImage}
+                    src={RESET_PASSWORD_CONFIRM_IMAGE}
                     alt="reset-password-confirm"
                 />
             </Col>

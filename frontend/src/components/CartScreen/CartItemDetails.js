@@ -17,7 +17,7 @@ function CartItemDetails({ cartItem, featuredImage }) {
         <Row>
             <Col xs={7} sm={6} md={6} lg={5} xl={4}>
                 <Link to={productLink}>
-                    <Image className="cart-featured-image" src={featuredImage.image} rounded/>
+                    <Image className="cart-featured-image" src={featuredImage} rounded/>
                 </Link>
             </Col>
             <Col>

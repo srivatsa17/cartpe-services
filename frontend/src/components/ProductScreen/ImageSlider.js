@@ -4,11 +4,26 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { Image, Row } from "react-bootstrap";
 import React, { useRef, useState } from "react";
 
+import { PLACEHOLDER_IMAGE } from "../../constants/imageConstants";
+
+const getProductImages = (product) => {
+    if(
+        !product || !product.product_images || product.product_images.length === 0 ||
+        !product.product_images.find((image) => image.is_featured === true)
+    ) {
+        return {
+            productImages: Array(3).fill({"image": PLACEHOLDER_IMAGE}),
+            imageToShowcase: PLACEHOLDER_IMAGE
+        }
+    }
+    return {
+        productImages: product.product_images,
+        imageToShowcase: product.product_images.find((image) => image.is_featured === true).image
+    }
+}
+
 function ImageSlider({ product }) {
-    const defaultImage = "/frontend/public/images/camera.jpg";  // Change defaultImage
-    const productImages = product?.product_images ?? [];
-    const isFeaturedImageObjExist = productImages.find((image) => image.is_featured === true);
-    const imageToShowcase = isFeaturedImageObjExist ? isFeaturedImageObjExist.image : defaultImage;
+    const { productImages, imageToShowcase } = getProductImages(product)
     const [featuredImage, setFeaturedImage] = useState(imageToShowcase);
 
     const scrollOffset = 145;
@@ -60,10 +75,10 @@ function ImageSlider({ product }) {
                                 return (
                                     <Image
                                         key={imageId}
-                                        src={productImage.image}
+                                        src={productImage?.image}
                                         id="product-images"
                                         data-testid="product-images"
-                                        onMouseOver={handleFeaturedImage}
+                                        onClick={handleFeaturedImage}
                                     />
                                 )
                             })

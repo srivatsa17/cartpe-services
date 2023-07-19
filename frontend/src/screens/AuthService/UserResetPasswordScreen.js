@@ -3,8 +3,9 @@ import "../../css/AuthService/ResetPassword/UserResetPasswordScreen.css";
 import { Button, Col, Form, Image, Row } from 'react-bootstrap';
 import React, { useState } from "react";
 
+import { RESET_PASSWORD_IMAGE } from "../../constants/imageConstants";
+
 function UserResetPasswordScreen() {
-    const resetPasswordUserImage = "/images/reset-password.jpg"
     const [formData, setFormData] = useState({
         email: '',
         isEmailValid: false,
@@ -26,7 +27,7 @@ function UserResetPasswordScreen() {
     return (
         <Row className="reset-password-user-container">
             <Col xs={6} sm={6} md={6} lg={6} xl={6}>
-                <Image className="reset-password-user-image" src={resetPasswordUserImage} alt="reset-password" />
+                <Image className="reset-password-user-image" src={RESET_PASSWORD_IMAGE} alt="reset-password" />
             </Col>
             <Col lg={5} xl={4}>
                 <div className="reset-password-heading">

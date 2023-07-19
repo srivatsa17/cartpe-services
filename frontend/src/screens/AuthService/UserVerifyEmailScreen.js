@@ -1,6 +1,7 @@
 import "../../css/AuthService/VerifyEmail/UserVerifyEmailScreen.css";
 
 import { Col, Image, Row } from "react-bootstrap";
+import { EMAIL_VERIFICATION_FAILURE_IMAGE, EMAIL_VERIFICATION_SUCCESS_IMAGE } from "../../constants/imageConstants";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,8 +13,6 @@ function UserVerifyEmailScreen() {
     const { id, token } = useParams();
     const dispatch = useDispatch();
     const [verifiedStatus, setVerifiedStatus] = useState(false)
-    const emailVerificationSuccessImage = "/images/email-verify-success.jpg"
-    const emailVerificationFailureImage = "/images/email-verify-failure.jpg"
 
     const userRegisterDetails = useSelector(state => state.userRegisterDetails)
     const { error, isLoading, isUserRegistered, isUserVerified } = userRegisterDetails
@@ -32,7 +31,7 @@ function UserVerifyEmailScreen() {
                             The email verification process has been completed successfully.
                             You may now close this tab.
                         </AlertMessage>
-                        <Image src={emailVerificationSuccessImage} alt="email-verification" fluid />
+                        <Image src={EMAIL_VERIFICATION_SUCCESS_IMAGE} alt="email-verification" fluid />
                     </>
                 }
                 {
@@ -42,7 +41,7 @@ function UserVerifyEmailScreen() {
                             The email verification has failed due to either an invalid token or non-existent user.
                             Try again after a while.
                         </AlertMessage>
-                        <Image src={emailVerificationFailureImage} alt="email-verification" fluid />
+                        <Image src={EMAIL_VERIFICATION_FAILURE_IMAGE} alt="email-verification" fluid />
                     </>
                 }
             </Col>

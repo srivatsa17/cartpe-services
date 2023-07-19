@@ -6,8 +6,20 @@ import CartItemDetails from "../components/CartScreen/CartItemDetails";
 import CartQuantityDetails from "../components/CartScreen/CartQuantityDetails";
 import CartSubTotal from "../components/CartScreen/CartSubTotal";
 import { HOME_SCREEN } from "../constants/routes";
+import { PLACEHOLDER_IMAGE } from "../constants/imageConstants";
 import React from "react";
 import { useSelector } from "react-redux";
+
+const getProductFeaturedImage = (product) => {
+    if(
+        !product ||
+        !product.product_images ||
+        !product.product_images.find((image) => image.is_featured === true)
+    ) {
+        return PLACEHOLDER_IMAGE
+    }
+    return product.product_images.find((image) => image.is_featured === true).image
+}
 
 function CartScreen() {
     const cart = useSelector(state => state.cart);
@@ -31,7 +43,7 @@ function CartScreen() {
                     <>
                         {
                             cartItems.map((cartItem, index) => {
-                                const featuredImage = cartItem.product.product_images.find((imageObj) => imageObj.is_featured === true);
+                                const featuredImage = getProductFeaturedImage(cartItem.product)
                                 return (
                                     <ListGroup className="pb-4">
                                         <ListGroup.Item key={index} className="py-3">

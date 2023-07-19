@@ -27,10 +27,3 @@
     max-height: 120px;
     padding: 10px;
 }
-
-#product-images:hover {
-    max-width: 210px;
-    max-height: 130px;
-    border: 3px solid #000;
-    transition: .2s;
-}

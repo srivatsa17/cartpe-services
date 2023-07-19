@@ -9,10 +9,10 @@ import AlertMessage from "../../components/AlertMessages/AlertMessage";
 import { LOGIN_USER_SCREEN } from "../../constants/routes";
 import { Link } from 'react-router-dom';
 import Loader from "../../components/Loader/Loader";
+import { REGISTER_USER_IMAGE } from "../../constants/imageConstants";
 import { registerUser } from '../../actions/authActions';
 
 function UserRegisterScreen() {
-    const registerUserImage = "/images/register.jpg"
     const dispatch = useDispatch();
 
     const [showAlertMessage, setShowAlertMessage] = useState(false)
@@ -79,7 +79,7 @@ function UserRegisterScreen() {
     return (
         <Row className="register-user-container">
             <Col xs={6} sm={6} md={6} lg={6} xl={6}>
-                <Image className="register-user-image" src={registerUserImage} alt="register" />
+                <Image className="register-user-image" src={REGISTER_USER_IMAGE} alt="register" />
             </Col>
             <Col lg={5} xl={4}>
                 {   showAlertMessage && error &&
