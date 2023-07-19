@@ -28,18 +28,20 @@ function CartScreen() {
                         Cart is empty. <Alert.Link href={HOME_SCREEN}>Continue shopping</Alert.Link>
                     </Alert>
                     :
-                    <ListGroup >
+                    <>
                         {
                             cartItems.map((cartItem, index) => {
                                 const featuredImage = cartItem.product.product_images.find((imageObj) => imageObj.is_featured === true);
                                 return (
-                                    <ListGroup.Item key={index}>
-                                        <CartItemDetails cartItem={cartItem} featuredImage={featuredImage}/>
-                                    </ListGroup.Item>
+                                    <ListGroup className="pb-4">
+                                        <ListGroup.Item key={index} className="py-3">
+                                            <CartItemDetails cartItem={cartItem} featuredImage={featuredImage}/>
+                                        </ListGroup.Item>
+                                    </ListGroup>
                                 )
                             })
                         }
-                    </ListGroup>
+                    </>
                 }
             </Col>
             <Col>

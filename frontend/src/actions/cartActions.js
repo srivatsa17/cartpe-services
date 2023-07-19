@@ -45,8 +45,11 @@ export const addToCart = (product, quantity = 1) => async (dispatch, getState) =
 
     try {
         dispatch({ type: ADD_CART_ITEM_REQUEST })
-        const { data } = await axiosInstance.post(cartUri, cartData)
-        dispatch({ type: ADD_CART_ITEM_SUCCESS, payload: data })
+        await axiosInstance.post(cartUri, cartData)
+        dispatch({
+            type: ADD_CART_ITEM_SUCCESS,
+            payload: cartData
+        })
         saveItemInStorage(CART_ITEMS, getState().cart.cartItems)
     } catch (error) {
         dispatch({

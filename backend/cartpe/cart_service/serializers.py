@@ -81,7 +81,7 @@ class CartByIdSerializer(serializers.Serializer):
             if index == -1 or index == redis_client.arrlen(redis_key, cart_items_path_in_redis):
                 raise ValidationError("Requested cart item is not found.")
 
-            if cart_item_obj['quantity'] == quantity:
+            if self.context.get('request_method') == 'PATCH' and cart_item_obj['quantity'] == quantity:
                 raise ValidationError("New quantity provided is same as previous quantity.")
 
             return {

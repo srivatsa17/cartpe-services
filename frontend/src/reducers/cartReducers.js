@@ -16,7 +16,10 @@ export const cartReducer = (state = { cartItems: [] }, action) => {
         case ADD_CART_ITEM_SUCCESS:
             const isProductInCart = state.cartItems.some((cartItem) => cartItem.product.id === payload.product.id)
             if(!isProductInCart) {
-                return payload
+                return {
+                    ...state,
+                    cartItems: [...state.cartItems, payload]
+                }
             }
             break
 

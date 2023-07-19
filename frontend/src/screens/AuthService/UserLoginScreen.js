@@ -8,12 +8,12 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import AlertMessage from "../../components/AlertMessages/AlertMessage";
+import { LOGIN_USER_IMAGE } from "../../constants/imageConstants";
 import Loader from "../../components/Loader/Loader";
 import { getCartItems } from "../../actions/cartActions";
 import { loginUser } from '../../actions/authActions';
 
 function UserLoginScreen() {
-    const loginUserImage = "/images/login.png";
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -86,7 +86,7 @@ function UserLoginScreen() {
     return (
         <Row className="login-user-container">
             <Col xs={6} sm={6} md={6} lg={6} xl={6}>
-                <Image className="login-user-image" src={loginUserImage} alt="login" />
+                <Image className="login-user-image" src={LOGIN_USER_IMAGE} alt="login" />
             </Col>
             <Col lg={5} xl={4}>
                 {   error &&

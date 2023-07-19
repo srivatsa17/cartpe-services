@@ -1,0 +1,1 @@
+export const LOGIN_USER_IMAGE = "https://cartpe.s3.ap-south-1.amazonaws.com/Authentication+Images/login.png"
