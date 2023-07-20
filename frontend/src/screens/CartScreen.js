@@ -45,8 +45,8 @@ function CartScreen() {
                             cartItems.map((cartItem, index) => {
                                 const featuredImage = getProductFeaturedImage(cartItem.product)
                                 return (
-                                    <ListGroup className="pb-4">
-                                        <ListGroup.Item key={index} className="py-3">
+                                    <ListGroup key={index} className="pb-4">
+                                        <ListGroup.Item className="py-3">
                                             <CartItemDetails cartItem={cartItem} featuredImage={featuredImage}/>
                                         </ListGroup.Item>
                                     </ListGroup>

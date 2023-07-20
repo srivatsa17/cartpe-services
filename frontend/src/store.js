@@ -1,4 +1,4 @@
-import { CART_ITEMS, USER_LOGIN_DETAILS, USER_REGISTER_DETAILS } from './constants/localStorageConstants';
+import { CART_ITEMS, PRODUCT_LIST, USER_LOGIN_DETAILS, USER_REGISTER_DETAILS } from './constants/localStorageConstants';
 import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux';
 import { productDetailsReducer, productListReducer } from './reducers/productReducers';
 import { userLoginReducer, userRegisterReducer } from './reducers/authReducers';
@@ -8,6 +8,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import getItemFromStorage from './utils/localStorage/getItemFromStorage';
 import thunk from 'redux-thunk';
 
+const productListFromStorage = getItemFromStorage(PRODUCT_LIST) ?? {}
 const cartItemsFromStorage = getItemFromStorage(CART_ITEMS) ?? []
 const userLoginDetailsFromStorage = getItemFromStorage(USER_LOGIN_DETAILS) ?? {}
 const userRegisterDetailsFromStorage = getItemFromStorage(USER_REGISTER_DETAILS) ?? {}
@@ -21,6 +22,10 @@ const reducer = combineReducers({
 })
 
 const persistedState = {
+    productList: {
+        products: productListFromStorage.products ?? [],
+        searchedCategory: productListFromStorage.searchedCategory
+    },
     cart: {
         cartItems: cartItemsFromStorage,
     },
