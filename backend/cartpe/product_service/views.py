@@ -7,6 +7,8 @@ from product_service.routes import routes
 from product_service.serializers import ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer
 from product_service.models import Product, Category, Brand, Image
 from product_service.filters import ProductFilter, CategoryFilter
+from haystack.query import SearchQuerySet
+import ast
 
 # Create your views here.
 
@@ -231,3 +233,23 @@ class ProductImageByIdAPIView(generics.GenericAPIView):
         image = self.get_object(id)
         image.delete()
         return Response(status = status.HTTP_204_NO_CONTENT)
+
+class CategorySearchAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        query = request.query_params.get('q', '')
+        search_results = SearchQuerySet().filter(text__icontains = query)
+        results = []
+
+        for result in search_results:
+            text_list_str = result.text     # e.g., "['Men']"
+            text = ast.literal_eval(text_list_str)[0]   # Converts to Python list
+            results.append(
+                {
+                    "id": int(result.id.split(".")[2]),
+                    "name" : text
+                }
+            )
+
+        return Response(results, status = status.HTTP_200_OK)
