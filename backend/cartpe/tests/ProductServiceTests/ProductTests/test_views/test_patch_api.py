@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 import json, decimal
 from product_service.models import Product, Category, Brand
+from auth_service.models import User
 
 CONTENT_TYPE = 'application/json'
 
@@ -17,6 +18,10 @@ class UpdateProductByIdTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         self.category = Category.objects.create(name = "Electronics")
         self.pixel = Product.objects.create(name="pixel 7", description="good product", price=50000, stock_count=10, discount=0)
 
