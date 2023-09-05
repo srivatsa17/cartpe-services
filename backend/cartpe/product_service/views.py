@@ -239,7 +239,7 @@ class CategorySearchAPIView(generics.GenericAPIView):
 
     def get(self, request):
         query = request.query_params.get('q', '')
-        search_results = SearchQuerySet().filter(text__icontains = query)
+        search_results = SearchQuerySet().filter(text__contains = query)
         results = []
 
         for result in search_results:
