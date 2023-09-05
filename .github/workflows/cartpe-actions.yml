@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
     push:
-        branches: ["master"]
+        branches: ["master", "Development"]
     pull_request:
         branches: ["master", "Development"]
 
@@ -58,6 +58,15 @@ jobs:
                 # Set health checks to wait until postgres has started
                 options:
                     --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+            redis:
+                image: redis-stack-server:latest
+                ports:
+                    - 6379:6379
+                options: >-
+                    --health-cmd "redis-cli ping"
                     --health-interval 10s
                     --health-timeout 5s
                     --health-retries 5
