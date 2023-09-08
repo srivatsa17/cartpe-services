@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt.token_blacklist',
+    'haystack',
 
     'product_service.apps.ProductServiceConfig',
     'auth_service.apps.AuthServiceConfig',
@@ -201,3 +202,10 @@ EMAIL_HOST_USER = 'cartpe.site@gmail.com'
 EMAIL_HOST_PASSWORD = 'cagzitdhrfxazwrt'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr/cartpe_core'
+    },
+}

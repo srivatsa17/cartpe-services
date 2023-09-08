@@ -1,8 +1,10 @@
 from django.urls import reverse
+from unittest.mock import patch, Mock
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Category
 from product_service.serializers import CategorySerializer
+from auth_service.models import User
 
 # Initialize the APIClient app
 client = APIClient()
@@ -68,3 +70,72 @@ class GetCategoryByIdTest(APITestCase):
 
         self.assertEqual(receivedResponse, expectedResponse)
         self.assertEqual(receivedStatusCode, expectedStatusCode)
+
+class SearchCategoriesTest(APITestCase):
+    """ Test module for GET request for CategorySearchAPIView API """
+
+    def setUp(self):
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
+    def get_url(self, searchKey=None):
+        url = reverse('category_search') + f"?q={searchKey}"
+        return url
+
+    @patch("product_service.views.SearchQuerySet")
+    def test_search_with_no_query_param(self, mock_search):
+        mock_search_instance = mock_search.return_value
+        mock_search_instance.filter.return_value = [
+            Mock(id='product_service.category.1', text="['Men']"),
+            Mock(id='product_service.category.2', text="['Women']"),
+        ]
+        expectedStatusCode = status.HTTP_200_OK
+        expectedResponse = [
+            {"id": 1, "name": "Men"},
+            {"id": 2, "name": "Women"}
+        ]
+
+        url = self.get_url()
+        response = client.get(url)
+        receivedStatusCode = response.status_code
+        receivedResponse = response.data
+
+        self.assertEqual(expectedStatusCode, receivedStatusCode)
+        self.assertEqual(expectedResponse, receivedResponse)
+
+    @patch("product_service.views.SearchQuerySet")
+    def test_search_with_query_param(self, mock_search):
+        mock_search_instance = mock_search.return_value
+        mock_search_instance.filter.return_value = [
+            Mock(id='product_service.category.1', text="['Men']"),
+            Mock(id='product_service.category.2', text="['Women']")
+        ]
+        expectedStatusCode = status.HTTP_200_OK
+        expectedResponse = [
+            {"id": 1, "name": "Men"},
+            {"id": 2, "name": "Women"}
+        ]
+
+        url = self.get_url("me")
+        response = client.get(url)
+        receivedStatusCode = response.status_code
+        receivedResponse = response.data
+
+        self.assertEqual(expectedStatusCode, receivedStatusCode)
+        self.assertEqual(expectedResponse, receivedResponse)
+
+    @patch("product_service.views.SearchQuerySet")
+    def test_search_with_empty_response(self, mock_search):
+        mock_search_instance = mock_search.return_value
+        mock_search_instance.filter.return_value = []
+        expectedStatusCode = status.HTTP_200_OK
+        expectedResponse = []
+
+        url = self.get_url("me")
+        response = client.get(url)
+        receivedStatusCode = response.status_code
+        receivedResponse = response.data
+
+        self.assertEqual(expectedStatusCode, receivedStatusCode)
+        self.assertEqual(expectedResponse, receivedResponse)
