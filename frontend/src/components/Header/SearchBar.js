@@ -1,51 +1,39 @@
 import '../../css/Header/SearchBar.css';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { FaSearch } from 'react-icons/fa';
 import { GrClose } from 'react-icons/gr';
 import { Link } from "react-router-dom";
-import categories from "../../categories";
-
-function getCategoriesList( categoriesSearchList, categories ) {
-    categories.map((category) => {
-        if(category.children.length > 0) {
-            getCategoriesList(categoriesSearchList, category.children)
-        }
-        if(category.level !== 0) {
-            categoriesSearchList.push(category)
-        }
-        return categoriesSearchList
-    })
-}
+import { getSearchedCategories } from '../../actions/productActions';
 
 function SearchBar() {
 
-    const [filteredData, setFilteredData] = useState([]);
     const [searchText, setSearchText] = useState("");
+    const [showSearchResult, setShowSearchResult] = useState(false);
     const searchResultsRef = useRef(null);
-    const categoriesSearchList = []
-
-    useEffect(() => {
-        getCategoriesList(categoriesSearchList, categories);
-    })
+    const dispatch = useDispatch()
+    const categoryList = useSelector(state => state.searchedCategories)
+    var { categories, error } = categoryList
 
     const handleInputChange = (event) => {
         const inputValue = event.target.value.toLowerCase().trim();
         if (inputValue === "") {
             setSearchText("");
-            setFilteredData([]);
         } else {
             setSearchText(inputValue);
-            const filter = categoriesSearchList?.filter((category) => {
-                return category.name.toLowerCase().includes(inputValue);
-            })
-            setFilteredData(filter);
+            if(inputValue.length > 2) {
+                dispatch(getSearchedCategories(inputValue))
+                if(!error) {
+                    setShowSearchResult(true)
+                }
+            }
         }
     };
 
     const clearSearchInput = () => {
-        setFilteredData([]);
+        setShowSearchResult(false);
         setSearchText("");
     };
 
@@ -82,10 +70,10 @@ function SearchBar() {
                 </div>
             </div>
             {
-                filteredData.length !== 0 && (
+                showSearchResult && categories && categories.length !== 0 && (
                     <div className="searchResults" ref={searchResultsRef}>
                     {
-                        filteredData.map((category, index) => {
+                        categories.map((category, index) => {
                             return (
                                 <Link
                                     to={{ pathname: `/${category.slug}`, search: `searchItem=${category.name}`}}

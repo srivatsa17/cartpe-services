@@ -243,12 +243,20 @@ class CategorySearchAPIView(generics.GenericAPIView):
         results = []
 
         for result in search_results:
-            text_list_str = result.text     # e.g., "['Men']"
-            text = ast.literal_eval(text_list_str)[0]   # Converts to Python list
+            """
+            e.g., result.id = "product_service.category.1".
+            We split the string based on "." and take the integer part as id.
+            """
+            id = int(result.id.split(".")[2])
+            """ e.g., result.text = "['Men']". We convert to Python list and take the first element in it. """
+            name = ast.literal_eval(result.text)[0]
+            """ e.g., result.slug = "['men']". We convert to Python list and take the first element in it. """
+            slug = ast.literal_eval(result.slug)[0]
             results.append(
                 {
-                    "id": int(result.id.split(".")[2]),
-                    "name" : text
+                    "id": id,
+                    "name" : name,
+                    "slug": slug
                 }
             )
 

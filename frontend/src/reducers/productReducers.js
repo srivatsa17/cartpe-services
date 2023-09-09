@@ -1,4 +1,9 @@
 import {
+    CATEGORY_SEARCH_FAIL,
+    CATEGORY_SEARCH_REQUEST,
+    CATEGORY_SEARCH_SUCCESS
+} from "../constants/categorySearchConstants";
+import {
     PRODUCT_DETAIL_FAIL,
     PRODUCT_DETAIL_REQUEST,
     PRODUCT_DETAIL_SUCCESS,
@@ -27,6 +32,19 @@ export const productDetailsReducer = (state = { product : {}}, action) => {
         case PRODUCT_DETAIL_SUCCESS:
             return { isLoading: false, product: action.payload }
         case PRODUCT_DETAIL_FAIL:
+            return { isLoading: false, error: action.payload }
+        default:
+            return state
+    }
+}
+
+export const categorySearchReducer = (state = { categories : [] }, action) => {
+    switch(action.type) {
+        case CATEGORY_SEARCH_REQUEST:
+            return { isLoading: true, ...state }
+        case CATEGORY_SEARCH_SUCCESS:
+            return { isLoading: false, categories: action.payload }
+        case CATEGORY_SEARCH_FAIL:
             return { isLoading: false, error: action.payload }
         default:
             return state

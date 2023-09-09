@@ -1,4 +1,9 @@
 import {
+    CATEGORY_SEARCH_FAIL,
+    CATEGORY_SEARCH_REQUEST,
+    CATEGORY_SEARCH_SUCCESS
+} from "../constants/categorySearchConstants";
+import {
     PRODUCT_DETAIL_FAIL,
     PRODUCT_DETAIL_REQUEST,
     PRODUCT_DETAIL_SUCCESS,
@@ -64,6 +69,19 @@ export const getProductDetails = (id) => async (dispatch) => {
     } catch(error) {
         dispatch({
             type: PRODUCT_DETAIL_FAIL,
+            payload: throwErrorResponse(error)
+        })
+    }
+}
+
+export const getSearchedCategories = (searchedCategory) => async (dispatch) => {
+    try {
+        dispatch({ type: CATEGORY_SEARCH_REQUEST })
+        const { data } = await axiosInstance.get(`products/categories/search?q=${searchedCategory}`)
+        dispatch({ type: CATEGORY_SEARCH_SUCCESS, payload: data })
+    } catch(error) {
+        dispatch({
+            type: CATEGORY_SEARCH_FAIL,
             payload: throwErrorResponse(error)
         })
     }

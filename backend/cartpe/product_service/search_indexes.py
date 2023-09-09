@@ -3,6 +3,7 @@ from product_service.models import Category
 
 class CategoryIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document = True, use_template = True)
+    slug = indexes.CharField(model_attr = 'slug')
 
     def get_model(self):
         return Category

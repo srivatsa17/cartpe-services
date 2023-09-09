@@ -1,6 +1,6 @@
 import { CART_ITEMS, PRODUCT_LIST, USER_LOGIN_DETAILS, USER_REGISTER_DETAILS } from './constants/localStorageConstants';
 import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux';
-import { productDetailsReducer, productListReducer } from './reducers/productReducers';
+import { categorySearchReducer, productDetailsReducer, productListReducer } from './reducers/productReducers';
 import { userLoginReducer, userRegisterReducer } from './reducers/authReducers';
 
 import { cartReducer } from './reducers/cartReducers';
@@ -16,6 +16,7 @@ const userRegisterDetailsFromStorage = getItemFromStorage(USER_REGISTER_DETAILS)
 const reducer = combineReducers({
     productList: productListReducer,
     productDetails: productDetailsReducer,
+    searchedCategories: categorySearchReducer,
     cart: cartReducer,
     userLoginDetails: userLoginReducer,
     userRegisterDetails: userRegisterReducer,
