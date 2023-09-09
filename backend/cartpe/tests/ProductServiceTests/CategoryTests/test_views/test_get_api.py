@@ -87,13 +87,13 @@ class SearchCategoriesTest(APITestCase):
     def test_search_with_no_query_param(self, mock_search):
         mock_search_instance = mock_search.return_value
         mock_search_instance.filter.return_value = [
-            Mock(id='product_service.category.1', text="['Men']"),
-            Mock(id='product_service.category.2', text="['Women']"),
+            Mock(id='product_service.category.1', text="['Men']", slug="['men']"),
+            Mock(id='product_service.category.2', text="['Women']", slug="['women']"),
         ]
         expectedStatusCode = status.HTTP_200_OK
         expectedResponse = [
-            {"id": 1, "name": "Men"},
-            {"id": 2, "name": "Women"}
+            {"id": 1, "name": "Men", "slug": "men"},
+            {"id": 2, "name": "Women", "slug": "women"}
         ]
 
         url = self.get_url()
@@ -108,13 +108,13 @@ class SearchCategoriesTest(APITestCase):
     def test_search_with_query_param(self, mock_search):
         mock_search_instance = mock_search.return_value
         mock_search_instance.filter.return_value = [
-            Mock(id='product_service.category.1', text="['Men']"),
-            Mock(id='product_service.category.2', text="['Women']")
+            Mock(id='product_service.category.1', text="['Men']", slug="['men']"),
+            Mock(id='product_service.category.2', text="['Women']", slug="['women']"),
         ]
         expectedStatusCode = status.HTTP_200_OK
         expectedResponse = [
-            {"id": 1, "name": "Men"},
-            {"id": 2, "name": "Women"}
+            {"id": 1, "name": "Men", "slug": "men"},
+            {"id": 2, "name": "Women", "slug": "women"}
         ]
 
         url = self.get_url("me")
