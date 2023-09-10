@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 import json
 from product_service.models import Brand
+from auth_service.models import User
 
 CONTENT_TYPE = 'application/json'
 
@@ -17,6 +18,10 @@ class UpdateBrandByIdTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         self.google = Brand.objects.create(name="Google", description="good brand")
 
     def test_with_id(self) -> None:

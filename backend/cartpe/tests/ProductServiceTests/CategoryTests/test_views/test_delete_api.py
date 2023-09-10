@@ -2,6 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Category
+from auth_service.models import User
 
 # Initialize the APIClient app
 client = APIClient()
@@ -15,6 +16,10 @@ class DeleteCategoryByIdTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         self.men = Category.objects.create(name = "Men", description = "Clothing", parent = None)
 
     def test_with_existing_id(self) -> None:

@@ -73,7 +73,7 @@ class ProductByIdAPIView(generics.GenericAPIView):
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class CategoryAPIView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = CategorySerializer
     queryset = Category.objects.root_nodes()
     filter_backends = [ DjangoFilterBackend ]
@@ -92,7 +92,7 @@ class CategoryAPIView(generics.GenericAPIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class CategoryByIdAPIView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = CategorySerializer
 
     def get_object(self, id):
@@ -121,7 +121,7 @@ class CategoryByIdAPIView(generics.GenericAPIView):
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class BrandAPIView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = BrandSerializer
     queryset = Brand.objects.all()
 
@@ -138,7 +138,7 @@ class BrandAPIView(generics.GenericAPIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class BrandByIdAPIView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = BrandSerializer
 
     def get_object(self, id):
@@ -167,7 +167,7 @@ class BrandByIdAPIView(generics.GenericAPIView):
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class ProductImageAPIView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = ProductImageSerializer
 
     def get_object(self, id):
@@ -206,7 +206,7 @@ class ProductImageAPIView(generics.GenericAPIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class ProductImageByIdAPIView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = ProductImageSerializer
 
     def get_object(self, id):

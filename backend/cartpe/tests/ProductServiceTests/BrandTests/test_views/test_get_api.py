@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Brand
 from product_service.serializers import BrandSerializer
+from auth_service.models import User
 
 # Initialize the APIClient app
 client = APIClient()
@@ -15,6 +16,10 @@ class GetAllBrandsTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         Brand.objects.create(name = "Apple", description = "ok brand")
         Brand.objects.create(name = "Google", description = "good brand")
 
@@ -41,6 +46,10 @@ class GetBrandByIdTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         self.apple = Brand.objects.create(name = "apple", description = "ok brand")
         self.google = Brand.objects.create(name = "google", description = "good brand")
 

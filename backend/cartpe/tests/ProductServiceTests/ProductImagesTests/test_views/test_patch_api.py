@@ -7,6 +7,7 @@ from rest_framework import status
 from product_service.models import Product, Image
 from io import BytesIO
 from PIL import Image as img
+from auth_service.models import User
 
 # Global variables
 BOUNDARY = 'BoUnDaRyStRiNg'
@@ -38,6 +39,10 @@ class UpdateImageTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         self.product = Product.objects.create(name="pixel 7", description="good product", price=50000, stock_count=10)
         self.sampleImage = SimpleUploadedFile("test_image1.jpg", b"binary data for image", content_type="image/jpeg")
         self.image1 = Image.objects.create(image=self.sampleImage, is_featured=True, product=self.product)

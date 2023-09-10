@@ -2,6 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 import json
+from auth_service.models import User
 
 CONTENT_TYPE = 'application/json'
 
@@ -16,6 +17,10 @@ class PostCategoryTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         self.validData = { "name" : "Men", "description" : "Clothing for men", "parent" : None }
         self.subcategory = { "name" : "Topwear", "description" : "Topwear for men", "parent" : "Men" }
 

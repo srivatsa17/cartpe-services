@@ -17,6 +17,10 @@ class GetAllCategoriesTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         self.men = Category.objects.create(name = "Men", description = "Clothing", parent = None)
         self.topwear = Category.objects.create(name = "Topwear", description = "Topwear for men", parent = self.men)
 
@@ -42,6 +46,10 @@ class GetCategoryByIdTest(APITestCase):
         return url
 
     def setUp(self) -> None:
+        # Creating a user and forcing the authentication.
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        client.force_authenticate(user = self.user)
+
         self.men = Category.objects.create(name = "Men", description = "Clothing", parent = None)
         self.topwear = Category.objects.create(name = "Topwear", description = "Topwear for men", parent = self.men)
 
