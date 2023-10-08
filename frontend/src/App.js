@@ -10,15 +10,15 @@ import {
     RESET_PASSWORD_CONFIRM_SCREEN,
     RESET_PASSWORD_SCREEN,
     VERIFY_USER_EMAIL_SCREEN
-} from '../src/constants/routes';
+} from './constants/routes';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
-import AnonymousUserRoute from './AnonymousUserRoute';
+import AnonymousUserRoute from './routing/AnonymousUserRoute';
 import CartScreen from './screens/CartScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import ProductSearchScreen from './screens/ProductSearchScreen';
-import ProtectedUserRoute from './ProtectedUserRoute';
+import ProtectedUserRoute from './routing/ProtectedUserRoute';
 import React from 'react';
 import UserLoginScreen from './screens/AuthService/UserLoginScreen';
 import UserRegisterScreen from './screens/AuthService/UserRegisterScreen';

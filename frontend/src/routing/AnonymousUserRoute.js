@@ -1,10 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 import { Container } from 'react-bootstrap';
-import { HOME_SCREEN } from "./constants/routes";
+import { HOME_SCREEN } from "../constants/routes";
 import React from "react";
-import { USER_LOGIN_DETAILS } from "./constants/localStorageConstants";
-import getItemFromStorage from "./utils/localStorage/getItemFromStorage";
+import { USER_LOGIN_DETAILS } from "../constants/localStorageConstants";
+import getItemFromStorage from "../utils/localStorage/getItemFromStorage";
 
 function AnonymousUserRoute() {
     const token = getItemFromStorage(USER_LOGIN_DETAILS);

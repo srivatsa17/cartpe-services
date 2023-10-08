@@ -61,3 +61,11 @@ input:focus {
 #clearButton {
     cursor: pointer;
 }
+
+.noResultFound {
+    background-color: rgb(214, 212, 212);
+}
+
+.noResultFound:hover {
+    cursor: not-allowed;
+}
