@@ -1,3 +1,7 @@
 main {
     min-height: 75vh;
 }
+
+.dropdown-menu {
+    transform: translate(0px, 15px);
+}

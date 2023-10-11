@@ -10,7 +10,216 @@ const categories = [
     "children": [
         {
             "id": 2,
-            "name": "Topwear",
+            "name": "Topwear1",
+            "slug": "topwear",
+            "description": "Topwear related to men.",
+            "level": 1,
+            "parent": "Men",
+            "children": [
+                {
+                    "id": 3,
+                    "name": "T-shirts-1",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                },
+                {
+                    "id": 3,
+                    "name": "T-shirts-2",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                },
+                {
+                    "id": 3,
+                    "name": "T-shirts-3",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                },
+                {
+                    "id": 3,
+                    "name": "T-shirts-4",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                }
+            ],
+            "products": [],
+            "created_at": "2023-04-29T20:10:26.116594+05:30",
+            "updated_at": "2023-04-29T22:11:57.331130+05:30"
+        },
+        {
+            "id": 2,
+            "name": "Topwear2",
+            "slug": "topwear",
+            "description": "Topwear related to men.",
+            "level": 1,
+            "parent": "Men",
+            "children": [
+                {
+                    "id": 3,
+                    "name": "T-shirts",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                }
+            ],
+            "products": [],
+            "created_at": "2023-04-29T20:10:26.116594+05:30",
+            "updated_at": "2023-04-29T22:11:57.331130+05:30"
+        },
+        {
+            "id": 2,
+            "name": "Topwear3",
+            "slug": "topwear",
+            "description": "Topwear related to men.",
+            "level": 1,
+            "parent": "Men",
+            "children": [
+                {
+                    "id": 3,
+                    "name": "T-shirts-1",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                },
+                {
+                    "id": 3,
+                    "name": "T-shirts-2",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                },
+                {
+                    "id": 3,
+                    "name": "T-shirts-3",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                },
+                {
+                    "id": 3,
+                    "name": "T-shirts-4",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                },
+                {
+                    "id": 3,
+                    "name": "T-shirts-5",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                }
+            ],
+            "products": [],
+            "created_at": "2023-04-29T20:10:26.116594+05:30",
+            "updated_at": "2023-04-29T22:11:57.331130+05:30"
+        },
+        {
+            "id": 2,
+            "name": "Topwear4",
+            "slug": "topwear",
+            "description": "Topwear related to men.",
+            "level": 1,
+            "parent": "Men",
+            "children": [
+                {
+                    "id": 3,
+                    "name": "T-shirts",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                }
+            ],
+            "products": [],
+            "created_at": "2023-04-29T20:10:26.116594+05:30",
+            "updated_at": "2023-04-29T22:11:57.331130+05:30"
+        },
+        {
+            "id": 2,
+            "name": "Topwear5",
+            "slug": "topwear",
+            "description": "Topwear related to men.",
+            "level": 1,
+            "parent": "Men",
+            "children": [
+                {
+                    "id": 3,
+                    "name": "T-shirts",
+                    "slug": "t-shirts",
+                    "description": "T-shirts related to men.",
+                    "level": 2,
+                    "parent": "Topwear",
+                    "children": [],
+                    "products": [],
+                    "created_at": "2023-04-29T20:37:43.381375+05:30",
+                    "updated_at": "2023-04-29T20:37:43.381427+05:30"
+                }
+            ],
+            "products": [],
+            "created_at": "2023-04-29T20:10:26.116594+05:30",
+            "updated_at": "2023-04-29T22:11:57.331130+05:30"
+        },
+        {
+            "id": 2,
+            "name": "Topwear6",
             "slug": "topwear",
             "description": "Topwear related to men.",
             "level": 1,

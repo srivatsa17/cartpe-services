@@ -8,8 +8,21 @@
     border-radius: 5px;
     border-width: 0;
     padding: 8px;
-    width: 350px;
     position: relative;
+}
+
+/* Styles for screens up to (Large - lg) */
+@media (max-width: 1199.98px) {
+    .searchInputs input {
+        width: 100%;
+    }
+}
+
+/* Styles for screens 1200 pixels and above (Extra Large - xl) */
+@media (min-width: 1200px) {
+    .searchInputs input {
+        width: 350px;
+    }
 }
 
 input:focus {

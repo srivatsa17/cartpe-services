@@ -1,3 +1,9 @@
+import { CATEGORY_LIST, PRODUCT_LIST } from "../constants/localStorageConstants";
+import {
+    CATEGORY_LIST_FAIL,
+    CATEGORY_LIST_REQUEST,
+    CATEGORY_LIST_SUCCESS
+} from "../constants/categoryConstants";
 import {
     CATEGORY_SEARCH_FAIL,
     CATEGORY_SEARCH_REQUEST,
@@ -12,7 +18,6 @@ import {
     PRODUCT_LIST_SUCCESS
 } from "../constants/productConstants";
 
-import { PRODUCT_LIST } from "../constants/localStorageConstants";
 import axiosInstance from "../utils/axios/axiosInterceptor";
 import getItemFromStorage from "../utils/localStorage/getItemFromStorage";
 import saveItemInStorage from "../utils/localStorage/saveItemInStorage";
@@ -82,6 +87,28 @@ export const getSearchedCategories = (searchedCategory) => async (dispatch) => {
     } catch(error) {
         dispatch({
             type: CATEGORY_SEARCH_FAIL,
+            payload: throwErrorResponse(error)
+        })
+    }
+}
+
+export const getCategoriesList = () => async (dispatch, getState) => {
+    try {
+        dispatch({ type: CATEGORY_LIST_REQUEST })
+        const categoryListFromStorage = getItemFromStorage(CATEGORY_LIST)
+        if(! categoryListFromStorage) {
+            const { data } = await axiosInstance.get("products/categories")
+            dispatch({ type: CATEGORY_LIST_SUCCESS, payload: data })
+            saveItemInStorage(CATEGORY_LIST, getState().categoryList)
+        } else {
+            dispatch({
+                type: CATEGORY_LIST_SUCCESS,
+                payload: categoryListFromStorage.categories
+            })
+        }
+    } catch(error) {
+        dispatch({
+            type: CATEGORY_LIST_FAIL,
             payload: throwErrorResponse(error)
         })
     }

@@ -11,6 +11,7 @@ import AlertMessage from "../../components/AlertMessages/AlertMessage";
 import { LOGIN_USER_IMAGE } from "../../constants/imageConstants";
 import Loader from "../../components/Loader/Loader";
 import { getCartItems } from "../../actions/cartActions";
+import { getCategoriesList } from "../../actions/productActions";
 import { loginUser } from '../../actions/authActions';
 
 function UserLoginScreen() {
@@ -68,6 +69,7 @@ function UserLoginScreen() {
         if(isLoggedIn === true) {
             navigate(HOME_SCREEN);
             dispatch(getCartItems())
+            dispatch(getCategoriesList())
         }
     }, [isLoggedIn, navigate, dispatch])
 

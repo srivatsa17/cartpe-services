@@ -6,6 +6,7 @@ import { FaRegHeart, FaRegUser, FaShoppingCart } from 'react-icons/fa';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CategoryDropdown from './CategoryDropdown';
 import { LOGIN_USER_SCREEN } from '../../constants/routes';
 import { LinkContainer } from 'react-router-bootstrap';
 import SearchBar from './SearchBar';
@@ -46,72 +47,12 @@ function Header() {
 
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className='me-auto'>
-                            <NavDropdown
-                                title="Men"
-                                id="collapsible-nav-dropdown"
-                                data-testid="categories-dropdown"
-                            >
-                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">
-                                    Another action
-                                </NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">
-                                    Separated link
-                                </NavDropdown.Item>
-                            </NavDropdown>
-                            <NavDropdown
-                                title="Women"
-                                id="collapsible-nav-dropdown"
-                                data-testid="categories-dropdown"
-                            >
-                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">
-                                    Another action
-                                </NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">
-                                    Separated link
-                                </NavDropdown.Item>
-                            </NavDropdown>
-                            <NavDropdown
-                                title="Kids"
-                                id="collapsible-nav-dropdown"
-                                data-testid="categories-dropdown"
-                            >
-                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">
-                                    Another action
-                                </NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">
-                                    Separated link
-                                </NavDropdown.Item>
-                            </NavDropdown>
-                            <NavDropdown
-                                title="Electronics"
-                                id="collapsible-nav-dropdown"
-                                data-testid="categories-dropdown"
-                            >
-                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">
-                                    Another action
-                                </NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">
-                                    Separated link
-                                </NavDropdown.Item>
-                            </NavDropdown>
+                            <CategoryDropdown  />
                         </Nav>
 
                         <Nav>
                             <SearchBar />
                         </Nav>
-
 
                         <Nav className="justify-content-end">
                             <NavDropdown

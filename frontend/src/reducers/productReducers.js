@@ -1,4 +1,9 @@
 import {
+    CATEGORY_LIST_FAIL,
+    CATEGORY_LIST_REQUEST,
+    CATEGORY_LIST_SUCCESS
+} from "../constants/categoryConstants";
+import {
     CATEGORY_SEARCH_FAIL,
     CATEGORY_SEARCH_REQUEST,
     CATEGORY_SEARCH_SUCCESS
@@ -45,6 +50,19 @@ export const categorySearchReducer = (state = { categories : [] }, action) => {
         case CATEGORY_SEARCH_SUCCESS:
             return { isLoading: false, categories: action.payload }
         case CATEGORY_SEARCH_FAIL:
+            return { isLoading: false, error: action.payload }
+        default:
+            return state
+    }
+}
+
+export const categoryListReducer = (state = { categories : [] }, action) => {
+    switch(action.type) {
+        case CATEGORY_LIST_REQUEST:
+            return { isLoading: true, ...state }
+        case CATEGORY_LIST_SUCCESS:
+            return { isLoading: false, categories: action.payload }
+        case CATEGORY_LIST_FAIL:
             return { isLoading: false, error: action.payload }
         default:
             return state

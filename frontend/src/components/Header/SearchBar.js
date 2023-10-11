@@ -15,7 +15,7 @@ function SearchBar() {
     const searchResultsRef = useRef(null);
     const dispatch = useDispatch()
     const categoryList = useSelector(state => state.searchedCategories)
-    var { categories, error } = categoryList
+    const { categories, isLoading, error } = categoryList
 
     const debouncedSendRequest = useMemo(() => {
         const sendRequest = (searchText) => {
@@ -88,8 +88,8 @@ function SearchBar() {
             
             <div ref={searchResultsRef}>
                 {
-                    showSearchResult && (
-                        error || ! categories ? (
+                    (isLoading === false && showSearchResult === true) && (
+                        (error || ! categories) ? (
                             <div className="searchResults">
                                 <div className="searchItem noResultFound">
                                     Something went wrong!

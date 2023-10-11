@@ -1,7 +1,25 @@
-import { CART_ITEMS, PRODUCT_LIST, USER_LOGIN_DETAILS, USER_REGISTER_DETAILS } from './constants/localStorageConstants';
-import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux';
-import { categorySearchReducer, productDetailsReducer, productListReducer } from './reducers/productReducers';
-import { userLoginReducer, userRegisterReducer } from './reducers/authReducers';
+import {
+    CART_ITEMS,
+    CATEGORY_LIST,
+    PRODUCT_LIST,
+    USER_LOGIN_DETAILS,
+    USER_REGISTER_DETAILS
+} from './constants/localStorageConstants';
+import {
+    applyMiddleware,
+    combineReducers,
+    legacy_createStore as createStore
+} from 'redux';
+import {
+    categoryListReducer,
+    categorySearchReducer,
+    productDetailsReducer,
+    productListReducer
+} from './reducers/productReducers';
+import {
+    userLoginReducer,
+    userRegisterReducer
+} from './reducers/authReducers';
 
 import { cartReducer } from './reducers/cartReducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -12,10 +30,12 @@ const productListFromStorage = getItemFromStorage(PRODUCT_LIST) ?? {}
 const cartItemsFromStorage = getItemFromStorage(CART_ITEMS) ?? []
 const userLoginDetailsFromStorage = getItemFromStorage(USER_LOGIN_DETAILS) ?? {}
 const userRegisterDetailsFromStorage = getItemFromStorage(USER_REGISTER_DETAILS) ?? {}
+const categoryListFromStorage = getItemFromStorage(CATEGORY_LIST) ?? []
 
 const reducer = combineReducers({
     productList: productListReducer,
     productDetails: productDetailsReducer,
+    categoryList: categoryListReducer, 
     searchedCategories: categorySearchReducer,
     cart: cartReducer,
     userLoginDetails: userLoginReducer,
@@ -26,6 +46,9 @@ const persistedState = {
     productList: {
         products: productListFromStorage.products ?? [],
         searchedCategory: productListFromStorage.searchedCategory
+    },
+    categoryList: {
+        categories: categoryListFromStorage ?? []
     },
     cart: {
         cartItems: cartItemsFromStorage,
