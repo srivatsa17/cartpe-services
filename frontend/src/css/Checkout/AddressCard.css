@@ -1,0 +1,22 @@
+.address-card-container {
+    margin-top: 40px;
+}
+
+.address-card-container #address-note {
+    font-size: 14px; 
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.checkout-order-summary-info #items-info-placeholder, 
+.checkout-order-summary-info #delivery-info-placeholder {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.checkout-order-total-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+}

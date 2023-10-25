@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
     CART_SCREEN,
+    CHECKOUT_SCREEN,
     HOME_SCREEN,
     LOGIN_USER_SCREEN,
     PRODUCT_SCREEN,
@@ -15,6 +16,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import AnonymousUserRoute from './routing/AnonymousUserRoute';
 import CartScreen from './screens/CartScreen';
+import CheckoutScreen from './screens/CheckoutScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import ProductSearchScreen from './screens/ProductSearchScreen';
@@ -43,6 +45,7 @@ function App() {
                     <Route path={PRODUCT_SEARCH_SCREEN} element={<ProductSearchScreen />}/>
                     <Route path={PRODUCT_SCREEN} element={<ProductScreen />} />
                     <Route path={CART_SCREEN} element={<CartScreen />} />
+                    <Route path={CHECKOUT_SCREEN} element={<CheckoutScreen />} />
                 </Route>
             </Routes>
         </Router>

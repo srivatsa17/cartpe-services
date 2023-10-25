@@ -49,11 +49,15 @@ function createAxiosResponseInterceptor() {
                     refresh: refresh_token,
                 })
                 .then((response) => {
-                    const updateData = {
-                        "access_token": response.data.access,
-                        "refresh_token": response.data.refresh
-                    }
-                    updateItemInStorage(USER_REGISTER_DETAILS, updateData);
+                    const tokenData = {
+                        "access_token": response.data.access
+                    };
+
+                    const updateRegisterData = { ...tokenData };
+                    const updateLoginData = { ...tokenData, "isLoggedIn": true };
+
+                    updateItemInStorage(USER_LOGIN_DETAILS, updateLoginData);
+                    updateItemInStorage(USER_REGISTER_DETAILS, updateRegisterData);
                     error.response.config.headers["Authorization"] = "Bearer " + response.data.access;
                     // Retry the initial call, but with the updated token in the headers.
                     // Resolves the promise if successful

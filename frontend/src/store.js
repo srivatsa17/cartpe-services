@@ -30,7 +30,7 @@ const productListFromStorage = getItemFromStorage(PRODUCT_LIST) ?? {}
 const cartItemsFromStorage = getItemFromStorage(CART_ITEMS) ?? []
 const userLoginDetailsFromStorage = getItemFromStorage(USER_LOGIN_DETAILS) ?? {}
 const userRegisterDetailsFromStorage = getItemFromStorage(USER_REGISTER_DETAILS) ?? {}
-const categoryListFromStorage = getItemFromStorage(CATEGORY_LIST) ?? []
+const categoryListFromStorage = getItemFromStorage(CATEGORY_LIST) ?? {}
 
 const reducer = combineReducers({
     productList: productListReducer,
@@ -47,9 +47,7 @@ const persistedState = {
         products: productListFromStorage.products ?? [],
         searchedCategory: productListFromStorage.searchedCategory
     },
-    categoryList: {
-        categories: categoryListFromStorage ?? []
-    },
+    categoryList: categoryListFromStorage,
     cart: {
         cartItems: cartItemsFromStorage,
     },

@@ -1,0 +1,29 @@
+.checkout-order-summary-card-container {
+    margin-top: 40px;
+}
+
+.checkout-order-summary-card-heading {
+    font-size: 20px;
+}
+
+.checkout-order-summary-mrp,
+.checkout-order-summary-discount-price,
+.checkout-order-summary-convenience-fee,
+.checkout-order-summary-round-off  {
+    display:flex; 
+    justify-content:space-between; 
+    font-size: 16px;
+    padding-bottom: 10px;
+}
+
+.checkout-order-summary-total-amount {
+    display:flex; 
+    justify-content:space-between; 
+    font-size: 19px;
+}
+
+.checkout-order-summary-savings {
+    font-size: 16px;
+    padding-top: 10px;
+    color: #F31260;
+}

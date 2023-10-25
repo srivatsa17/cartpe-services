@@ -2,7 +2,9 @@ import "../../css/CartScreen/CartSubTotal.css";
 
 import { Button, ListGroup } from "react-bootstrap";
 
+import { CHECKOUT_SCREEN } from "../../constants/routes";
 import { FaRupeeSign } from "react-icons/fa";
+import { LinkContainer } from "react-router-bootstrap";
 import React from "react";
 
 function CartSubTotal({ cartItems }) {
@@ -46,9 +48,13 @@ function CartSubTotal({ cartItems }) {
                 </ListGroup.Item>
             </ListGroup>
             <br />
-            <Button className="checkout-button" variant="dark" disabled={isCartEmpty}>
-                Proceed to checkout
-            </Button>
+            
+            <LinkContainer to={CHECKOUT_SCREEN}>
+                <Button className="checkout-button" variant="dark" disabled={isCartEmpty}>
+                    Proceed to checkout
+                </Button>
+            </LinkContainer>
+            
         </>
     );
 }
