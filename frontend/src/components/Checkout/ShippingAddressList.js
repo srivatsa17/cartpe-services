@@ -1,5 +1,7 @@
-import { Form } from "react-bootstrap";
-import React from "react";
+import { Button, Form } from "react-bootstrap";
+import React, { useState } from "react";
+
+import EditAddress from "./EditAddress";
 
 const shippingAddress = [
     {
@@ -22,28 +24,66 @@ const shippingAddress = [
         "state":"Karnataka",
         "country":"India",
         "pin_code":"560064",
-        "alternate_phone":"9008430442"
+        "alternate_phone":"8277452193"
     }
 ]
 
 function ShippingAddressList() {
+    const defaultAddressId = shippingAddress?.findIndex((shippingAddress) => shippingAddress.is_default)
+
+    const [selectedItem, setSelectedItem] = useState(defaultAddressId);
+
+    const [showAddressModal, setShowAddressModal] = useState(false);
+
+    const handleShowNewAddressModal = () => setShowAddressModal(true);
+    const handleCloseNewAddressModal = () => setShowAddressModal(false);
+
+    const addressLabel = (shippingAddress) => {
+        return (
+            <div>
+                <b>{shippingAddress.name}</b> - {shippingAddress.line1}, {shippingAddress.line2}, {shippingAddress.city}, {shippingAddress.state}, {shippingAddress.country}, {shippingAddress.pin_code}, {shippingAddress.alternate_phone}
+            </div>
+        )
+    }
+
+    const handleCheckboxClick = (index) => {
+        setSelectedItem(index)
+    }
+
     return (
         <React.Fragment>
         {
-            shippingAddress?.map((shippingAddress, index) => {
+            shippingAddress?.map((address, index) => {
                 return (
                     <div key={index}>
                         <Form.Check
                             inline
-                            label={
-                                <div>
-                                    <b>{shippingAddress.name}</b> {shippingAddress.line1}, {shippingAddress.line2}, {shippingAddress.city}, {shippingAddress.state}, {shippingAddress.country}, {shippingAddress.pin_code}, {shippingAddress.alternate_phone}
-                                </div>
-                            }
+                            label={addressLabel(address)}
                             name="group1"
-                            type="radio"
-                            defaultChecked={shippingAddress.is_default}
+                            type="checkbox"
+                            checked={index === selectedItem}
+                            onChange={() => handleCheckboxClick(index)}
                         />
+                        {
+                            selectedItem === index &&
+                            <div>
+                                <Button
+                                    className="mx-4 mt-2"
+                                    variant="outline-dark"
+                                    onClick={handleShowNewAddressModal}
+                                >
+                                    Edit
+                                </Button>
+                                <Button className="mt-2" variant="outline-danger">
+                                    Remove
+                                </Button>
+                                <EditAddress
+                                    showAddressModal={showAddressModal}
+                                    handleCloseNewAddressModal={handleCloseNewAddressModal}
+                                    address={address}
+                                />
+                            </div>
+                        }
                         <hr />
                     </div>
                 )

@@ -3,7 +3,7 @@ import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import React from "react";
 import { useState } from "react";
 
-function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
+function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) {
     const [validated, setValidated] = useState(false);
 
     const handleSubmit = (event) => {
@@ -25,7 +25,7 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
             >
                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Add new Address</Modal.Title>
+                        <Modal.Title>Edit Address</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
@@ -37,7 +37,10 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
                             <Row>
                                 <Col>
                                     <Form.Label>Name</Form.Label>
-                                    <Form.Control type="text" required />
+                                    <Form.Control type="text"
+                                        required
+                                        defaultValue={address.name}
+                                    />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter a name.
                                     </Form.Control.Feedback>
@@ -46,7 +49,10 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
                                     <Form.Label>Phone number</Form.Label>
                                     <InputGroup className="mb-3" hasValidation>
                                         <InputGroup.Text>+91</InputGroup.Text>
-                                        <Form.Control type="text" required />
+                                        <Form.Control type="text"
+                                            required
+                                            defaultValue={address.alternate_phone}
+                                        />
                                         <Form.Control.Feedback type="invalid">
                                             Please enter phone number.
                                         </Form.Control.Feedback>
@@ -63,14 +69,20 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
                             <Row>
                                 <Col>
                                     <Form.Label>Flat, House no., Building, Company, Apartment</Form.Label>
-                                    <Form.Control type="text" required />
+                                    <Form.Control type="text"
+                                        required
+                                        defaultValue={address.line1}
+                                    />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter building name.
                                     </Form.Control.Feedback>
                                 </Col>
                                 <Col>
                                     <Form.Label>Area, Street, Sector, Village</Form.Label>
-                                    <Form.Control type="text" required />
+                                    <Form.Control type="text"
+                                        required
+                                        defaultValue={address.line2}
+                                    />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter area name.
                                     </Form.Control.Feedback>
@@ -82,21 +94,30 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
                             <Row>
                                 <Col>
                                     <Form.Label>Town/City</Form.Label>
-                                    <Form.Control type="text" required />
+                                    <Form.Control type="text"
+                                        required
+                                        defaultValue={address.city}
+                                    />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter town/city.
                                     </Form.Control.Feedback>
                                 </Col>
                                 <Col>
                                     <Form.Label>State</Form.Label>
-                                    <Form.Control type="text" required />
+                                    <Form.Control type="text"
+                                        required
+                                        defaultValue={address.state}
+                                    />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter state.
                                     </Form.Control.Feedback>
                                 </Col>
                                 <Col>
                                     <Form.Label>Pin Code</Form.Label>
-                                    <Form.Control type="text" required />
+                                    <Form.Control type="text"
+                                        required
+                                        defaultValue={address.pin_code}
+                                    />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter pin code.
                                     </Form.Control.Feedback>
@@ -110,6 +131,7 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
                                 label="Set as default address"
                                 name="group1"
                                 type="checkbox"
+                                defaultChecked={address.is_default}
                                 required
                             />
                         </Form.Group>
@@ -120,7 +142,7 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
                             Close
                         </Button>
                         <Button type="submit" variant="success">
-                            Save Address
+                            Update Address
                         </Button>
                     </Modal.Footer>
                 </Form>
@@ -128,4 +150,4 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
     )
 }
 
-export default AddNewAddress;
+export default EditAddress;
