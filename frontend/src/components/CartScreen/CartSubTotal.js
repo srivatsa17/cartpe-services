@@ -7,7 +7,7 @@ import { FaRupeeSign } from "react-icons/fa";
 import { LinkContainer } from "react-router-bootstrap";
 import React from "react";
 
-function CartSubTotal({ cartItems }) {
+function CartSubTotal({ cartItems, error }) {
     const totalCartItemsQuantity = cartItems.length;
     const totalMRP = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity * cartItem.product.price, 0).toFixed(2);
     const minusSign = "-";
@@ -50,7 +50,7 @@ function CartSubTotal({ cartItems }) {
             <br />
             
             <LinkContainer to={CHECKOUT_SCREEN}>
-                <Button className="checkout-button" variant="dark" disabled={isCartEmpty}>
+                <Button className="checkout-button" variant="dark" disabled={isCartEmpty || error}>
                     Proceed to checkout
                 </Button>
             </LinkContainer>

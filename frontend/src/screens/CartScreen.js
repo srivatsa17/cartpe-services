@@ -70,7 +70,7 @@ function CartScreen() {
                 }
             </Col>
             <Col>
-                <CartSubTotal cartItems={cartItems}/>
+                <CartSubTotal cartItems={cartItems} error={error}/>
             </Col>
         </Row>
     )
