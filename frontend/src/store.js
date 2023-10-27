@@ -1,4 +1,5 @@
 import {
+    ADDRESS_LIST,
     CART_ITEMS,
     CATEGORY_LIST,
     PRODUCT_LIST,
@@ -21,6 +22,7 @@ import {
     userRegisterReducer
 } from './reducers/authReducers';
 
+import { addressReducer } from './reducers/addressReducers';
 import { cartReducer } from './reducers/cartReducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import getItemFromStorage from './utils/localStorage/getItemFromStorage';
@@ -28,6 +30,7 @@ import thunk from 'redux-thunk';
 
 const productListFromStorage = getItemFromStorage(PRODUCT_LIST) ?? {}
 const cartItemsFromStorage = getItemFromStorage(CART_ITEMS) ?? []
+const addressListFromStorage = getItemFromStorage(ADDRESS_LIST) ?? []
 const userLoginDetailsFromStorage = getItemFromStorage(USER_LOGIN_DETAILS) ?? {}
 const userRegisterDetailsFromStorage = getItemFromStorage(USER_REGISTER_DETAILS) ?? {}
 const categoryListFromStorage = getItemFromStorage(CATEGORY_LIST) ?? {}
@@ -38,6 +41,7 @@ const reducer = combineReducers({
     categoryList: categoryListReducer, 
     searchedCategories: categorySearchReducer,
     cart: cartReducer,
+    address: addressReducer,
     userLoginDetails: userLoginReducer,
     userRegisterDetails: userRegisterReducer,
 })
@@ -50,6 +54,9 @@ const persistedState = {
     categoryList: categoryListFromStorage,
     cart: {
         cartItems: cartItemsFromStorage,
+    },
+    address: {
+        addressList: addressListFromStorage,
     },
     userLoginDetails: {
         isLoggedIn: userLoginDetailsFromStorage.isLoggedIn || false
