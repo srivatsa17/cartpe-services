@@ -1,37 +1,24 @@
 import { Button, Form } from "react-bootstrap";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
+import AlertMessage from "../AlertMessages/AlertMessage";
 import EditAddress from "./EditAddress";
-
-const shippingAddress = [
-    {
-        "name":"Srivatsa",
-        "is_default":true,
-        "line1":"014 A Block, DS Max Synergy",
-        "line2":"Agrahara Layout main road",
-        "city":"Bangalore",
-        "state":"Karnataka",
-        "country":"India",
-        "pin_code":"560064",
-        "alternate_phone":"9008430442"
-    },
-    {
-        "name":"Chaithra",
-        "is_default":false,
-        "line1":"014 A Block, DS Max Synergy",
-        "line2":"Agrahara Layout main road",
-        "city":"Bangalore",
-        "state":"Karnataka",
-        "country":"India",
-        "pin_code":"560064",
-        "alternate_phone":"8277452193"
-    }
-]
+import Loader from "../Loader/Loader";
+import { getShippingAddressList } from "../../actions/addressActions";
 
 function ShippingAddressList() {
-    const defaultAddressId = shippingAddress?.findIndex((shippingAddress) => shippingAddress.is_default)
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(getShippingAddressList())
+    }, [dispatch])
 
-    const [selectedItem, setSelectedItem] = useState(defaultAddressId);
+    const { isLoading, addressList, error } = useSelector(state => state.address)
+
+    const defaultAddressIndex = addressList.findIndex((shippingAddress) => shippingAddress.is_default);
+    const defaultSelectedItem = defaultAddressIndex !== -1 ? defaultAddressIndex : 0;
+
+    const [selectedItem, setSelectedItem] = useState(defaultSelectedItem);
 
     const [showAddressModal, setShowAddressModal] = useState(false);
 
@@ -41,7 +28,7 @@ function ShippingAddressList() {
     const addressLabel = (shippingAddress) => {
         return (
             <div>
-                <b>{shippingAddress.name}</b> - {shippingAddress.line1}, {shippingAddress.line2}, {shippingAddress.city}, {shippingAddress.state}, {shippingAddress.country}, {shippingAddress.pin_code}, {shippingAddress.alternate_phone}
+                <b>{shippingAddress.name}</b> - {shippingAddress.address.line1}, {shippingAddress.address.line2}, {shippingAddress.address.city}, {shippingAddress.address.state}, {shippingAddress.address.country}, {shippingAddress.address.pin_code}, {shippingAddress.alternate_phone}
             </div>
         )
     }
@@ -53,13 +40,25 @@ function ShippingAddressList() {
     return (
         <React.Fragment>
         {
-            shippingAddress?.map((address, index) => {
+            isLoading ?
+                <>
+                    <Loader />
+                    <br /><br />
+                </>
+            : error ?
+                <div className="mb-3">
+                    <AlertMessage variant="danger">Error in obtaining shipping address list.</AlertMessage>
+                </div>
+            : addressList.length === 0 ?
+                <div className="mb-3">
+                    Looks like there is no shipping address added yet. Please go ahead and add one!
+                </div>
+            : addressList?.map((address, index) => {
                 return (
                     <div key={index}>
                         <Form.Check
                             inline
                             label={addressLabel(address)}
-                            name="group1"
                             type="checkbox"
                             checked={index === selectedItem}
                             onChange={() => handleCheckboxClick(index)}
@@ -80,7 +79,7 @@ function ShippingAddressList() {
                                 <EditAddress
                                     showAddressModal={showAddressModal}
                                     handleCloseNewAddressModal={handleCloseNewAddressModal}
-                                    address={address}
+                                    shippingAddress={address}
                                 />
                             </div>
                         }

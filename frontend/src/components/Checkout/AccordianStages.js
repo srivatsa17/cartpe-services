@@ -7,6 +7,7 @@ import AddNewAddress from "./AddNewAddress";
 import DisplayCartItems from "./DisplayCartItems";
 import PaymentOptions from "./PaymentOptions";
 import ShippingAddressList from "./ShippingAddressList";
+import { useSelector } from "react-redux";
 
 function AccordianStages({
     activeKey,
@@ -20,6 +21,8 @@ function AccordianStages({
     const handleShowNewAddressModal = () => setShowAddressModal(true);
     const handleCloseNewAddressModal = () => setShowAddressModal(false);
 
+    const { isLoading, addressList, error } = useSelector(state => state.address)
+
     return (
         <div className="accordian-container">
             <Accordion activeKey={activeKey}>
@@ -29,10 +32,19 @@ function AccordianStages({
                     </Accordion.Header>
                     <Accordion.Body>
                         <ShippingAddressList />
-                        <Button variant="success" onClick={() => handleActiveAccordionItem("1")}>
+                        <Button
+                            variant="success"
+                            onClick={() => handleActiveAccordionItem("1")}
+                            disabled={ addressList.length === 0 || isLoading || error }
+                        >
                             Use this Address
                         </Button>
-                        <Button className="mx-3" variant="dark" onClick={handleShowNewAddressModal}>
+                        <Button
+                            className="mx-3"
+                            variant="dark"
+                            onClick={handleShowNewAddressModal}
+                            disabled={ isLoading || error }
+                        >
                             Add new Address
                         </Button>
                         <AddNewAddress

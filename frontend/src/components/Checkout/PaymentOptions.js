@@ -25,7 +25,7 @@ function PaymentOptions({ handleActiveAccordionItem, isTermsAndConditionsChecked
                 <Form.Check
                     type="checkbox"
                     checked={isTermsAndConditionsChecked}
-                    onClick={() => setIsTermsAndConditionsChecked(!isTermsAndConditionsChecked)}
+                    onChange={() => setIsTermsAndConditionsChecked(!isTermsAndConditionsChecked)}
                     label={termsAndConditionsLabel()}
                 />
             </Form>

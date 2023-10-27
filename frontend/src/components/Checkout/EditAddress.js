@@ -3,7 +3,7 @@ import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import React from "react";
 import { useState } from "react";
 
-function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) {
+function EditAddress({ showAddressModal, handleCloseNewAddressModal, shippingAddress }) {
     const [validated, setValidated] = useState(false);
 
     const handleSubmit = (event) => {
@@ -39,7 +39,7 @@ function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) 
                                     <Form.Label>Name</Form.Label>
                                     <Form.Control type="text"
                                         required
-                                        defaultValue={address.name}
+                                        defaultValue={shippingAddress.name}
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter a name.
@@ -51,7 +51,7 @@ function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) 
                                         <InputGroup.Text>+91</InputGroup.Text>
                                         <Form.Control type="text"
                                             required
-                                            defaultValue={address.alternate_phone}
+                                            defaultValue={shippingAddress.alternate_phone}
                                         />
                                         <Form.Control.Feedback type="invalid">
                                             Please enter phone number.
@@ -71,7 +71,7 @@ function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) 
                                     <Form.Label>Flat, House no., Building, Company, Apartment</Form.Label>
                                     <Form.Control type="text"
                                         required
-                                        defaultValue={address.line1}
+                                        defaultValue={shippingAddress.address.line1}
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter building name.
@@ -81,7 +81,7 @@ function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) 
                                     <Form.Label>Area, Street, Sector, Village</Form.Label>
                                     <Form.Control type="text"
                                         required
-                                        defaultValue={address.line2}
+                                        defaultValue={shippingAddress.address.line2}
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter area name.
@@ -96,7 +96,7 @@ function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) 
                                     <Form.Label>Town/City</Form.Label>
                                     <Form.Control type="text"
                                         required
-                                        defaultValue={address.city}
+                                        defaultValue={shippingAddress.address.city}
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter town/city.
@@ -106,7 +106,7 @@ function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) 
                                     <Form.Label>State</Form.Label>
                                     <Form.Control type="text"
                                         required
-                                        defaultValue={address.state}
+                                        defaultValue={shippingAddress.address.state}
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter state.
@@ -116,7 +116,7 @@ function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) 
                                     <Form.Label>Pin Code</Form.Label>
                                     <Form.Control type="text"
                                         required
-                                        defaultValue={address.pin_code}
+                                        defaultValue={shippingAddress.address.pin_code}
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         Please enter pin code.
@@ -125,13 +125,33 @@ function EditAddress({ showAddressModal, handleCloseNewAddressModal, address }) 
                             </Row>
                         </Form.Group>
 
+                        <Form.Label>
+                            Save address as
+                        </Form.Label>
+                        <Form.Group className="mb-3">
+                            {
+                                ["Home", "Work", "Other"].map((addressType, index) => {
+                                    return (
+                                        <Form.Check
+                                            key={index}
+                                            inline
+                                            label={addressType}
+                                            type="radio"
+                                            defaultChecked={addressType === shippingAddress.type}
+                                            required
+                                        />
+                                    )
+                                })
+                            }
+                        </Form.Group>
+
                         <Form.Group className="mb-3">
                             <Form.Check
                                 inline
-                                label="Set as default address"
+                                label="Mark as my default address"
                                 name="group1"
                                 type="checkbox"
-                                defaultChecked={address.is_default}
+                                defaultChecked={shippingAddress.is_default}
                                 required
                             />
                         </Form.Group>
