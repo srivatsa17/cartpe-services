@@ -26,8 +26,9 @@ class Address(models.Model):
     
 class UserAddress(models.Model):
     ADDRESS_TYPE_CHOICES = (
-        (1, "Home"),
-        (2, "Work")
+        ("Home", "Home"),
+        ("Work", "Work"),
+        ("Other", "Other")
     )
     name = models.CharField(max_length = 255, null = False, blank = False)
     user = models.ForeignKey(to = User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'user_address')

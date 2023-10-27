@@ -34,7 +34,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field = 'email', read_only = True)
     address = AddressSerializer()
     alternate_phone = serializers.CharField(min_length = 1, max_length = 10, allow_blank = False, trim_whitespace = True)
-    type = serializers.ChoiceField(choices=[(1, "Home"), (2, "Work")])
+    type = serializers.ChoiceField(choices=[("Home", "Home"), ("Work", "Work"), ("Other", "Other")])
     is_default = serializers.BooleanField(allow_null = False)
     created_at = serializers.DateTimeField(read_only = True)
     updated_at = serializers.DateTimeField(read_only = True)
