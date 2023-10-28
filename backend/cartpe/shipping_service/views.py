@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from shipping_service.models import Country, Address, UserAddress
 from shipping_service.serializers import CountrySerializer, AddressSerializer, UserAddressSerializer
@@ -58,7 +59,7 @@ class UserAddressAPIView(generics.GenericAPIView):
         address_serializer = AddressSerializer(data = request.data.get('address'))
         serializer = self.serializer_class(data = request.data)
 
-        if address_serializer.is_valid() and serializer.is_valid():
+        if serializer.is_valid() and address_serializer.is_valid():
             # Save the address first
             address = address_serializer.save()
             # Now set the address and user and save the user address
@@ -67,3 +68,32 @@ class UserAddressAPIView(generics.GenericAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserAddressByIdAPIView(generics.GenericAPIView):
+    serializer_class = UserAddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, id):
+        try:
+            return UserAddress.objects.get(id = id, user = self.request.user)
+        except UserAddress.DoesNotExist:
+            response = { "message" : "Unable to find user address with id " + str(id) }
+            raise NotFound(response)
+
+    def put(self, request, id):
+        user_address = self.get_object(id)
+
+        serializer = self.serializer_class(instance = user_address, data = request.data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        user_address = self.get_object(id)
+        # Delete the associated address instance.
+        address = user_address.address
+        address.delete()
+        # Delete the user address instance.
+        user_address.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)

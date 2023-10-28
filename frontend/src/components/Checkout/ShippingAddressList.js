@@ -1,11 +1,11 @@
 import { Button, Form } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
+import { getShippingAddressList, removeShippingAddress } from "../../actions/addressActions";
 import { useDispatch, useSelector } from "react-redux";
 
 import AlertMessage from "../AlertMessages/AlertMessage";
 import EditAddress from "./EditAddress";
 import Loader from "../Loader/Loader";
-import { getShippingAddressList } from "../../actions/addressActions";
 
 function ShippingAddressList() {
     const dispatch = useDispatch()
@@ -35,6 +35,10 @@ function ShippingAddressList() {
 
     const handleCheckboxClick = (index) => {
         setSelectedItem(index)
+    }
+
+    const handleRemoveShippingAddress = (shippingAddressId) => {
+        dispatch(removeShippingAddress(shippingAddressId))
     }
 
     return (
@@ -73,13 +77,17 @@ function ShippingAddressList() {
                                 >
                                     Edit
                                 </Button>
-                                <Button className="mt-2" variant="outline-danger">
+                                <Button 
+                                    className="mt-2" 
+                                    variant="outline-danger"
+                                    onClick={handleRemoveShippingAddress}
+                                >
                                     Remove
                                 </Button>
                                 <EditAddress
                                     showAddressModal={showAddressModal}
                                     handleCloseNewAddressModal={handleCloseNewAddressModal}
-                                    shippingAddress={address}
+                                    address={address}
                                 />
                             </div>
                         }

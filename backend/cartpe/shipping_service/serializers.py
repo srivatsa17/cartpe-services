@@ -54,3 +54,25 @@ class UserAddressSerializer(serializers.ModelSerializer):
             user_address_obj.save()
 
         return attrs
+
+    def update(self, instance, validated_data):
+        """
+        The update method is written to update the address model fields from UserAddressByIdAPIView.
+        Since address data is a nested object in request data, we need to update individual fields of address model
+        in the following way.
+        """
+        # Get the address object from validated request data.
+        address_data = validated_data.pop('address')
+        # Get the serialized data of address object from UserAddressSerializer.
+        address = instance.address
+
+        # Update the fields of address model and save it.
+        for attr, value in address_data.items():
+            setattr(address, attr, value)
+        address.save()  # Save the updated address instance.
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()  # Save the updated user address instance.
+
+        return instance
