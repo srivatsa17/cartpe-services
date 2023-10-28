@@ -2,6 +2,7 @@ import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import AlertMessage from "../AlertMessages/AlertMessage";
+import Loader from "../Loader/Loader";
 import React from "react";
 import { addShippingAddress } from "../../actions/addressActions";
 import { useState } from "react";
@@ -60,6 +61,11 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
         setFormData(initialFormData)
     }
 
+    const handleCloseButton = () => {
+        setValidated(false)
+        handleCloseNewAddressModal()
+    }
+
     const handleSubmit = (event) => {
         const form = event.currentTarget;
         event.preventDefault();
@@ -76,46 +82,29 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
 
     return (
         <React.Fragment>
-            {
-                isLoading ?
-                    <>
-
-                    </>
-                : error ?
-                    <Modal
-                        show={showAddressModal}
-                        onHide={handleCloseNewAddressModal}
-                        backdrop="static"
-                        centered
-                        size="lg"
-                    >
-                        <Modal.Header closeButton>
-                            <Modal.Title>Add new Address</Modal.Title>
-                        </Modal.Header>
+            <Modal
+                show={showAddressModal}
+                onHide={handleCloseNewAddressModal}
+                backdrop="static"
+                centered
+                size="lg"
+            >
+                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add new Address</Modal.Title>
+                    </Modal.Header>
+                    {
+                        isLoading ?
+                        <Modal.Body>
+                            <Loader />
+                        </Modal.Body>
+                        : error ?
                         <Modal.Body>
                             <AlertMessage variant="danger">
                                 Oops! Something went wrong while adding new address!
                             </AlertMessage>
                         </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="dark" onClick={() => handleCloseNewAddressModal()}>
-                                Close
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
-                :
-                <Modal
-                    show={showAddressModal}
-                    onHide={handleCloseNewAddressModal}
-                    backdrop="static"
-                    centered
-                    size="lg"
-                >
-                    <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Add new Address</Modal.Title>
-                        </Modal.Header>
-
+                        :
                         <Modal.Body>
                             <Form.Label>
                                 <strong>Contact Details</strong>
@@ -259,20 +248,21 @@ function AddNewAddress({ showAddressModal, handleCloseNewAddressModal }) {
                                 />
                             </Form.Group>
                         </Modal.Body>
-
-                        <Modal.Footer>
-                            <Button variant="dark" onClick={() => handleCloseNewAddressModal()}>
-                                Close
-                            </Button>
+                    }
+                    <Modal.Footer>
+                        <Button variant="dark" onClick={handleCloseButton}>
+                            Close
+                        </Button>
+                        {
+                            ( !isLoading && !error ) &&
                             <Button type="submit" variant="success">
                                 Save Address
                             </Button>
-                        </Modal.Footer>
-                    </Form>
-                </Modal>
-            }
+                        }
+                    </Modal.Footer>
+                </Form>
+            </Modal>
         </React.Fragment>
-
     )
 }
 
