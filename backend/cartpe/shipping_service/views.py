@@ -48,7 +48,7 @@ class UserAddressAPIView(generics.GenericAPIView):
 
     def get_queryset(self):
         user = self.get_object()
-        return UserAddress.objects.filter(user = user)
+        return UserAddress.objects.filter(user = user).order_by('id')
 
     def get(self, request):
         user_addresses = self.get_queryset()
@@ -57,7 +57,7 @@ class UserAddressAPIView(generics.GenericAPIView):
 
     def post(self, request):
         address_serializer = AddressSerializer(data = request.data.get('address'))
-        serializer = self.serializer_class(data = request.data)
+        serializer = self.serializer_class(data = request.data, context = {'user' : self.get_object()})
 
         if serializer.is_valid() and address_serializer.is_valid():
             # Save the address first
@@ -83,7 +83,7 @@ class UserAddressByIdAPIView(generics.GenericAPIView):
     def put(self, request, id):
         user_address = self.get_object(id)
 
-        serializer = self.serializer_class(instance = user_address, data = request.data, partial = True)
+        serializer = self.serializer_class(instance = user_address, data = request.data, partial = True, context = {'user' : self.request.user})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = status.HTTP_200_OK)

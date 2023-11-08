@@ -1,4 +1,4 @@
-import "../../css/Checkout/OrderSummaryCard.css";
+import "../../../css/Checkout/OrderSummaryCard.css";
 
 import { Button, Card } from 'react-bootstrap';
 

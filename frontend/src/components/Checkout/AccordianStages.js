@@ -3,10 +3,10 @@ import "../../css/Checkout/AccordianStages.css";
 import { Accordion, Button } from "react-bootstrap";
 import React, { useState } from "react";
 
-import AddNewAddress from "./AddNewAddress";
-import DisplayCartItems from "./DisplayCartItems";
-import PaymentOptions from "./PaymentOptions";
-import ShippingAddressList from "./ShippingAddressList";
+import DisplayCartItems from "./OrderItems/DisplayCartItems";
+import PaymentOptions from "./PaymentOptions/PaymentOptions";
+import ShippingAddress from "./ShippingAddress/ShippingAddress";
+import ShippingAddressList from "./ShippingAddress/AddressList";
 import { useSelector } from "react-redux";
 
 function AccordianStages({
@@ -14,14 +14,9 @@ function AccordianStages({
     handleActiveAccordionItem,
     cartItems,
     isTermsAndConditionsChecked,
-    setIsTermsAndConditionsChecked
+    setIsTermsAndConditionsChecked,
 }) {
-    const [showAddressModal, setShowAddressModal] = useState(false);
-
-    const handleShowNewAddressModal = () => setShowAddressModal(true);
-    const handleCloseNewAddressModal = () => setShowAddressModal(false);
-
-    const { isLoading, addressList, error } = useSelector(state => state.address)
+    
 
     return (
         <div className="accordian-container">
@@ -31,29 +26,15 @@ function AccordianStages({
                         Select a Delivery Address
                     </Accordion.Header>
                     <Accordion.Body>
-                        <ShippingAddressList />
-                        <Button
-                            variant="success"
-                            onClick={() => handleActiveAccordionItem("1")}
-                            disabled={ addressList.length === 0 || isLoading || error }
-                        >
-                            Use this Address
-                        </Button>
-                        <Button
-                            className="mx-3"
-                            variant="dark"
-                            onClick={handleShowNewAddressModal}
-                            disabled={ isLoading || error }
-                        >
-                            Add new Address
-                        </Button>
-                        <AddNewAddress
-                            showAddressModal={showAddressModal}
-                            handleCloseNewAddressModal={handleCloseNewAddressModal}
+                        <ShippingAddress
+                            handleActiveAccordionItem={handleActiveAccordionItem}
                         />
                     </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="1">
+                
+                
+                
+                {/* <Accordion.Item eventKey="1">
                     <Accordion.Header>Order Summary</Accordion.Header>
                     <Accordion.Body>
                         <DisplayCartItems
@@ -71,7 +52,7 @@ function AccordianStages({
                             setIsTermsAndConditionsChecked={setIsTermsAndConditionsChecked}
                         />
                     </Accordion.Body>
-                </Accordion.Item>
+                </Accordion.Item> */}
             </Accordion>
         </div>
     )

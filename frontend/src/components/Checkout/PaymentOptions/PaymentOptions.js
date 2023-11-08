@@ -1,4 +1,4 @@
-import "../../css/Checkout/PaymentOptions.css";
+import "../../../css/Checkout/PaymentOptions.css";
 
 import { Button, Form } from "react-bootstrap";
 

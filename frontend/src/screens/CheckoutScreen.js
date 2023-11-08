@@ -1,8 +1,8 @@
 import { Col, Container, Row } from 'react-bootstrap';
 
 import AccordianStages from '../components/Checkout/AccordianStages';
-import AddressCard from '../components/Checkout/AddressCard';
-import OrderSummaryCard from '../components/Checkout/OrderSummaryCard';
+import AddressCard from '../components/Checkout/ShippingAddress/AddressCard';
+import OrderSummaryCard from '../components/Checkout/OrderItems/OrderSummaryCard';
 import Progress from '../components/Checkout/Progress';
 import React from 'react';
 import { useSelector } from 'react-redux';

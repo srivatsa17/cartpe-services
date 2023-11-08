@@ -1,7 +1,7 @@
 import { Button, ListGroup } from "react-bootstrap";
 
-import CartItemDetails from "../CartScreen/CartItemDetails";
-import { PLACEHOLDER_IMAGE } from "../../constants/imageConstants";
+import CartItemDetails from "../../CartScreen/CartItemDetails";
+import { PLACEHOLDER_IMAGE } from "../../../constants/imageConstants";
 import React from "react";
 
 const getProductFeaturedImage = (product) => {

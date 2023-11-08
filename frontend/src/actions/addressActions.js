@@ -43,11 +43,9 @@ export const getShippingAddressList = () => async (dispatch, getState) => {
 export const addShippingAddress = (shippingAddress) => async (dispatch, getState) => {
     try {
         dispatch({ type: ADD_SHIPPING_ADDRESS_REQUEST })
-        const { data } = await axiosInstance.post(shippingUri, shippingAddress)
-        dispatch({
-            type: ADD_SHIPPING_ADDRESS_SUCCESS,
-            payload: data
-        })
+        await axiosInstance.post(shippingUri, shippingAddress)
+        dispatch(getShippingAddressList())
+        dispatch({ type: ADD_SHIPPING_ADDRESS_SUCCESS })
         saveItemInStorage(ADDRESS_LIST, getState().address.addressList)
     } catch (error) {
         dispatch({
@@ -60,11 +58,9 @@ export const addShippingAddress = (shippingAddress) => async (dispatch, getState
 export const editShippingAddress = (shippingAddress, shippingAddressId) => async (dispatch, getState) => {
     try {
         dispatch({ type: EDIT_SHIPPING_ADDRESS_REQUEST })
-        const { data } = await axiosInstance.put(shippingByIdUri(shippingAddressId), shippingAddress)
-        dispatch({
-            type: EDIT_SHIPPING_ADDRESS_SUCCESS,
-            payload: data
-        })
+        await axiosInstance.put(shippingByIdUri(shippingAddressId), shippingAddress)
+        dispatch(getShippingAddressList())
+        dispatch({ type: EDIT_SHIPPING_ADDRESS_SUCCESS })
         saveItemInStorage(ADDRESS_LIST, getState().address.addressList)
     } catch (error) {
         dispatch({
@@ -78,10 +74,8 @@ export const removeShippingAddress = (shippingAddressId) => async (dispatch, get
     try {
         dispatch({ type: REMOVE_SHIPPING_ADDRESS_REQUEST })
         await axiosInstance.delete(shippingByIdUri(shippingAddressId))
-        dispatch({
-            type: REMOVE_SHIPPING_ADDRESS_SUCCESS,
-            payload: shippingAddressId
-        })
+        dispatch(getShippingAddressList())
+        dispatch({ type: REMOVE_SHIPPING_ADDRESS_SUCCESS })
         saveItemInStorage(ADDRESS_LIST, getState().address.addressList)
     } catch (error) {
         dispatch({

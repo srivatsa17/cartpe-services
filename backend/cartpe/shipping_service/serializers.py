@@ -45,10 +45,11 @@ class UserAddressSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         is_default_address = attrs.get('is_default', '')
+        user = self.context.get('user', '')
 
         # If is_default = True and there exists an entry in table which already is the default address,
         # we update the table entry by setting is_default = False and saving the new entry with is_default = True.
-        if is_default_address and UserAddress.objects.filter(is_default = True).exists():
+        if is_default_address and UserAddress.objects.filter(is_default = True, user = user).exists():
             user_address_obj = UserAddress.objects.get(is_default = True)
             user_address_obj.is_default = False
             user_address_obj.save()
