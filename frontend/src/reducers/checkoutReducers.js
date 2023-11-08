@@ -11,7 +11,7 @@ import {
     REMOVE_SHIPPING_ADDRESS_FAIL,
     REMOVE_SHIPPING_ADDRESS_REQUEST,
     REMOVE_SHIPPING_ADDRESS_SUCCESS
-} from "../constants/addressConstants";
+} from "../constants/checkoutConstants";
 
 export const addressReducer = (state = { addressList : [] }, action) => {
     const payload = action.payload;

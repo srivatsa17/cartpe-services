@@ -22,7 +22,7 @@ import {
     userRegisterReducer
 } from './reducers/authReducers';
 
-import { addressReducer } from './reducers/addressReducers';
+import { addressReducer } from './reducers/checkoutReducers';
 import { cartReducer } from './reducers/cartReducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import getItemFromStorage from './utils/localStorage/getItemFromStorage';

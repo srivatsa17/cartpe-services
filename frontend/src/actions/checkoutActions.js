@@ -11,7 +11,7 @@ import {
     REMOVE_SHIPPING_ADDRESS_FAIL,
     REMOVE_SHIPPING_ADDRESS_REQUEST,
     REMOVE_SHIPPING_ADDRESS_SUCCESS
-} from "../constants/addressConstants";
+} from "../constants/checkoutConstants";
 
 import { ADDRESS_LIST } from "../constants/localStorageConstants";
 import axiosInstance from "../utils/axios/axiosInterceptor";

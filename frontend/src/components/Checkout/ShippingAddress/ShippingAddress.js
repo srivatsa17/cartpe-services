@@ -4,7 +4,7 @@ import {
     editShippingAddress,
     getShippingAddressList,
     removeShippingAddress
-} from "../../../actions/addressActions";
+} from "../../../actions/checkoutActions";
 import { useDispatch, useSelector } from "react-redux";
 
 import AddNewAddress from "./AddNewAddress";
