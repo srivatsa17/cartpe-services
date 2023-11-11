@@ -45,14 +45,14 @@ export const addressReducer = (state = { addressList : [] }, action) => {
     }
 }
 
-export const checkoutReducer = (state = { selectedAddress : {} }, action) => {
+export const checkoutReducer = (state = { shippingAddress : {} }, action) => {
     const payload = action.payload;
 
     switch(action.type) {
         case USE_SELECTED_SHIPPING_ADDRESS_REQUEST:
             return { ...state, isLoading: true }
         case USE_SELECTED_SHIPPING_ADDRESS_SUCCESS:
-            return { isLoading: false, selectedAddress: payload }
+            return { isLoading: false, shippingAddress: payload }
         case USE_SELECTED_SHIPPING_ADDRESS_FAIL:
             return { ...state, isLoading: false, error: payload }
         default:
