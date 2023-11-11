@@ -6,19 +6,20 @@ import React from "react";
 import { SiRazorpay } from "react-icons/si";
 
 function PaymentOptions({ handleActiveAccordionItem, isTermsAndConditionsChecked, setIsTermsAndConditionsChecked }) {
-    
+
     const termsAndConditionsLabel = () => {
         return (
             <div>
-                Please agree to the <a href="#">terms and conditions</a> of <b>CartPe</b> to place the order.
+                Please agree to the <a href="##">terms and conditions</a> of <b>CartPe</b> to place the order.
             </div>
         )
     }
-    
+
     const handlePayment = () => {
+        // Trigger razorpay's api's
         handleActiveAccordionItem("3");
     }
-    
+
     return (
         <div className="payment-options">
             <Form>
@@ -30,9 +31,9 @@ function PaymentOptions({ handleActiveAccordionItem, isTermsAndConditionsChecked
                 />
             </Form>
             {
-                isTermsAndConditionsChecked && 
+                isTermsAndConditionsChecked &&
                 <div className="mt-3">
-                    You will be redirected to <SiRazorpay /> Razorpay's payment gateway on ordering the cart items.
+                    You will be redirected to <SiRazorpay /> Razorpay's payment gateway to complete the order payment.
                 </div>
             }
             <div className="mt-3">

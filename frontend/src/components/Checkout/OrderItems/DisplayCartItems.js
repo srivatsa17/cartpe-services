@@ -3,6 +3,8 @@ import { Button, ListGroup } from "react-bootstrap";
 import CartItemDetails from "../../CartScreen/CartItemDetails";
 import { PLACEHOLDER_IMAGE } from "../../../constants/imageConstants";
 import React from "react";
+import { addOrderItems } from "../../../actions/checkoutActions";
+import { useDispatch } from "react-redux";
 
 const getProductFeaturedImage = (product) => {
     if(
@@ -16,6 +18,13 @@ const getProductFeaturedImage = (product) => {
 }
 
 function DisplayCartItems({ handleActiveAccordionItem, cartItems }) {
+    const dispatch = useDispatch()
+
+    const handleOrderItemsClick = () => {
+        dispatch(addOrderItems(cartItems))
+        handleActiveAccordionItem("2")
+    }
+
     return (
         <React.Fragment>
             {
@@ -33,7 +42,7 @@ function DisplayCartItems({ handleActiveAccordionItem, cartItems }) {
             <div className="mt-2">
                 <Button
                     variant="success"
-                    onClick={() => handleActiveAccordionItem("2")}
+                    onClick={handleOrderItemsClick}
                 >
                     Place Order
                 </Button>

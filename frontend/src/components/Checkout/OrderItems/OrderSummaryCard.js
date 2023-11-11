@@ -4,12 +4,14 @@ import { Button, Card } from 'react-bootstrap';
 
 import { FaRupeeSign } from "react-icons/fa";
 import React from 'react';
+import { addOrderItems } from "../../../actions/checkoutActions";
+import { useDispatch } from "react-redux";
 
-function OrderSummaryCard({ 
-    handleActiveAccordionItem, 
-    cartItems, 
-    nextAccordionItemEventKey, 
-    isTermsAndConditionsChecked 
+function OrderSummaryCard({
+    handleActiveAccordionItem,
+    cartItems,
+    nextAccordionItemEventKey,
+    isTermsAndConditionsChecked
 }) {
     const totalCartItemsQuantity = cartItems.length;
     const totalMRP = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity * cartItem.product.price, 0).toFixed(2);
@@ -28,6 +30,13 @@ function OrderSummaryCard({
     const finalAmount = Math.round(totalSellingPrice);
     const savingsAmount = Math.round(totalMRP - finalAmount);
     const savingsPercent = ((savingsAmount / totalMRP).toFixed(2) * 100).toFixed(2);
+
+    const dispatch = useDispatch()
+
+    const handleOrderItemsClick = () => {
+        dispatch(addOrderItems(cartItems))
+        handleActiveAccordionItem(nextAccordionItemEventKey)
+    }
 
     return (
         <>
@@ -83,7 +92,7 @@ function OrderSummaryCard({
 
                     <Button
                         variant='dark' className='w-100'
-                        onClick={() => handleActiveAccordionItem(nextAccordionItemEventKey)}
+                        onClick={handleOrderItemsClick}
                         disabled={isTermsAndConditionsChecked === false}
                     >
                         Place order

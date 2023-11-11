@@ -1,4 +1,7 @@
 import {
+    ADD_ORDER_ITEMS_FAIL,
+    ADD_ORDER_ITEMS_REQUEST,
+    ADD_ORDER_ITEMS_SUCCESS,
     ADD_SHIPPING_ADDRESS_FAIL,
     ADD_SHIPPING_ADDRESS_REQUEST,
     ADD_SHIPPING_ADDRESS_SUCCESS,
@@ -45,16 +48,28 @@ export const addressReducer = (state = { addressList : [] }, action) => {
     }
 }
 
-export const checkoutReducer = (state = { shippingAddress : {} }, action) => {
+const initialCheckoutState = {
+    shippingAddress : {},
+    orderItems: []
+}
+
+export const checkoutReducer = (state = initialCheckoutState, action) => {
     const payload = action.payload;
 
     switch(action.type) {
         case USE_SELECTED_SHIPPING_ADDRESS_REQUEST:
+        case ADD_ORDER_ITEMS_REQUEST:
             return { ...state, isLoading: true }
+
         case USE_SELECTED_SHIPPING_ADDRESS_SUCCESS:
-            return { isLoading: false, shippingAddress: payload }
+            return { ...state, isLoading: false, shippingAddress: payload }
+        case ADD_ORDER_ITEMS_SUCCESS:
+            return { ...state, isLoading: false, orderItems: payload }
+
         case USE_SELECTED_SHIPPING_ADDRESS_FAIL:
+        case ADD_ORDER_ITEMS_FAIL:
             return { ...state, isLoading: false, error: payload }
+
         default:
             return state
     }

@@ -1,4 +1,7 @@
 import {
+    ADD_ORDER_ITEMS_FAIL,
+    ADD_ORDER_ITEMS_REQUEST,
+    ADD_ORDER_ITEMS_SUCCESS,
     ADD_SHIPPING_ADDRESS_FAIL,
     ADD_SHIPPING_ADDRESS_REQUEST,
     ADD_SHIPPING_ADDRESS_SUCCESS,
@@ -95,6 +98,18 @@ export const saveSelectedShippingAddress = (shippingAddress) => async (dispatch,
     } catch (error) {
         dispatch({
             type: USE_SELECTED_SHIPPING_ADDRESS_FAIL,
+            payload: throwErrorResponse(error)
+        })
+    }
+}
+
+export const addOrderItems = (cartItems) => async (dispatch, getState) => {
+    try {
+        dispatch({ type: ADD_ORDER_ITEMS_REQUEST })
+        dispatch({ type: ADD_ORDER_ITEMS_SUCCESS, payload: cartItems })
+    } catch (error) {
+        dispatch({
+            type: ADD_ORDER_ITEMS_FAIL,
             payload: throwErrorResponse(error)
         })
     }
