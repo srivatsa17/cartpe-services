@@ -11,6 +11,17 @@ class CountrySerializer(serializers.ModelSerializer):
         model = Country
         fields = ['id', 'name', 'created_at', 'updated_at']
 
+    def validate(self, attrs):
+        countryName = attrs.get('name', '')
+        isCountryFound = Country.objects.filter(name__iexact = countryName).exists()
+
+        if isCountryFound:
+            raise serializers.ValidationError({
+                "message" : "Country '" + countryName + "' already exists and cannot be created again."
+            })
+
+        return super().validate(attrs)
+
     def create(self, validated_data):
         country = Country.objects.create(**validated_data)
         return country
