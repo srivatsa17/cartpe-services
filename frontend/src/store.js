@@ -6,23 +6,11 @@ import {
     USER_LOGIN_DETAILS,
     USER_REGISTER_DETAILS
 } from './constants/localStorageConstants';
-import {
-    applyMiddleware,
-    combineReducers,
-    legacy_createStore as createStore
-} from 'redux';
-import {
-    categoryListReducer,
-    categorySearchReducer,
-    productDetailsReducer,
-    productListReducer
-} from './reducers/productReducers';
-import {
-    userLoginReducer,
-    userRegisterReducer
-} from './reducers/authReducers';
+import { addressReducer, checkoutReducer } from './reducers/checkoutReducers';
+import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux';
+import { categoryListReducer, categorySearchReducer, productDetailsReducer, productListReducer } from './reducers/productReducers';
+import { userLoginReducer, userRegisterReducer } from './reducers/authReducers';
 
-import { addressReducer } from './reducers/checkoutReducers';
 import { cartReducer } from './reducers/cartReducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import getItemFromStorage from './utils/localStorage/getItemFromStorage';
@@ -38,10 +26,11 @@ const categoryListFromStorage = getItemFromStorage(CATEGORY_LIST) ?? {}
 const reducer = combineReducers({
     productList: productListReducer,
     productDetails: productDetailsReducer,
-    categoryList: categoryListReducer, 
+    categoryList: categoryListReducer,
     searchedCategories: categorySearchReducer,
     cart: cartReducer,
     address: addressReducer,
+    checkoutInfo: checkoutReducer,
     userLoginDetails: userLoginReducer,
     userRegisterDetails: userRegisterReducer,
 })

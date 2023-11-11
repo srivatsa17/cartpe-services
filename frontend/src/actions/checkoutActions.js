@@ -10,7 +10,10 @@ import {
     GET_SHIPPING_ADDRESS_LIST_SUCCESS,
     REMOVE_SHIPPING_ADDRESS_FAIL,
     REMOVE_SHIPPING_ADDRESS_REQUEST,
-    REMOVE_SHIPPING_ADDRESS_SUCCESS
+    REMOVE_SHIPPING_ADDRESS_SUCCESS,
+    USE_SELECTED_SHIPPING_ADDRESS_FAIL,
+    USE_SELECTED_SHIPPING_ADDRESS_REQUEST,
+    USE_SELECTED_SHIPPING_ADDRESS_SUCCESS
 } from "../constants/checkoutConstants";
 
 import { ADDRESS_LIST } from "../constants/localStorageConstants";
@@ -80,6 +83,18 @@ export const removeShippingAddress = (shippingAddressId) => async (dispatch, get
     } catch (error) {
         dispatch({
             type: REMOVE_SHIPPING_ADDRESS_FAIL,
+            payload: throwErrorResponse(error)
+        })
+    }
+}
+
+export const saveSelectedShippingAddress = (shippingAddress) => async (dispatch, getState) => {
+    try {
+        dispatch({ type: USE_SELECTED_SHIPPING_ADDRESS_REQUEST })
+        dispatch({ type: USE_SELECTED_SHIPPING_ADDRESS_SUCCESS, payload: shippingAddress })
+    } catch (error) {
+        dispatch({
+            type: USE_SELECTED_SHIPPING_ADDRESS_FAIL,
             payload: throwErrorResponse(error)
         })
     }
