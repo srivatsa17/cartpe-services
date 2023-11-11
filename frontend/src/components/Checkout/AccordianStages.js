@@ -1,13 +1,10 @@
 import "../../css/Checkout/AccordianStages.css";
 
-import { Accordion, Button } from "react-bootstrap";
-import React, { useState } from "react";
-
+import { Accordion } from "react-bootstrap";
 import DisplayCartItems from "./OrderItems/DisplayCartItems";
 import PaymentOptions from "./PaymentOptions/PaymentOptions";
+import React from "react";
 import ShippingAddress from "./ShippingAddress/ShippingAddress";
-import ShippingAddressList from "./ShippingAddress/AddressList";
-import { useSelector } from "react-redux";
 
 function AccordianStages({
     activeKey,
@@ -15,8 +12,11 @@ function AccordianStages({
     cartItems,
     isTermsAndConditionsChecked,
     setIsTermsAndConditionsChecked,
+    selectedAddress,
+    setSelectedAddress,
+    defaultAddress
 }) {
-    
+
 
     return (
         <div className="accordian-container">
@@ -28,13 +28,13 @@ function AccordianStages({
                     <Accordion.Body>
                         <ShippingAddress
                             handleActiveAccordionItem={handleActiveAccordionItem}
+                            selectedAddress={selectedAddress}
+                            setSelectedAddress={setSelectedAddress}
+                            defaultAddress={defaultAddress}
                         />
                     </Accordion.Body>
                 </Accordion.Item>
-                
-                
-                
-                {/* <Accordion.Item eventKey="1">
+                <Accordion.Item eventKey="1">
                     <Accordion.Header>Order Summary</Accordion.Header>
                     <Accordion.Body>
                         <DisplayCartItems
@@ -52,7 +52,7 @@ function AccordianStages({
                             setIsTermsAndConditionsChecked={setIsTermsAndConditionsChecked}
                         />
                     </Accordion.Body>
-                </Accordion.Item> */}
+                </Accordion.Item>
             </Accordion>
         </div>
     )

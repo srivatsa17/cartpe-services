@@ -1,18 +1,25 @@
 import "../../../css/Checkout/AddressCard.css";
 
 import { Button, Card } from 'react-bootstrap';
+import { useDispatch, useSelector } from "react-redux";
 
 import { FaRupeeSign } from "react-icons/fa";
 import React from 'react';
-import { useSelector } from "react-redux/es/hooks/useSelector";
+import { saveSelectedShippingAddress } from "../../../actions/checkoutActions";
 
-function AddressCard({ handleActiveAccordionItem, cartItems, nextAccordionItemEventKey }) {
+function AddressCard({ handleActiveAccordionItem, cartItems, nextAccordionItemEventKey, selectedAddress }) {
+    const dispatch = useDispatch()
 
     const totalSellingPrice = cartItems.reduce(
         (sum, cartItem) => sum + cartItem.quantity * cartItem.product.selling_price, 0
     ).toFixed(2)
 
     const { isLoading, addressList, error } = useSelector(state => state.address)
+
+    const handleUseAddressClick = () => {
+        dispatch(saveSelectedShippingAddress(selectedAddress))
+        handleActiveAccordionItem(nextAccordionItemEventKey)
+    }
 
     return (
         <>
@@ -21,7 +28,7 @@ function AddressCard({ handleActiveAccordionItem, cartItems, nextAccordionItemEv
                     <Button
                         variant='success'
                         className='w-100'
-                        onClick={() => handleActiveAccordionItem(nextAccordionItemEventKey)}
+                        onClick={handleUseAddressClick}
                         disabled={ addressList.length === 0 || isLoading || error }
                     >
                         Use this address

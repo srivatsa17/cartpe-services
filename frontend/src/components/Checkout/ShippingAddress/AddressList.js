@@ -6,23 +6,14 @@ import EditAddress from "./EditAddress";
 import Loader from "../../Loader/Loader";
 import { useSelector } from "react-redux";
 
-const getDefaultAddress = (addressList) => {
-    const isDefaultAddressFound = addressList.find((address) => address.is_default);
-    const defaultAddress = isDefaultAddressFound || (addressList.length > 0 ? addressList[0] : {});
-    return defaultAddress;
-}
-
-function AddressList({ handleRemoveShippingAddress, handleEditShippingAddress }) {
+function AddressList({ handleRemoveShippingAddress, handleEditShippingAddress, selectedAddress, setSelectedAddress, defaultAddress }) {
     const { isLoading, addressList, error } = useSelector(state => state.address)
-
-    const defaultAddress = getDefaultAddress(addressList ?? {})
-    const [selectedAddress, setSelectedAddress] = useState(defaultAddress)
 
     // On POST/DELETE operations, selectedAddress still holds the previous state value.
     // To resolve this issue, we trigger useEffect to set the latest value of defaultAddress as the selectedAddress.
     useEffect(() => {
         setSelectedAddress(defaultAddress);
-    }, [defaultAddress]);
+    }, [defaultAddress, setSelectedAddress]);
 
     const  handleShippingAddressSelect = (address) => {
         setSelectedAddress(address)
