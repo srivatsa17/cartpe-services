@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'auth_service.apps.AuthServiceConfig',
     'cart_service.apps.CartServiceConfig',
     'shipping_service.apps.ShippingServiceConfig',
+    'order_service.apps.OrderServiceConfig',
 ]
 
 MIDDLEWARE = [
@@ -210,3 +211,6 @@ HAYSTACK_CONNECTIONS = {
         'URL': 'http://127.0.0.1:8983/solr/cartpe_core'
     },
 }
+
+RAZORPAY_KEY_ID = "rzp_test_q6yYG9cg3J2Ozn"
+RAZORPAY_KEY_SECRET = "DSKSs5cEjVACrURcsVOUgVAg"

@@ -32,7 +32,7 @@ class AddressSerializer(serializers.ModelSerializer):
     city = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     state = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     country = serializers.SlugRelatedField(slug_field = 'name', queryset = Country.objects.all())
-    pin_code = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
+    pin_code = serializers.CharField(min_length = 6, max_length = 6, allow_blank = False, trim_whitespace = True)
     created_at = serializers.DateTimeField(read_only = True)
     updated_at = serializers.DateTimeField(read_only = True)
 
@@ -44,7 +44,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
     name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     user = serializers.SlugRelatedField(slug_field = 'email', read_only = True)
     address = AddressSerializer()
-    alternate_phone = serializers.CharField(min_length = 1, max_length = 10, allow_blank = False, trim_whitespace = True)
+    alternate_phone = serializers.CharField(min_length = 10, max_length = 10, allow_blank = False, trim_whitespace = True)
     type = serializers.ChoiceField(choices=[("Home", "Home"), ("Work", "Work"), ("Other", "Other")])
     is_default = serializers.BooleanField(allow_null = False)
     created_at = serializers.DateTimeField(read_only = True)
