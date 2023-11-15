@@ -1,11 +1,13 @@
 import "../../../css/Checkout/PaymentOptions.css";
 
 import { Button, Form } from "react-bootstrap";
+import React, { useState } from "react";
 
-import React from "react";
+import DisplayRazorPayCard from "../RazorPayCard/DisplayRazorPayCard";
 import { SiRazorpay } from "react-icons/si";
 
 function PaymentOptions({ handleActiveAccordionItem, isTermsAndConditionsChecked, setIsTermsAndConditionsChecked }) {
+    const [isPlaceOrderButtonClicked, setIsPlaceOrderButtonClicked] = useState(false);
 
     const termsAndConditionsLabel = () => {
         return (
@@ -15,9 +17,9 @@ function PaymentOptions({ handleActiveAccordionItem, isTermsAndConditionsChecked
         )
     }
 
-    const handlePayment = () => {
-        // Trigger razorpay's api's
+    const handleOrderAndPayment = () => {
         handleActiveAccordionItem("3");
+        setIsPlaceOrderButtonClicked(true)
     }
 
     return (
@@ -39,11 +41,14 @@ function PaymentOptions({ handleActiveAccordionItem, isTermsAndConditionsChecked
             <div className="mt-3">
                 <Button
                     variant="success"
-                    onClick={handlePayment}
+                    onClick={handleOrderAndPayment}
                     disabled={isTermsAndConditionsChecked === false}
                 >
                     Pay & Order
                 </Button>
+                {
+                    isPlaceOrderButtonClicked && <DisplayRazorPayCard />
+                }
                 <Button
                     variant="warning"
                     className="mx-2"

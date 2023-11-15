@@ -34,7 +34,7 @@ function OrderSummaryCard({
     const dispatch = useDispatch()
 
     const handleOrderItemsClick = () => {
-        dispatch(addOrderItems(cartItems))
+        dispatch(addOrderItems(cartItems, finalAmount))
         handleActiveAccordionItem(nextAccordionItemEventKey)
     }
 
@@ -89,14 +89,16 @@ function OrderSummaryCard({
                     </div>
 
                     <hr />
-
-                    <Button
-                        variant='dark' className='w-100'
-                        onClick={handleOrderItemsClick}
-                        disabled={isTermsAndConditionsChecked === false}
-                    >
-                        Place order
-                    </Button>
+                    {
+                        nextAccordionItemEventKey === "2" &&
+                        <Button
+                            variant='dark' className='w-100'
+                            onClick={handleOrderItemsClick}
+                            disabled={isTermsAndConditionsChecked === false}
+                        >
+                            Place order
+                        </Button>
+                    }
                 </Card.Body>
             </Card>
         </>

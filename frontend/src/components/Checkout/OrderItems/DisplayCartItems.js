@@ -20,8 +20,17 @@ const getProductFeaturedImage = (product) => {
 function DisplayCartItems({ handleActiveAccordionItem, cartItems }) {
     const dispatch = useDispatch()
 
+    const convenienceFee = 20;
+    const totalSellingPrice =
+        Number(
+            cartItems.reduce(
+                (sum, cartItem) => sum + cartItem.quantity * cartItem.product.selling_price, 0
+            ).toFixed(2)
+        ) + Number(convenienceFee);
+    const finalAmount = Math.round(totalSellingPrice);
+
     const handleOrderItemsClick = () => {
-        dispatch(addOrderItems(cartItems))
+        dispatch(addOrderItems(cartItems, finalAmount))
         handleActiveAccordionItem("2")
     }
 

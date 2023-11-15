@@ -50,7 +50,8 @@ export const addressReducer = (state = { addressList : [] }, action) => {
 
 const initialCheckoutState = {
     shippingAddress : {},
-    orderItems: []
+    orderItems: [],
+    amount: 0
 }
 
 export const checkoutReducer = (state = initialCheckoutState, action) => {
@@ -64,7 +65,10 @@ export const checkoutReducer = (state = initialCheckoutState, action) => {
         case USE_SELECTED_SHIPPING_ADDRESS_SUCCESS:
             return { ...state, isLoading: false, shippingAddress: payload }
         case ADD_ORDER_ITEMS_SUCCESS:
-            return { ...state, isLoading: false, orderItems: payload }
+            const extractedData = payload.orderItems?.map((item) => ({
+                product: item.product.id, quantity: item.quantity
+            }))
+            return { ...state, isLoading: false, orderItems: extractedData, amount: payload.amount }
 
         case USE_SELECTED_SHIPPING_ADDRESS_FAIL:
         case ADD_ORDER_ITEMS_FAIL:

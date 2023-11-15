@@ -103,10 +103,16 @@ export const saveSelectedShippingAddress = (shippingAddress) => async (dispatch,
     }
 }
 
-export const addOrderItems = (cartItems) => async (dispatch, getState) => {
+export const addOrderItems = (cartItems, amount) => async (dispatch, getState) => {
     try {
         dispatch({ type: ADD_ORDER_ITEMS_REQUEST })
-        dispatch({ type: ADD_ORDER_ITEMS_SUCCESS, payload: cartItems })
+        dispatch({
+            type: ADD_ORDER_ITEMS_SUCCESS,
+            payload: {
+                orderItems: cartItems,
+                amount: amount
+            }
+        })
     } catch (error) {
         dispatch({
             type: ADD_ORDER_ITEMS_FAIL,
