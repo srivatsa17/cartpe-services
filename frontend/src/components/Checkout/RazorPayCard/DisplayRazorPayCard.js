@@ -1,6 +1,7 @@
+import { ORDER_CONFIRMED_SCREEN, ORDER_FAILED_SCREEN, ORDER_PAYMENT_FAILED_SCREEN } from "../../../constants/routes";
+
 import { CARTPE_LOGO_BLACK } from "../../../constants/imageConstants";
 import { LATEST_ORDER } from "../../../constants/localStorageConstants";
-import { ORDER_CONFIRMED_SCREEN } from "../../../constants/routes";
 import axiosInstance from "../../../utils/axios/axiosInterceptor";
 import saveItemInStorage from "../../../utils/localStorage/saveItemInStorage";
 import { useEffect } from "react";
@@ -40,7 +41,6 @@ const displayRazorPayCheckoutForm = (Razorpay, navigate, shippingAddress, orderI
             handler: function (response) {
                 createOrder(response, shippingAddress, orderItems, amount)
                 .then((order) => {
-                    console.log(order)
                     saveItemInStorage(LATEST_ORDER, order);
                     navigate(`${ORDER_CONFIRMED_SCREEN}?orderId=${order.id}`)
                 })
@@ -58,6 +58,16 @@ const displayRazorPayCheckoutForm = (Razorpay, navigate, shippingAddress, orderI
         const rzp1 = new Razorpay(options);
 
         rzp1.on("payment.failed", function (response) {
+            const orderIdQueryParam = `orderId=${response.error.metadata.order_id}`;
+            const paymentIdQueryParam = `paymentId=${response.error.metadata.payment_id}`;
+            
+            navigate(
+                `${ORDER_PAYMENT_FAILED_SCREEN}?${orderIdQueryParam}&${paymentIdQueryParam}`, {
+                    state: {
+                        "paymentError": response.error.description
+                    }
+                }
+            )
             // alert(response.error.code);
             // alert(response.error.description);
             // alert(response.error.source);
@@ -69,8 +79,8 @@ const displayRazorPayCheckoutForm = (Razorpay, navigate, shippingAddress, orderI
 
         rzp1.open();
     })
-    .catch((error) => {
-
+    .catch(() => {
+        navigate(`${ORDER_FAILED_SCREEN}`)
     })
 }
 
