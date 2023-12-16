@@ -9,6 +9,8 @@ MIN_PASSWORD_LENGTH = 6
 MAX_PASSWORD_LENGTH = 70
 
 class RegisterUserSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(min_length = 2, max_length = 255)
+    last_name = serializers.CharField(min_length = 2, max_length = 255)
     email = serializers.EmailField(min_length = 3, max_length = 255, allow_blank = False)
     password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
 

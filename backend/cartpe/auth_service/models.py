@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, password):
+    def create_user(self, email, password, first_name = None, last_name = None):
         if email is None:
             raise ValidationError('Email should not be empty')
 
@@ -19,15 +19,17 @@ class UserManager(BaseUserManager):
             raise ValidationError('Password should not be empty')
 
         user = self.model(email = self.normalize_email(email))
+        user.first_name = first_name
+        user.last_name = last_name
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email, password):
+    def create_superuser(self, email, password, first_name = None, last_name = None):
         if password is None:
             raise ValidationError('Password should not be empty')
 
-        user = self.create_user(email, password)
+        user = self.create_user(email, password, first_name, last_name)
         user.is_superuser = True
         user.is_staff = True
         user.save()
