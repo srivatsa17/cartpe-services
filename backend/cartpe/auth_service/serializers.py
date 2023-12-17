@@ -70,7 +70,7 @@ class EmailVerificationSerializer(serializers.Serializer):
         return user
 
 class LoginSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(min_length = 3, max_length = 255, write_only = True, allow_blank = False)
+    email = serializers.EmailField(min_length = 3, max_length = 255, allow_blank = False)
     password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
 
     class Meta:
@@ -94,8 +94,14 @@ class LoginSerializer(serializers.ModelSerializer):
         if not user.is_verified:
             raise AuthenticationFailed("Please ensure that your email is verified.")
 
+        return user
+
+    def to_representation(self, instance):
         return {
-            'tokens' : user.tokens
+            'email': instance.email,
+            'firstName': instance.first_name,
+            'lastName': instance.last_name,
+            'tokens': instance.tokens
         }
 
 class LogoutSerializer(serializers.Serializer):
