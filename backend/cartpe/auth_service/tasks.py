@@ -14,6 +14,7 @@ def send_verification_email_task(user_email):
 
     if response['status'] == 400:
         logger.error("Email was not sent because of errors")
+        logger.error(response)
         return "Verification email was not sent"
 
     return "Successfully sent verification email to %s" % user_email
