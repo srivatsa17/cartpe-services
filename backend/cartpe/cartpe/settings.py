@@ -189,6 +189,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:3001",
     "https://cartpe-ui.vercel.app"
 ]
 
@@ -202,7 +203,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'cartpe.site@gmail.com'
 EMAIL_HOST_PASSWORD = 'cagzitdhrfxazwrt'
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+EMAIL_USE_SSL = True
 
 HAYSTACK_CONNECTIONS = {
     'default': {

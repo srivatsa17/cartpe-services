@@ -4,7 +4,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from product_service.models import Product, Category, Brand, Image, Attribute, AttributeValue
 
 class ProductImageSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(allow_empty_file = False)
+    image = serializers.URLField(max_length = 255)
     is_featured = serializers.BooleanField(default = None)
     product = serializers.PrimaryKeyRelatedField(read_only = True)
     created_at = serializers.DateTimeField(read_only = True)
@@ -61,16 +61,21 @@ class ProductSerializer(serializers.ModelSerializer):
     stock_count = serializers.IntegerField(min_value = 0)
     discount = serializers.IntegerField(min_value = 0, max_value = 100)
     category = serializers.SlugRelatedField(slug_field = 'name', queryset = Category.objects.all())
+    category_slug = serializers.SerializerMethodField()
     attributes = AttributeSerializer(many = True, read_only = True)
     product_images = ProductImageSerializer(many = True, read_only = True)
     created_at = serializers.DateTimeField(read_only = True)
     updated_at = serializers.DateTimeField(read_only = True)
 
+    def get_category_slug(self, instance):
+        # Get the slug from the related category
+        return instance.category.slug if instance.category else None
+
     class Meta:
         model = Product
         fields = [
             'id', 'sku', 'name', 'slug', 'description', 'price', 'brand', 'stock_count', 'discount', 'discounted_price',
-            'selling_price', 'category', 'attributes', 'product_images', 'created_at', 'updated_at'
+            'selling_price', 'category', 'category_slug', 'attributes', 'product_images', 'created_at', 'updated_at'
         ]
 
     def validate(self, attrs):
