@@ -62,6 +62,11 @@ class UserAddressAPIView(generics.GenericAPIView):
         if serializer.is_valid() and address_serializer.is_valid():
             # Save the address first
             address = address_serializer.save()
+            
+            # If there is no existing user address at all, we save the first one as default.
+            if not UserAddress.objects.filter(user = self.get_object()).exists():
+                serializer.validated_data['is_default'] = True
+            
             # Now set the address and user and save the user address
             serializer.validated_data['address'] = address
             serializer.validated_data['user'] = self.get_object()
