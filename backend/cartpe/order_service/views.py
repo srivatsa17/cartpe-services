@@ -3,6 +3,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from order_service.models import Order, OrderItem
 from order_service.serializers import OrderSerializer, OrderItemSerializer
+from order_service.constants import OrderStatus, OrderMethod
 from razorpay_integration.views import razorpay_api_client
 from razorpay_integration.serializers import RazorPayOrderSerializer
 
@@ -57,15 +58,19 @@ class OrderAPIView(generics.GenericAPIView):
         order_items_serializer = OrderItemSerializer(data = request.data.get('order_items'), many = True)
 
         if  serializer.is_valid() and order_items_serializer.is_valid():
-            razorpay_api_client.verify_payment_signature(
-                razorpay_order_id = serializer.validated_data.get("razorpay_order_id"),
-                razorpay_payment_id = serializer.validated_data.get("razorpay_payment_id"),
-                razorpay_signature = serializer.validated_data.get("razorpay_signature")
-            )
+            if serializer.validated_data['method'] == OrderMethod.UPI:
+                razorpay_api_client.verify_payment_signature(
+                    razorpay_order_id = serializer.validated_data.get("razorpay_order_id"),
+                    razorpay_payment_id = serializer.validated_data.get("razorpay_payment_id"),
+                    razorpay_signature = serializer.validated_data.get("razorpay_signature")
+                )
+                serializer.validated_data['is_paid'] = True
+            else:
+                serializer.validated_data['is_paid'] = False
 
             serializer.validated_data['user'] = self.get_object()
-            serializer.validated_data['is_paid'] = True
-            serializer.validated_data['status'] = "CONFIRMED"
+            serializer.validated_data['status'] = OrderStatus.CONFIRMED
+            
             order = serializer.save()
 
             # We are creating a list of OrderItem objects because of bulk_create method on OrderItem class.

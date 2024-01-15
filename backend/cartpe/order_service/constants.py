@@ -6,7 +6,24 @@ class OrderStatus:
     DELIVERED = "DELIVERED"
     CANCELLED = "CANCELLED"
     RETURNED = "RETURNED"
+    REFUNDED = "REFUNDED"
+
+    ORDER_STATUS_CHOICES = [
+        (PENDING, PENDING),
+        (CONFIRMED, CONFIRMED),
+        (SHIPPED, SHIPPED),
+        (OUT_FOR_DELIVERY, OUT_FOR_DELIVERY),
+        (DELIVERED, DELIVERED),
+        (CANCELLED, CANCELLED),
+        (RETURNED, RETURNED),
+        (REFUNDED, REFUNDED)
+    ]
 
 class OrderMethod:
     UPI = "UPI"
     COD = "CASH_ON_DELIVERY"
+
+    ORDER_METHOD_CHOICES = [
+        (UPI, UPI),
+        (COD, COD)
+    ]

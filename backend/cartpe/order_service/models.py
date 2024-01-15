@@ -6,27 +6,12 @@ from order_service.constants import OrderStatus, OrderMethod
 
 # Create your models here.
 class Order(models.Model):
-    ORDER_STATUS_CHOICES = [
-        (OrderStatus.PENDING, OrderStatus.PENDING),
-        (OrderStatus.CONFIRMED, OrderStatus.CONFIRMED),
-        (OrderStatus.SHIPPED, OrderStatus.SHIPPED),
-        (OrderStatus.OUT_FOR_DELIVERY, OrderStatus.OUT_FOR_DELIVERY),
-        (OrderStatus.DELIVERED, OrderStatus.DELIVERED),
-        (OrderStatus.CANCELLED, OrderStatus.CANCELLED),
-        (OrderStatus.RETURNED, OrderStatus.RETURNED)
-    ]
-
-    ORDER_METHOD_CHOICES = [
-        (OrderMethod.UPI, OrderMethod.UPI),
-        (OrderMethod.COD, OrderMethod.COD)
-    ]
-
     amount = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
     user = models.ForeignKey(to = User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'order')
     user_address = models.ForeignKey(to = UserAddress, on_delete = models.CASCADE, null = False, blank = False, related_name = 'order')
     is_paid = models.BooleanField(default = False, null = False, blank = False)
-    status = models.CharField(max_length = 255, choices = ORDER_STATUS_CHOICES, default = OrderStatus.PENDING, null = False, blank = False)
-    method = models.CharField(max_length = 255, choices = ORDER_METHOD_CHOICES, default = OrderMethod.UPI, null = False, blank = False)
+    status = models.CharField(max_length = 255, choices = OrderStatus.ORDER_STATUS_CHOICES, default = OrderStatus.PENDING, null = False, blank = False)
+    method = models.CharField(max_length = 255, choices = OrderMethod.ORDER_METHOD_CHOICES, default = OrderMethod.UPI, null = False, blank = False)
     razorpay_order_id = models.CharField(max_length = 255, null = True, blank = True)
     razorpay_payment_id = models.CharField(max_length = 255, null = True, blank = True)
     razorpay_signature = models.CharField(max_length = 255, null = True, blank = True)
