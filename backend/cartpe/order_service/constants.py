@@ -21,7 +21,7 @@ class OrderStatus:
 
 class OrderMethod:
     UPI = "UPI"
-    COD = "CASH_ON_DELIVERY"
+    COD = "Cash On Delivery"
 
     ORDER_METHOD_CHOICES = [
         (UPI, UPI),
