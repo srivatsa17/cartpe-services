@@ -24,8 +24,8 @@ class GetAllImagesTest(APITestCase):
         self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
         client.force_authenticate(user = self.user)
 
-        self.product = Product.objects.create(name="pixel 7", description="good product", price=50000, stock_count=10)
-        self.sampleImage = SimpleUploadedFile("test_image.jpg", b"binary data for image", content_type="image/jpeg")
+        self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
+        self.sampleImage = "https://cartpe.s3.ap-south-1.amazonaws.com/Products/Canon+80D/canon_80D_image_1.webp"
         self.imageInstance1 = Image.objects.create(image=self.sampleImage, is_featured=True, product=self.product)
         self.imageInstance2 = Image.objects.create(image=self.sampleImage, is_featured=False, product=self.product)
 
@@ -91,11 +91,6 @@ class GetAllImagesTest(APITestCase):
         self.assertEqual(receivedResponse, expectedResponse)
         self.assertEqual(receivedStatusCode, expectedStatusCode)
 
-    def tearDown(self) -> None:
-        self.sampleImage.close()
-        self.imageInstance1.image.delete()
-        self.imageInstance2.image.delete()
-
 class GetImageByIdTest(APITestCase):
     """ Test module for GET request for ProductImageByIdAPIView API """
 
@@ -104,8 +99,8 @@ class GetImageByIdTest(APITestCase):
         return url
 
     def setUp(self) -> None:
-        self.product = Product.objects.create(name="pixel 7", description="good product", price=50000, stock_count=10)
-        self.sampleImage = SimpleUploadedFile("test_image.jpg", b"binary data for image", content_type="image/jpeg")
+        self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
+        self.sampleImage = "https://cartpe.s3.ap-south-1.amazonaws.com/Products/Canon+80D/canon_80D_image_1.webp"
         self.imageInstance1 = Image.objects.create(image=self.sampleImage, is_featured=True, product=self.product)
         self.imageInstance2 = Image.objects.create(image=self.sampleImage, is_featured=False, product=self.product)
 
@@ -134,8 +129,3 @@ class GetImageByIdTest(APITestCase):
 
         self.assertEqual(receivedResponse, expectedResponse)
         self.assertEqual(receivedStatusCode, expectedStatusCode)
-
-    def tearDown(self):
-        self.sampleImage.close()
-        self.imageInstance1.image.delete()
-        self.imageInstance2.image.delete()

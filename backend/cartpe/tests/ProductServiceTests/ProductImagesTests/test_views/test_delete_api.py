@@ -5,6 +5,9 @@ from rest_framework import status
 from product_service.models import Product, Image
 from auth_service.models import User
 
+# Global variables
+SAMPLE_IMAGE_1 = "https://cartpe.s3.ap-south-1.amazonaws.com/Products/Canon+80D/canon_80D_image_1.webp"
+
 # Initialize the APIClient app
 client = APIClient()
 
@@ -20,9 +23,8 @@ class DeleteImageTest(APITestCase):
         self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
         client.force_authenticate(user = self.user)
 
-        self.product = Product.objects.create(name = "pixel 7", description = "good product", price = 50000, stock_count = 10)
-        self.sampleImage = SimpleUploadedFile("test_image1.jpg", b"binary data for image", content_type="image/jpeg")
-        self.image1 = Image.objects.create(image=self.sampleImage, is_featured=True, product=self.product)
+        self.product = Product.objects.create(name = "Canon 80D", description = "good product", price = 50000, stock_count = 10)
+        self.image1 = Image.objects.create(image=SAMPLE_IMAGE_1, is_featured=True, product=self.product)
 
     def test_with_existing_id(self) -> None:
         expectedStatusCode = status.HTTP_204_NO_CONTENT
@@ -44,7 +46,3 @@ class DeleteImageTest(APITestCase):
 
         self.assertEqual(receivedResponse, expectedResponse)
         self.assertEqual(receivedStatusCode, expectedStatusCode)
-
-    def tearDown(self) -> None:
-        self.sampleImage.close()
-        self.image1.image.delete()
