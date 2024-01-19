@@ -18,7 +18,12 @@ class PostRegisterUserTest(APITestCase):
         return url
 
     def setUp(self) -> None:
-        self.validData = { "email" : "testuser@example.com", "password" : "testpassword" }
+        self.validData = {
+            "email" : "testuser@example.com",
+            "password" : "testpassword",
+            "first_name": "testuser",
+            "last_name": "testuser"
+        }
         self.invalidData = { "email" : "abc", "password" : "abc" }
 
     @patch('auth_service.views.send_verification_email_task.delay')

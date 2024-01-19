@@ -101,5 +101,5 @@ class SendVerificationEmailTest(TestCase):
             mock_send.assert_called_once()
 
             # Assert the expected return value
-            expectedResponse = { "status": 400 }
+            expectedResponse = { "status": 400, "error": "Email sending failed" }
             self.assertEqual(receivedResponse, expectedResponse)

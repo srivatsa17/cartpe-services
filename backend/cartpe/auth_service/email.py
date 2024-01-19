@@ -41,6 +41,6 @@ def send_verification_email(user_email):
         response = { "status" : 200 }
 
     except Exception as e:
-        response = { "status" : 400, "error": e }
+        response = { "status" : 400, "error": str(e) }
 
     return response
