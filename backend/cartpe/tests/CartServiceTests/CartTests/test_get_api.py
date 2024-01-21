@@ -31,33 +31,23 @@ class GetCartItemsAPITest(APITestCase):
         return "cart:%s" % self.user.id
 
     def test_get_empty_cart(self):
-        expectedResponse = { "cartItems": [] }
-        expectedStatusCode = status.HTTP_200_OK
-
         url = self.get_url()
         response = client.get(url)
-        receivedResponse = response.data
-        receivedStatusCode = response.status_code
 
-        self.assertEqual(receivedResponse, expectedResponse)
-        self.assertEqual(receivedStatusCode, expectedStatusCode)
+        self.assertEqual({ "cartItems": [] }, response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_get_all_cart_items(self):
-        expectedResponse = {"cartItems": [{ "product": {"id": 1}, "quantity": 2 }]}
-        expectedStatusCode = status.HTTP_200_OK
-
-        redis_client.set(self.get_redis_key(), '$', { "cartItems": [] })
-        redis_client.arrappend(self.get_redis_key(), '$.cartItems', { "product": {"id": 1}, "quantity": 2 })
+        redis_client.set(self.get_redis_key(), "$", { "cartItems": [] })
+        redis_client.arrappend(self.get_redis_key(), "$.cartItems", { "product": { "id": 1 }, "quantity": 2 })
 
         url = self.get_url()
         response = client.get(url)
-        receivedResponse = response.data
-        receivedStatusCode = response.status_code
 
-        self.assertEqual(receivedResponse, expectedResponse)
-        self.assertEqual(receivedStatusCode, expectedStatusCode)
+        self.assertEqual({ "cartItems": [{ "product": { "id": 1 }, "quantity": 2 }]}, response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-    def tearDown(self) -> None:
+    def tearDown(self):
         redis_key = self.get_redis_key()
         if redis_client.get(redis_key):
             redis_client.delete(redis_key)

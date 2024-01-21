@@ -8,6 +8,7 @@ import redis
 # Initialize the APIClient app
 client = APIClient()
 
+# Global variables
 CONTENT_TYPE = "application/json"
 
 # Initialise JSON redis instance
@@ -27,17 +28,12 @@ class DeleteCartItemsAPITest(APITestCase):
         url = reverse("cart")
         return url
 
-    def test_with_valid_data(self):
-        expectedResponse = None
-        expectedStatusCode = status.HTTP_204_NO_CONTENT
-
+    def test_delete_with_valid_data(self):
         url = self.get_url()
         response = client.delete(url)
-        receivedStatusCode = response.status_code
-        receivedResponse = response.data
 
-        self.assertEqual(receivedResponse, expectedResponse)
-        self.assertEqual(receivedStatusCode, expectedStatusCode)
+        self.assertIsNone(response.data)
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
 
 class DeleteCartItemsByIdAPITest(APITestCase):
     """ Test module for DELETE request for CartByIdAPIView API """
@@ -53,37 +49,27 @@ class DeleteCartItemsByIdAPITest(APITestCase):
         return "cart:%s" % self.user.id
 
     def get_url(self, product_id):
-        url = reverse('cart_by_id', kwargs = {'id' : product_id})
+        url = reverse("cart_by_id", kwargs = { "id" : product_id })
         return url
 
-    def test_successful_delete(self):
-        expectedResponse = { "cartItems": [] }
-        expectedStatusCode = status.HTTP_200_OK
-
-        redis_client.set(self.get_redis_key(), '$', { "cartItems": [] })
-        redis_client.arrappend(self.get_redis_key(), '$.cartItems', { "product": {"id" : self.product.id }, "quantity": 2 })
+    def test_delete_success(self):
+        redis_client.set(self.get_redis_key(), "$", { "cartItems": [] })
+        redis_client.arrappend(self.get_redis_key(), "$.cartItems", { "product": {"id" : self.product.id }, "quantity": 2 })
 
         url = self.get_url(self.product.id)
         response = client.delete(url)
-        receivedStatusCode = response.status_code
-        receivedResponse = response.data
 
-        self.assertEqual(receivedResponse, expectedResponse)
-        self.assertEqual(receivedStatusCode, expectedStatusCode)
+        self.assertEqual({ "cartItems": [] }, response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-    def test_failure_delete(self):
-        expectedResponse = "Empty cart found for user."
-        expectedStatusCode = status.HTTP_400_BAD_REQUEST
-
+    def test_delete_failure(self):
         url = self.get_url(self.product.id)
         response = client.delete(url)
-        receivedStatusCode = response.status_code
-        receivedResponse = str(response.data["message"][0])
 
-        self.assertEqual(receivedResponse, expectedResponse)
-        self.assertEqual(receivedStatusCode, expectedStatusCode)
+        self.assertEqual("Empty cart found for user.", str(response.data["message"][0]))
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
 
-    def tearDown(self) -> None:
+    def tearDown(self):
         redis_key = self.get_redis_key()
         if redis_client.get(redis_key):
             redis_client.delete(redis_key)
