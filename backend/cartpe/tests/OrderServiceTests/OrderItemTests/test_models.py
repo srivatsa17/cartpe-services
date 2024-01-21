@@ -9,29 +9,17 @@ class OrderItemModelTest(TestCase):
         self.country = Country.objects.create(name = "India")
         self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
         self.address = Address.objects.create(
-            line1 = "abc", line2 = "def", city = "pqr", state = "xyz", country = self.country,
-            pin_code = "123244"
+            line1 = "abc", line2 = "def", city = "pqr", state = "xyz", country = self.country, pin_code = "123244"
         )
         self.user_address = UserAddress.objects.create(
-            name = "test_user",
-            user = self.user,
-            address = self.address,
-            alternate_phone = "1234567890",
-            type = "Home",
+            name = "test_user", user = self.user, address = self.address, alternate_phone = "1234567890", type = "Home",
             is_default = False
         )
         self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
         self.order = Order.objects.create(
-            method="Cash On Delivery", user_address=self.user_address, amount=123.00,
-            user=self.user
+            method="Cash On Delivery", user_address=self.user_address, amount=123.00, user=self.user
         )
-        self.orderItem = OrderItem.objects.create(
-            order=self.order, product=self.product, quantity=2
-        )
+        self.orderItem = OrderItem.objects.create(order=self.order, product=self.product, quantity=2)
 
     def test_str_is_equal_to_title(self):
-        orderItem = OrderItem.objects.get(id = self.orderItem.id)
-        expectedResponse = str(self.orderItem.pk)
-        receivedResponse = str(orderItem)
-
-        self.assertEqual(receivedResponse, expectedResponse)
+        self.assertEqual(str(self.orderItem.pk), str(OrderItem.objects.get(id = self.orderItem.id)))
