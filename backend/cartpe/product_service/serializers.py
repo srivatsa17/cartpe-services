@@ -5,7 +5,7 @@ from product_service.models import Product, Category, Brand, Image, Attribute, A
 
 class ProductImageSerializer(serializers.ModelSerializer):
     image = serializers.URLField(max_length = 255)
-    is_featured = serializers.BooleanField(default = None)
+    is_featured = serializers.BooleanField()
     product = serializers.PrimaryKeyRelatedField(read_only = True)
     created_at = serializers.DateTimeField(read_only = True)
     updated_at = serializers.DateTimeField(read_only = True)
