@@ -9,9 +9,9 @@ class Payment(models.Model):
     convenience_fee = models.PositiveSmallIntegerField(null = False, blank = False)
     shipping_fee = models.PositiveSmallIntegerField(null = False, blank = False)
     total_amount = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
-    round_off_price = models.IntegerField(null = False, blank = False)
-    savings_amount = models.IntegerField(null = False, blank = False)
-    savings_percent = models.PositiveSmallIntegerField(null = False, blank = False)
+    round_off_price = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
+    savings_amount = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
+    savings_percent = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
