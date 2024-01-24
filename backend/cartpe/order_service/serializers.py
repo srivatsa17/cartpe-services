@@ -3,6 +3,7 @@ from order_service.models import Order, OrderItem
 from product_service.models import Product
 from shipping_service.models import UserAddress
 from order_service.constants import OrderStatus, OrderMethod
+from shipping_service.serializers import UserAddressSerializer
 
 class OrderItemSerializer(serializers.ModelSerializer):
     order = serializers.SlugRelatedField(slug_field = 'id', read_only = True)
@@ -46,8 +47,7 @@ class OrderSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         # Retrieve order_items related to the current Order instance
         order_items_queryset = OrderItem.objects.filter(order = instance).order_by("-created_at")
-        # Serialize order_items
-        order_items_data = OrderItemSerializer(order_items_queryset, many = True).data
         # Include order_items in the representation
-        representation['order_items'] = order_items_data
+        representation['order_items'] = OrderItemSerializer(order_items_queryset, many = True).data
+        representation['user_address'] = UserAddressSerializer(instance.user_address).data
         return representation
