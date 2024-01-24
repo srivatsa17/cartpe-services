@@ -1,9 +1,11 @@
 from rest_framework import serializers
 from order_service.models import Order, OrderItem
+from order_service.constants import OrderStatus, OrderMethod
 from product_service.models import Product
 from shipping_service.models import UserAddress
-from order_service.constants import OrderStatus, OrderMethod
 from shipping_service.serializers import UserAddressSerializer
+from payment_service.models import Payment
+from payment_service.serializers import PaymentSerializer
 
 class OrderItemSerializer(serializers.ModelSerializer):
     order = serializers.SlugRelatedField(slug_field = 'id', read_only = True)
@@ -32,7 +34,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'id', 'amount', 'user', 'user_address', 'is_paid', 'status', 'method', 'razorpay_order_id', 
+            'id', 'amount', 'user', 'user_address', 'is_paid', 'status', 'method', 'razorpay_order_id',
             'razorpay_payment_id', 'razorpay_signature', 'created_at', 'updated_at'
         ]
 
@@ -50,4 +52,9 @@ class OrderSerializer(serializers.ModelSerializer):
         # Include order_items in the representation
         representation['order_items'] = OrderItemSerializer(order_items_queryset, many = True).data
         representation['user_address'] = UserAddressSerializer(instance.user_address).data
+
+        # Retrieve payment related to the current Order instance and include it in representation
+        payment_queryset = Payment.objects.get(order = instance)
+        representation['payment_details'] = PaymentSerializer(payment_queryset).data
+
         return representation

@@ -6,6 +6,8 @@ from order_service.serializers import OrderSerializer, OrderItemSerializer
 from order_service.constants import OrderStatus, OrderMethod
 from razorpay_integration.views import razorpay_api_client
 from razorpay_integration.serializers import RazorPayOrderSerializer
+from payment_service.models import Payment
+from payment_service.serializers import PaymentSerializer
 
 # Create your views here.
 
@@ -56,8 +58,9 @@ class OrderAPIView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data = request.data)
         order_items_serializer = OrderItemSerializer(data = request.data.get('order_items'), many = True)
+        payment_serializer = PaymentSerializer(data = request.data.get('payment_details'))
 
-        if  serializer.is_valid() and order_items_serializer.is_valid():
+        if  serializer.is_valid() and order_items_serializer.is_valid() and payment_serializer.is_valid():
             if serializer.validated_data['method'] == OrderMethod.UPI:
                 razorpay_api_client.verify_payment_signature(
                     razorpay_order_id = serializer.validated_data.get("razorpay_order_id"),
@@ -80,5 +83,11 @@ class OrderAPIView(generics.GenericAPIView):
 
             OrderItem.objects.bulk_create(order_items)
 
+            # Create the payment
+            Payment.objects.create(order = order, **payment_serializer.validated_data)
+
             return Response(serializer.data, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors or payment_serializer.errors or order_items_serializer.errors, 
+            status = status.HTTP_400_BAD_REQUEST
+        )
