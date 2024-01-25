@@ -16,10 +16,7 @@ class OrderItemProductSerializer(serializers.ModelSerializer):
 
     def get_featured_image(self, obj):
         # Retrieve the featured image for the product
-        featured_image_instance = Image.objects.filter(product=obj, is_featured=True).first()
-        if featured_image_instance:
-            return featured_image_instance.image
-        return None
+        return Image.objects.filter(product=obj, is_featured=True).first().image
 
     class Meta:
         model = Product

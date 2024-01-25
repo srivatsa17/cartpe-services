@@ -6,6 +6,7 @@ from shipping_service.models import Country, Address, UserAddress
 from product_service.models import Product
 from order_service.models import Order
 from order_service.constants import OrderMethod
+from payment_service.models import Payment
 
 # Global variables
 CONTENT_TYPE = "application/json"
@@ -34,6 +35,11 @@ class OrderAPITestCase(APITestCase):
         self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
         self.order = Order.objects.create(
             user_address=self.user_address, amount=100, method=OrderMethod.COD, user=self.user
+        )
+        self.payment = Payment.objects.create(
+            total_mrp = 2129.99, total_discount_price = 153, total_selling_price = 1976.99, convenience_fee = 10,
+            shipping_fee = 0, total_amount = 1987, round_off_price = 0.01, savings_amount = 143, savings_percent = 6.71,
+            order = self.order
         )
 
     def test_get_order_list_success(self):

@@ -5,11 +5,12 @@ from rest_framework import status
 import json
 from auth_service.models import User
 from shipping_service.models import Country, Address, UserAddress
-from product_service.models import Product
+from product_service.models import Product, Brand, Image
 from order_service.constants import OrderMethod, OrderStatus
 
 # Global variables
 CONTENT_TYPE = "application/json"
+SAMPLE_IMAGE = "https://cartpe.s3.ap-south-1.amazonaws.com/Products/Canon+80D/canon_80D_image_1.webp"
 
 # Initialize the APIClient app
 client = APIClient()
@@ -67,7 +68,13 @@ class OrderAPITestCase(APITestCase):
             name = "test_user", user = self.user, address = self.address, alternate_phone = "1234567890", type = "Home",
             is_default = False
         )
-        self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
+        self.brand = Brand.objects.create(name = "Cannon")
+        self.product = Product.objects.create(
+            name="Canon 80D", description="good product", price=50000, stock_count=10, brand=self.brand
+        )
+        self.image = Image.objects.create(
+            image = SAMPLE_IMAGE, is_featured = True, product = self.product
+        )
 
     @patch("order_service.views.razorpay_api_client")
     def test_create_upi_order_success(self, mock_razorpay_api_client):
@@ -86,7 +93,18 @@ class OrderAPITestCase(APITestCase):
             "order_items": [{
                 "product": self.product.pk,
                 "quantity": 2
-            }]
+            }],
+            "payment_details": {
+                "total_mrp": 2129.99,
+                "total_discount_price": 153,
+                "total_selling_price": 1976.99,
+                "convenience_fee": 10,
+                "shipping_fee": 0,
+                "total_amount": 1987,
+                "round_off_price": 0.01,
+                "savings_amount": 143,
+                "savings_percent": 6.71
+            }
         })
         response = client.post(url, data, content_type=CONTENT_TYPE)
 
@@ -130,7 +148,18 @@ class OrderAPITestCase(APITestCase):
             "order_items": [{
                 "product": self.product.pk,
                 "quantity": 2
-            }]
+            }],
+            "payment_details": {
+                "total_mrp": 2129.99,
+                "total_discount_price": 153,
+                "total_selling_price": 1976.99,
+                "convenience_fee": 10,
+                "shipping_fee": 0,
+                "total_amount": 1987,
+                "round_off_price": 0.01,
+                "savings_amount": 143,
+                "savings_percent": 6.71
+            }
         })
         response = client.post(url, data, content_type=CONTENT_TYPE)
 
