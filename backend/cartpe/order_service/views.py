@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from order_service.models import Order, OrderItem
 from order_service.serializers import OrderSerializer, OrderItemSerializer
 from order_service.constants import OrderStatus, OrderMethod
+from order_service.tasks import send_order_confirmation_email_task
 from razorpay_integration.views import razorpay_api_client
 from razorpay_integration.serializers import RazorPayOrderSerializer
 from payment_service.models import Payment
@@ -85,6 +86,9 @@ class OrderAPIView(generics.GenericAPIView):
 
             # Create the payment
             Payment.objects.create(order = order, **payment_serializer.validated_data)
+
+            # Send order confirmation email
+            send_order_confirmation_email_task.delay(order_data=serializer.data)
 
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(
