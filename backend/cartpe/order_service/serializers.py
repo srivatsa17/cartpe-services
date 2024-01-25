@@ -1,22 +1,45 @@
 from rest_framework import serializers
 from order_service.models import Order, OrderItem
 from order_service.constants import OrderStatus, OrderMethod
-from product_service.models import Product
+from product_service.models import Product, Image
 from shipping_service.models import UserAddress
 from shipping_service.serializers import UserAddressSerializer
 from payment_service.models import Payment
 from payment_service.serializers import PaymentSerializer
 
+class OrderItemProductSerializer(serializers.ModelSerializer):
+    brand = serializers.SerializerMethodField()
+    featured_image = serializers.SerializerMethodField()
+
+    def get_brand(self, obj):
+        return obj.brand.name
+
+    def get_featured_image(self, obj):
+        # Retrieve the featured image for the product
+        featured_image_instance = Image.objects.filter(product=obj, is_featured=True).first()
+        if featured_image_instance:
+            return featured_image_instance.image
+        return None
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'description', 'brand', 'featured_image']
+
 class OrderItemSerializer(serializers.ModelSerializer):
     order = serializers.SlugRelatedField(slug_field = 'id', read_only = True)
     product = serializers.SlugRelatedField(slug_field = 'id', queryset = Product.objects.all())
     quantity = serializers.IntegerField(min_value = 1, max_value = 10)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = OrderItem
         fields = ['id', 'order', 'product', 'quantity', 'created_at', 'updated_at']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["product"] = OrderItemProductSerializer(instance=instance.product).data
+        return representation
 
 class OrderSerializer(serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False)
@@ -28,8 +51,8 @@ class OrderSerializer(serializers.ModelSerializer):
     razorpay_order_id = serializers.CharField(min_length = 1, max_length = 50, allow_null = True, allow_blank = True)
     razorpay_payment_id = serializers.CharField(min_length = 1, max_length = 50, allow_null = True, allow_blank = True)
     razorpay_signature = serializers.CharField(min_length = 1, max_length = 255, allow_null = True, allow_blank = True)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = Order

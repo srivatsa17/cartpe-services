@@ -206,7 +206,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'cartpe.site@gmail.com'
 EMAIL_HOST_PASSWORD = 'cagzitdhrfxazwrt'
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = True
 
 HAYSTACK_CONNECTIONS = {
     'default': {

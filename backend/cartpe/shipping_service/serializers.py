@@ -4,8 +4,8 @@ from auth_service.models import User
 
 class CountrySerializer(serializers.ModelSerializer):
     name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = Country
@@ -33,8 +33,8 @@ class AddressSerializer(serializers.ModelSerializer):
     state = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     country = serializers.SlugRelatedField(slug_field = 'name', queryset = Country.objects.all())
     pin_code = serializers.CharField(min_length = 6, max_length = 6, allow_blank = False, trim_whitespace = True)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = Address
@@ -47,8 +47,8 @@ class UserAddressSerializer(serializers.ModelSerializer):
     alternate_phone = serializers.CharField(min_length = 10, max_length = 10, allow_blank = False, trim_whitespace = True)
     type = serializers.ChoiceField(choices=[("Home", "Home"), ("Work", "Work"), ("Other", "Other")])
     is_default = serializers.BooleanField(allow_null = False)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = UserAddress

@@ -7,8 +7,8 @@ class ProductImageSerializer(serializers.ModelSerializer):
     image = serializers.URLField(max_length = 255)
     is_featured = serializers.BooleanField()
     product = serializers.PrimaryKeyRelatedField(read_only = True)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = Image
@@ -64,8 +64,8 @@ class ProductSerializer(serializers.ModelSerializer):
     category_slug = serializers.SerializerMethodField()
     attributes = AttributeSerializer(many = True, read_only = True)
     product_images = ProductImageSerializer(many = True, read_only = True)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     def get_category_slug(self, instance):
         # Get the slug from the related category
@@ -101,8 +101,8 @@ class CategorySerializer(serializers.ModelSerializer):
     parent = serializers.SlugRelatedField(slug_field = 'name', allow_null = True, queryset = Category.objects.all())
     children = RecursiveField(many = True, read_only = True)
     products = ProductSerializer(many = True, read_only = True)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = Category
@@ -137,8 +137,8 @@ class BrandSerializer(serializers.ModelSerializer):
     name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     slug = serializers.SlugField(min_length = 1, max_length = 255, read_only = True)
     description = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = Brand

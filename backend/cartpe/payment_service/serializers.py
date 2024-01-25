@@ -12,8 +12,8 @@ class PaymentSerializer(serializers.ModelSerializer):
     round_off_price = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False)
     savings_amount = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False)
     savings_percent = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False)
-    created_at = serializers.DateTimeField(read_only = True)
-    updated_at = serializers.DateTimeField(read_only = True)
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = Payment
