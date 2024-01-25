@@ -41,27 +41,8 @@ class SendVerificationEmailTest(TestCase):
             expectedResponse = { "status" : 200 }
             self.assertEqual(receivedResponse, expectedResponse)
 
-    @patch("auth_service.email.EmailMultiAlternatives.send")
-    def test_send_verification_email_failure(self, mock_send):
-        with patch("auth_service.email.User.objects.filter") as mock_user_filter:
-            # Mock the filter method to return False, indicating the user does not exist
-            mock_user_filter.return_value.exists.return_value = False
-
-            # Call the send_verification_email function
-            receivedResponse = send_verification_email(self.user_email)
-
-            # Assert that the filter method was called with the correct email
-            mock_user_filter.assert_called_once_with(email=self.user_email)
-
-            # Assert that the send method of EmailMultiAlternatives was not called
-            mock_send.assert_not_called()
-
-            # Assert the expected return value
-            expectedResponse = { "status": 400 }
-            self.assertEqual(receivedResponse, expectedResponse)
-
     @patch("auth_service.email.EmailMultiAlternatives")
-    def test_send_verification_email_exception(self, mock_email_class):
+    def test_send_verification_email_failure(self, mock_email_class):
         user = Mock()
         user.pk = 123
 
@@ -102,4 +83,23 @@ class SendVerificationEmailTest(TestCase):
 
             # Assert the expected return value
             expectedResponse = { "status": 400, "error": "Email sending failed" }
+            self.assertEqual(receivedResponse, expectedResponse)
+
+    @patch("auth_service.email.EmailMultiAlternatives.send")
+    def test_send_verification_email_failure_with_non_existing_user(self, mock_send):
+        with patch("auth_service.email.User.objects.filter") as mock_user_filter:
+            # Mock the filter method to return False, indicating the user does not exist
+            mock_user_filter.return_value.exists.return_value = False
+
+            # Call the send_verification_email function
+            receivedResponse = send_verification_email(self.user_email)
+
+            # Assert that the filter method was called with the correct email
+            mock_user_filter.assert_called_once_with(email=self.user_email)
+
+            # Assert that the send method of EmailMultiAlternatives was not called
+            mock_send.assert_not_called()
+
+            # Assert the expected return value
+            expectedResponse = { "status": 400 }
             self.assertEqual(receivedResponse, expectedResponse)
