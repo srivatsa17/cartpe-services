@@ -20,7 +20,7 @@ class OrderItemProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'brand', 'featured_image']
+        fields = ['id', 'name', 'description', 'slug', 'brand', 'featured_image']
 
 class OrderItemSerializer(serializers.ModelSerializer):
     order = serializers.SlugRelatedField(slug_field = 'id', read_only = True)
