@@ -89,6 +89,7 @@ class OrderAPITestCase(APITestCase):
             "razorpay_signature": "verified_signature",
             "user_address": self.user_address.pk,
             "amount": 100,
+            "pending_amount": 0,
             "method": OrderMethod.UPI,
             "order_items": [{
                 "product": self.product.pk,
@@ -144,6 +145,7 @@ class OrderAPITestCase(APITestCase):
             "razorpay_signature": None,
             "user_address": self.user_address.pk,
             "amount": 100,
+            "pending_amount": 0,
             "method": OrderMethod.COD,
             "order_items": [{
                 "product": self.product.pk,

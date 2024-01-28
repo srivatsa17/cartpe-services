@@ -40,6 +40,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False)
+    pending_amount = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False, read_only = True)
     user = serializers.SlugRelatedField(slug_field = 'email', read_only = True)
     user_address = serializers.SlugRelatedField(slug_field = 'id', queryset = UserAddress.objects.all())
     is_paid = serializers.BooleanField(default = False)
@@ -54,7 +55,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'id', 'amount', 'user', 'user_address', 'is_paid', 'status', 'method', 'razorpay_order_id',
+            'id', 'amount', 'pending_amount', 'user', 'user_address', 'is_paid', 'status', 'method', 'razorpay_order_id',
             'razorpay_payment_id', 'razorpay_signature', 'created_at', 'updated_at'
         ]
 

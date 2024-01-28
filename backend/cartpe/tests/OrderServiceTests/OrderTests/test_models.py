@@ -17,7 +17,7 @@ class OrderModelTest(TestCase):
         )
         self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
         self.order = Order.objects.create(
-            method="Cash On Delivery", user_address=self.user_address, amount=123.00, user=self.user
+            method="Cash On Delivery", user_address=self.user_address, amount=123.00, pending_amount=0, user=self.user
         )
 
     def test_str_is_equal_to_title(self):

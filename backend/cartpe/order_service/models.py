@@ -7,6 +7,7 @@ from order_service.constants import OrderStatus, OrderMethod
 # Create your models here.
 class Order(models.Model):
     amount = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
+    pending_amount = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
     user = models.ForeignKey(to = User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'order')
     user_address = models.ForeignKey(to = UserAddress, on_delete = models.CASCADE, null = False, blank = False, related_name = 'order')
     is_paid = models.BooleanField(default = False, null = False, blank = False)

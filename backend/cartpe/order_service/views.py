@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from order_service.models import Order, OrderItem
 from order_service.serializers import OrderSerializer, OrderItemSerializer
@@ -69,8 +70,11 @@ class OrderAPIView(generics.GenericAPIView):
                     razorpay_signature = serializer.validated_data.get("razorpay_signature")
                 )
                 serializer.validated_data['is_paid'] = True
+                serializer.validated_data['pending_amount'] = 0.0
             else:
+                # For Cash on delivery, set is_paid=False and update pending amount with entire amount value.
                 serializer.validated_data['is_paid'] = False
+                serializer.validated_data['pending_amount'] = serializer.validated_data['amount']
 
             serializer.validated_data['user'] = self.get_object()
             serializer.validated_data['status'] = OrderStatus.CONFIRMED
@@ -95,3 +99,19 @@ class OrderAPIView(generics.GenericAPIView):
             serializer.errors or payment_serializer.errors or order_items_serializer.errors, 
             status = status.HTTP_400_BAD_REQUEST
         )
+    
+class OrderByIdAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+
+    def get_object(self, id):
+        try:
+            return Order.objects.get(id = id, user = self.request.user)
+        except Order.DoesNotExist:
+            response = { "message" : "Unable to find order with id " + str(id) }
+            raise NotFound(response)
+
+    def get(self, request, id):
+        order = self.get_object(id)
+        serializer = self.serializer_class(order, many = False)
+        return Response(serializer.data)
