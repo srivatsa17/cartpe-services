@@ -21,7 +21,7 @@ class GetAllAddressTest(APITestCase):
 
         self.country = Country.objects.create(name = "India")
         self.address = Address.objects.create(
-            line1 = "abc", line2 = "def", city = "pqr", state = "xyz", country = self.country, pin_code = "123244"
+            building = "abc", area = "def", city = "pqr", state = "xyz", country = self.country, pin_code = "123244"
         )
 
     def test_get_with_valid_data(self):

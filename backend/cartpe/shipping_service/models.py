@@ -11,8 +11,8 @@ class Country(models.Model):
         return self.name
 
 class Address(models.Model):
-    line1 = models.CharField(max_length = 255, null = False, blank = False)
-    line2 = models.CharField(max_length = 255, null = False, blank = False)
+    building = models.CharField(max_length = 255, null = False, blank = False)
+    area = models.CharField(max_length = 255, null = False, blank = False)
     city = models.CharField(max_length = 255, null = False, blank = False)
     state = models.CharField(max_length = 255, null = False, blank = False)
     country = models.ForeignKey(to = Country, on_delete = models.CASCADE, null = False, blank = False, related_name = 'address')
@@ -21,7 +21,7 @@ class Address(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self) -> str:
-        address = "%s, %s, %s, %s, %s, %s" % (self.line1, self.line2, self.city, self.state, self.country, self.pin_code)
+        address = "%s, %s, %s, %s, %s, %s" % (self.building, self.area, self.city, self.state, self.country, self.pin_code)
         return address
     
 class UserAddress(models.Model):
