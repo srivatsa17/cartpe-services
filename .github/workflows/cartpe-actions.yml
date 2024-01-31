@@ -61,7 +61,7 @@ jobs:
             run: coverage run manage.py test
 
         -   name: Collect coverage report
-            run: coverage report -m
+            run: coverage report -m --skip-covered
 
         -   name: Generate coverage report in xml format for Codecov
             run: coverage xml
