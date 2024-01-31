@@ -27,8 +27,8 @@ class CountrySerializer(serializers.ModelSerializer):
         return country
 
 class AddressSerializer(serializers.ModelSerializer):
-    line1 = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
-    line2 = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
+    building = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
+    area = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     city = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     state = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)
     country = serializers.SlugRelatedField(slug_field = 'name', queryset = Country.objects.all())
@@ -38,7 +38,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Address
-        fields = ['id', 'line1', 'line2', 'city', 'state', 'country', 'pin_code', 'created_at', 'updated_at']
+        fields = ['id', 'building', 'area', 'city', 'state', 'country', 'pin_code', 'created_at', 'updated_at']
 
 class UserAddressSerializer(serializers.ModelSerializer):
     name = serializers.CharField(min_length = 1, max_length = 255, allow_blank = False, trim_whitespace = True)

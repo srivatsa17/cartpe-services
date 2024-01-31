@@ -75,7 +75,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'tokens']
+        fields = ['email', 'first_name', 'last_name', 'password', 'tokens']
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
@@ -95,14 +95,6 @@ class LoginSerializer(serializers.ModelSerializer):
             raise AuthenticationFailed("Please ensure that your email is verified.")
 
         return user
-
-    def to_representation(self, instance):
-        return {
-            'email': instance.email,
-            'firstName': instance.first_name,
-            'lastName': instance.last_name,
-            'tokens': instance.tokens
-        }
 
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()

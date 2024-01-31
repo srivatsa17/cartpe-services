@@ -23,8 +23,8 @@ class PostAddressTest(APITestCase):
 
         self.country = Country.objects.create(name = "India")
         self.valid_data = {
-            "line1" : "abc",
-            "line2" : "def",
+            "building" : "abc",
+            "area" : "def",
             "city" : "pqr",
             "state" : "xyz",
             "country" : "India",
@@ -44,8 +44,8 @@ class PostAddressTest(APITestCase):
         data = json.dumps({})
         response = client.post(url, data = data, content_type = CONTENT_TYPE)
 
-        self.assertEqual("This field is required.", response.data["line1"][0])
-        self.assertEqual("This field is required.", response.data["line2"][0])
+        self.assertEqual("This field is required.", response.data["building"][0])
+        self.assertEqual("This field is required.", response.data["area"][0])
         self.assertEqual("This field is required.", response.data["city"][0])
         self.assertEqual("This field is required.", response.data["state"][0])
         self.assertEqual("This field is required.", response.data["country"][0])

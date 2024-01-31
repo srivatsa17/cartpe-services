@@ -23,7 +23,7 @@ class PutUserAddressByIdTest(APITestCase):
 
         self.country = Country.objects.create(name = "India")
         self.address = Address.objects.create(
-            line1 = "abc", line2 = "def", city = "pqr", state = "xyz", country = self.country, pin_code = "123244"
+            building = "abc", area = "def", city = "pqr", state = "xyz", country = self.country, pin_code = "123244"
         )
         self.user_address = UserAddress.objects.create(
             name = "test_user", user = self.user, address = self.address, alternate_phone = "1234567890",
@@ -35,8 +35,8 @@ class PutUserAddressByIdTest(APITestCase):
             "type": "Home",
             "is_default": True,
             "address": {
-                "line1" : "abc",
-                "line2" : "def",
+                "building" : "abc",
+                "area" : "def",
                 "city" : "pqr",
                 "state" : "xyz",
                 "country" : "India",

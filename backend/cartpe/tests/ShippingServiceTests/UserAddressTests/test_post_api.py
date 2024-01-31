@@ -28,8 +28,8 @@ class PostUserAddressTest(APITestCase):
             "type": "Home",
             "is_default": True,
             "address": {
-                "line1" : "abc",
-                "line2" : "def",
+                "building" : "abc",
+                "area" : "def",
                 "city" : "pqr",
                 "state" : "xyz",
                 "country" : "India",

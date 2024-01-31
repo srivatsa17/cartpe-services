@@ -20,7 +20,7 @@ class GetAllUserAddressTest(APITestCase):
 
         self.country = Country.objects.create(name = "India")
         self.address = Address.objects.create(
-            line1 = "abc", line2 = "def", city = "pqr", state = "xyz", country = self.country, pin_code = "123244"
+            building = "abc", area = "def", city = "pqr", state = "xyz", country = self.country, pin_code = "123244"
         )
         self.user_address = UserAddress.objects.create(
             name = "Srivatsa", user = self.user, address = self.address, alternate_phone = "1234567890",
