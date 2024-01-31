@@ -37,6 +37,7 @@ export const cartReducer = (state = { cartItems: [] }, action) => {
             if(!isProductInCart) {
                 return {
                     ...state,
+                    isLoading : false,
                     cartItems: [...state.cartItems, payload]
                 }
             }

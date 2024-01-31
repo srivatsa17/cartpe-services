@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'product_service.apps.ProductServiceConfig',
     'auth_service.apps.AuthServiceConfig',
     'cart_service.apps.CartServiceConfig',
+    'shipping_service.apps.ShippingServiceConfig',
+    'order_service.apps.OrderServiceConfig',
+    'payment_service.apps.PaymentServiceConfig',
 ]
 
 MIDDLEWARE = [
@@ -203,7 +206,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'cartpe.site@gmail.com'
 EMAIL_HOST_PASSWORD = 'cagzitdhrfxazwrt'
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = True
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -211,3 +213,6 @@ HAYSTACK_CONNECTIONS = {
         'URL': 'http://127.0.0.1:8983/solr/cartpe_core'
     },
 }
+
+RAZORPAY_KEY_ID = "rzp_test_q6yYG9cg3J2Ozn"
+RAZORPAY_KEY_SECRET = "DSKSs5cEjVACrURcsVOUgVAg"

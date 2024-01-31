@@ -9,14 +9,12 @@ class GetRoutesTest(APITestCase):
     """ Test module for GET request for RoutesAPIView API """
 
     def get_url(self):
-        url = reverse('product-routes')
+        url = reverse("product-routes")
         return url
 
-    def test_get_routes(self) -> None:
-        expectedResponse = status.HTTP_200_OK
-
+    def test_get_routes(self):
         url = self.get_url()
         response = client.get(url)
-        receivedResponse = response.status_code
 
-        self.assertEqual(receivedResponse, expectedResponse)
+        self.assertIsNotNone(response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)

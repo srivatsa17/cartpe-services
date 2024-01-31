@@ -1,24 +1,22 @@
 import "../../css/Checkout/AccordianStages.css";
 
-import { Accordion, Button } from "react-bootstrap";
-import React, { useState } from "react";
-
-import AddNewAddress from "./AddNewAddress";
-import DisplayCartItems from "./DisplayCartItems";
-import PaymentOptions from "./PaymentOptions";
-import ShippingAddressList from "./ShippingAddressList";
+import { Accordion } from "react-bootstrap";
+import DisplayCartItems from "./OrderItems/DisplayCartItems";
+import PaymentOptions from "./PaymentOptions/PaymentOptions";
+import React from "react";
+import ShippingAddress from "./ShippingAddress/ShippingAddress";
 
 function AccordianStages({
     activeKey,
     handleActiveAccordionItem,
     cartItems,
     isTermsAndConditionsChecked,
-    setIsTermsAndConditionsChecked
+    setIsTermsAndConditionsChecked,
+    selectedAddress,
+    setSelectedAddress,
+    defaultAddress
 }) {
-    const [showAddressModal, setShowAddressModal] = useState(false);
 
-    const handleShowNewAddressModal = () => setShowAddressModal(true);
-    const handleCloseNewAddressModal = () => setShowAddressModal(false);
 
     return (
         <div className="accordian-container">
@@ -28,16 +26,11 @@ function AccordianStages({
                         Select a Delivery Address
                     </Accordion.Header>
                     <Accordion.Body>
-                        <ShippingAddressList />
-                        <Button variant="success" onClick={() => handleActiveAccordionItem("1")}>
-                            Use this Address
-                        </Button>
-                        <Button className="mx-3" variant="dark" onClick={handleShowNewAddressModal}>
-                            Add new Address
-                        </Button>
-                        <AddNewAddress
-                            showAddressModal={showAddressModal}
-                            handleCloseNewAddressModal={handleCloseNewAddressModal}
+                        <ShippingAddress
+                            handleActiveAccordionItem={handleActiveAccordionItem}
+                            selectedAddress={selectedAddress}
+                            setSelectedAddress={setSelectedAddress}
+                            defaultAddress={defaultAddress}
                         />
                     </Accordion.Body>
                 </Accordion.Item>

@@ -10,3 +10,8 @@ export const PRODUCT_SEARCH_SCREEN = '/:slug'
 export const CART_SCREEN = '/cart'
 export const CHECKOUT_SCREEN = '/checkout'
 export const WISHLIST_SCREEN = '/wishlist'
+
+export const ORDER_SCREEN = '/orders'
+export const ORDER_CONFIRMED_SCREEN = '/order/confirmed'
+export const ORDER_FAILED_SCREEN = '/order/failed'
+export const ORDER_PAYMENT_FAILED_SCREEN = '/order/paymentFailed'
