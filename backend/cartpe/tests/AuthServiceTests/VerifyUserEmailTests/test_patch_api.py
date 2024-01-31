@@ -26,7 +26,7 @@ class VerifyUserEmailTest(APITestCase):
     def test_verify_email_success(self):
         url = self.get_url()
         data = json.dumps({
-            "uidb64" : urlsafe_base64_encode(force_bytes(self.user.pk)),
+            "uid" : urlsafe_base64_encode(force_bytes(self.user.pk)),
             "token" : account_activation_token.make_token(self.user)
         })
 
@@ -36,10 +36,10 @@ class VerifyUserEmailTest(APITestCase):
         self.assertEqual("Email Verified Successfully", response.data["message"])
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-    def test_verify_email_invalid_uidb64(self):
+    def test_verify_email_invalid_uid(self):
         url = self.get_url()
         data = json.dumps({
-            "uidb64" : "abcd123",
+            "uid" : "abcd123",
             "token" : account_activation_token.make_token(self.user)
         })
 
@@ -51,7 +51,7 @@ class VerifyUserEmailTest(APITestCase):
     def test_verify_email_invalid_decoded_pk(self):
         url = self.get_url()
         data = json.dumps({
-            "uidb64" : urlsafe_base64_encode(force_bytes(self.user.pk)) + "a",
+            "uid" : urlsafe_base64_encode(force_bytes(self.user.pk)) + "a",
             "token" : account_activation_token.make_token(self.user)
         })
 
@@ -63,7 +63,7 @@ class VerifyUserEmailTest(APITestCase):
     def test_verify_email_non_existing_user(self):
         url = self.get_url()
         data = json.dumps({
-            "uidb64" : urlsafe_base64_encode(force_bytes(123)),
+            "uid" : urlsafe_base64_encode(force_bytes(123)),
             "token" : account_activation_token.make_token(self.user)
         })
 
@@ -75,7 +75,7 @@ class VerifyUserEmailTest(APITestCase):
     def test_verify_email_invalid_token(self):
         url = self.get_url()
         data = json.dumps({
-            "uidb64" : urlsafe_base64_encode(force_bytes(self.user.pk)),
+            "uid" : urlsafe_base64_encode(force_bytes(self.user.pk)),
             "token" : "invalid_token"
         })
 

@@ -39,19 +39,19 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         return user
 
 class EmailVerificationSerializer(serializers.Serializer):
-    uidb64 = serializers.CharField(min_length = 1, max_length = 20)
+    uid = serializers.CharField(min_length = 1, max_length = 20)
     token = serializers.CharField(min_length = 10, max_length = 100)
 
     class Meta:
-        fields = ['uidb64', 'token']
+        fields = ['uid', 'token']
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        uidb64 = attrs.get('uidb64', '')
+        uid = attrs.get('uid', '')
         token = attrs.get('token', '')
 
         try:
-            pk = urlsafe_base64_decode(uidb64).decode()
+            pk = urlsafe_base64_decode(uid).decode()
         except Exception:
             raise ValidationError("Error occurred while decoding base64 user id")
 
