@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
+from auth_service.models import User
 
 class Category(MPTTModel):
     name = models.CharField(max_length = 255, null = False, blank = False)
@@ -90,3 +91,12 @@ class Image(models.Model):
 
     def __str__(self):
         return str(self.image)
+
+class WishList(models.Model):
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
+    user = models.ForeignKey(User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return str(self.pk)
