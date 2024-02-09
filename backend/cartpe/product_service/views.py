@@ -4,8 +4,10 @@ from rest_framework.exceptions import NotFound, ParseError
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from product_service.routes import routes
-from product_service.serializers import ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer
-from product_service.models import Product, Category, Brand, Image
+from product_service.serializers import (
+    ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer, WishListSerializer
+)
+from product_service.models import Product, Category, Brand, Image, WishList
 from product_service.filters import ProductFilter, CategoryFilter
 from haystack.query import SearchQuerySet
 import ast
@@ -261,3 +263,48 @@ class CategorySearchAPIView(generics.GenericAPIView):
             )
 
         return Response(results, status = status.HTTP_200_OK)
+    
+class WishListAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = WishListSerializer
+
+    def get_object(self):
+        return self.request.user
+    
+    def get_queryset(self):
+        user = self.get_object()
+        return WishList.objects.filter(user = user).order_by('updated_at')
+    
+    def get(self, request):
+        wishlisted_products = self.get_queryset()
+        serializer = self.serializer_class(wishlisted_products, many = True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = self.serializer_class(data = request.data, context = { "user" : self.get_object() })
+        if serializer.is_valid():
+            serializer.validated_data["user"] = self.get_object()
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    
+class WishListByIdAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = WishListSerializer
+
+    def get_object(self, id):
+        try:
+            return WishList.objects.get(id = id)
+        except WishList.DoesNotExist:
+            response = { "message" : "Unable to find wishlist product with id " + str(id) }
+            raise NotFound(response)
+    
+    def get(self, request, id):
+        wishlisted_product = self.get_object(id)
+        serializer = self.serializer_class(wishlisted_product, many = False)
+        return Response(serializer.data)
+    
+    def delete(self, request, id):
+        wishlisted_product = self.get_object(id)
+        wishlisted_product.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
