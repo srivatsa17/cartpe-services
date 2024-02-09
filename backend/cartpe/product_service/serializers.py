@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 from rest_framework.validators import UniqueTogetherValidator
-from product_service.models import Product, Category, Brand, Image, Attribute, AttributeValue
+from auth_service.models import User
+from product_service.models import Product, Category, Brand, Image, Attribute, AttributeValue, WishList
 
 class ProductImageSerializer(serializers.ModelSerializer):
     image = serializers.URLField(max_length = 255)
@@ -158,3 +159,27 @@ class BrandSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         brand = Brand.objects.create(**validated_data)
         return brand
+
+class WishListSerializer(serializers.ModelSerializer):
+    product = serializers.SlugRelatedField(slug_field = 'id', queryset = Product.objects.all())
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+
+    class Meta:
+        model = WishList
+        fields = ['id', 'product', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        product = attrs.get('product', '')
+        user = self.context.get('user', '')
+
+        if WishList.objects.filter(product = product, user = user).exists():
+            raise serializers.ValidationError("Product is already in wishlist.")
+
+        return attrs
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["product"] = ProductSerializer(instance = instance.product).data
+        return representation

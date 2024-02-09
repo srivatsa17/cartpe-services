@@ -12,4 +12,6 @@ urlpatterns = [
     path('brands/<int:id>', views.BrandByIdAPIView.as_view(), name="brand_by_id"),
     path('images', views.ProductImageAPIView.as_view(), name="images"),
     path('images/<int:id>', views.ProductImageByIdAPIView.as_view(), name="image_by_id"),
+    path('wishlist', views.WishListAPIView.as_view(), name="wishlist"),
+    path('wishlist/<int:id>', views.WishListByIdAPIView.as_view(), name="wishlist_by_id")
 ]
