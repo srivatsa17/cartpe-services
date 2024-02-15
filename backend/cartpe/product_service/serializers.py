@@ -27,14 +27,18 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     discount = serializers.IntegerField(min_value=0, max_value=100)
     stock_count = serializers.IntegerField(min_value=0)
     properties = ProductVariantPropertyValueSerializer(many=True)
+    available_properties = serializers.SerializerMethodField(read_only = True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+
+    def get_available_properties(self, instance):
+        return [p.property.name for p in instance.properties.all()]
 
     class Meta:
         model = ProductVariant
         fields = [
             "id", "name", "sku", "images", "price", "discount", "discounted_price", "selling_price",
-            "stock_count", "properties", "created_at", "updated_at",
+            "stock_count", "properties", "available_properties", "created_at", "updated_at",
         ]
 
 class ProductSerializer(serializers.ModelSerializer):
