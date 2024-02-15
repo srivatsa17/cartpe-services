@@ -20,7 +20,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     """
     Serializer for the `ProductVariant` model's fields.
     """
-    name = serializers.CharField(min_length=1, max_length=255)
+    name = serializers.CharField(min_length=1, max_length=255, read_only=True)
     sku = serializers.UUIDField(format="hex_verbose", read_only=True)
     images = serializers.ListField(child=serializers.URLField(max_length=255))
     price = serializers.DecimalField(max_digits=7, decimal_places=2, coerce_to_string=False)
@@ -83,7 +83,14 @@ class ProductSerializer(serializers.ModelSerializer):
 
         for product_variant in product_variants:
             properties = product_variant.pop("properties", [])
-            product_variant_instance = ProductVariant.objects.create(product=product, **product_variant)
+
+            # Join all property values by "-", append it to the product name and assign this value to product variant name.
+            property_values = "-".join(property_data["value"] for property_data in properties)
+            product_variant_name = product.name + " - " + property_values
+            
+            product_variant_instance = ProductVariant.objects.create(
+                name=product_variant_name, product=product, **product_variant
+            )
 
             for property_data in properties:
                 property_name = property_data["property"]["name"]
