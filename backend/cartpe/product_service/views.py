@@ -1,32 +1,35 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
-from rest_framework.exceptions import NotFound, ParseError
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from product_service.routes import routes
 from product_service.serializers import (
-    ProductSerializer, CategorySerializer, BrandSerializer, ProductImageSerializer, WishListSerializer
+    ProductSerializer, CategorySerializer, BrandSerializer, ProductVariantSerializer, WishListSerializer
 )
-from product_service.models import Product, Category, Brand, Image, WishList
-from product_service.filters import ProductFilter, CategoryFilter
+from product_service.models import Product, Category, Brand, WishList
+from product_service.filters import ProductFilter
 from haystack.query import SearchQuerySet
 import ast
 
-# Create your views here.
-
 class RoutesAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET` requests providing the list of supported `Product Service` API's.
+    """
     queryset = routes
 
     def get(self, request):
         return Response(self.get_queryset())
 
 class ProductAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET` and `POST` requests related to the `Product` model.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = ProductSerializer
     queryset =  (
                     Product.objects
                     .select_related('category', 'brand')
-                    .prefetch_related('attributes__attribute_values', 'product_images')
                     .all()
                     .order_by('name')
                 )
@@ -40,12 +43,18 @@ class ProductAPIView(generics.GenericAPIView):
 
     def post(self, request):
         serializer = self.serializer_class(data = request.data)
-        if serializer.is_valid():
+        product_variant_serializer = ProductVariantSerializer(data = request.data.get("product_variants"), many = True)
+
+        if serializer.is_valid() and product_variant_serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors or product_variant_serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class ProductByIdAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET`, `PATCH` and `DELETE` requests related to a `Product` model's instance.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = ProductSerializer
 
@@ -75,11 +84,13 @@ class ProductByIdAPIView(generics.GenericAPIView):
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class CategoryAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET` and `POST` requests related to the `Category` model.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = CategorySerializer
     queryset = Category.objects.root_nodes()
     filter_backends = [ DjangoFilterBackend ]
-    filterset_class = CategoryFilter
 
     def get(self, request):
         categories = self.filter_queryset(self.get_queryset())
@@ -94,6 +105,9 @@ class CategoryAPIView(generics.GenericAPIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class CategoryByIdAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET`, `PATCH` and `DELETE` requests related to a `Category` model's instance.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = CategorySerializer
 
@@ -123,6 +137,9 @@ class CategoryByIdAPIView(generics.GenericAPIView):
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class BrandAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET` and `POST` requests related to the `Brand` model.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = BrandSerializer
     queryset = Brand.objects.all()
@@ -140,6 +157,9 @@ class BrandAPIView(generics.GenericAPIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class BrandByIdAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET`, `PATCH` and `DELETE` requests related to a `Brand` model's instance.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = BrandSerializer
 
@@ -168,75 +188,10 @@ class BrandByIdAPIView(generics.GenericAPIView):
         brand.delete()
         return Response(status = status.HTTP_204_NO_CONTENT)
 
-class ProductImageAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = ProductImageSerializer
-
-    def get_object(self, id):
-        try:
-            return Product.objects.get(id = id)
-        except Product.DoesNotExist:
-            response = { "message" : "Unable to find product with id " + str(id) }
-            raise NotFound(response)
-
-    def get_queryset(self):
-        if not self.request.query_params:
-            response = { "message" : "Please make sure query params are sent in the format ?product=<id>." }
-            raise ParseError(response)
-
-        productPathParam = self.request.query_params.get('product')
-
-        if not productPathParam.isnumeric():
-            response = { "message" : "Please enter a valid integer for product id." }
-            raise ParseError(response)
-
-        product = self.get_object(productPathParam)
-        images = Image.objects.filter(product = product)
-        return images
-
-    def get(self, request):
-        images = self.get_queryset()
-        serializer = self.serializer_class(images, many = True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        images = self.get_queryset()
-        serializer = self.serializer_class(data = request.data, context = self.request.query_params)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-
-class ProductImageByIdAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = ProductImageSerializer
-
-    def get_object(self, id):
-        try:
-            return Image.objects.get(id = id)
-        except Image.DoesNotExist:
-            response = { "message" : "Unable to find image with id " + str(id) }
-            raise NotFound(response)
-
-    def get(self, request, id):
-        image = self.get_object(id)
-        serializer = self.serializer_class(image, many = False)
-        return Response(serializer.data)
-
-    def patch(self, request, id):
-        image = self.get_object(id)
-        serializer = self.serializer_class(image, data = request.data, context = { 'imageId':id }, partial = True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, id):
-        image = self.get_object(id)
-        image.delete()
-        return Response(status = status.HTTP_204_NO_CONTENT)
-
 class CategorySearchAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET` requests which queries the `Solr` instance to get the related categories.
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -265,6 +220,9 @@ class CategorySearchAPIView(generics.GenericAPIView):
         return Response(results, status = status.HTTP_200_OK)
     
 class WishListAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET` and `POST` requests related to the `Wishlist` model.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = WishListSerializer
 
@@ -289,6 +247,9 @@ class WishListAPIView(generics.GenericAPIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     
 class WishListByIdAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET` and `DELETE` requests related to a `Wishlist` model's instance.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = WishListSerializer
 
