@@ -90,8 +90,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
             # Join all property values by "-", append it to the product name and assign this value to product variant name.
             property_values = "-".join(property_data["value"] for property_data in properties)
-            product_variant_name = product.name + " - " + property_values
-            
+            if property_values:
+                product_variant_name = product.name + " - " + property_values
+            else:
+                product_variant_name = product.name
+
             product_variant_instance = ProductVariant.objects.create(
                 name=product_variant_name, product=product, **product_variant
             )
