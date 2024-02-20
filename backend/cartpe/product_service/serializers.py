@@ -32,7 +32,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
     def get_available_properties(self, instance):
-        return [p.property.name for p in instance.properties.all()]
+        return list({p.property.name for p in instance.properties.all()})
 
     class Meta:
         model = ProductVariant
