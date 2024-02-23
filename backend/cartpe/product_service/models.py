@@ -99,7 +99,7 @@ class ProductVariant(models.Model):
         return str(self.name)
 
 class WishList(models.Model):
-    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
+    product_variant = models.ForeignKey(ProductVariant, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
     user = models.ForeignKey(User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)

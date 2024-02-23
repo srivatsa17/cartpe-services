@@ -177,26 +177,36 @@ class BrandSerializer(serializers.ModelSerializer):
         brand = Brand.objects.create(**validated_data)
         return brand
 
+class WishlistProductSerializer(serializers.ModelSerializer):
+    brand = serializers.CharField(source="brand.name", read_only = True)
+    category = serializers.CharField(source="category.name", read_only = True)
+    category_slug = serializers.CharField(source="category.slug", read_only = True)
+
+    class Meta:
+        model = Product
+        fields = ["id", "name", "slug", "description", "brand", "category", "category_slug"]
+    
 class WishListSerializer(serializers.ModelSerializer):
-    product = serializers.SlugRelatedField(slug_field="id", queryset=Product.objects.all())
+    product = WishlistProductSerializer(source="product_variant.product", read_only=True)
+    product_variant = serializers.SlugRelatedField(slug_field="id", queryset=ProductVariant.objects.all())
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = WishList
-        fields = ["id", "product", "created_at", "updated_at"]
+        fields = ["id", "product", "product_variant", "created_at", "updated_at"]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        product = attrs.get("product", "")
+        product_variant = attrs.get("product_variant", "")
         user = self.context.get("user", "")
 
-        if WishList.objects.filter(product=product, user=user).exists():
+        if WishList.objects.filter(product_variant=product_variant, user=user).exists():
             raise serializers.ValidationError("Product is already in wishlist.")
 
         return attrs
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["product"] = ProductSerializer(instance=instance.product).data
+        representation["product_variant"] = ProductVariantSerializer(instance=instance.product_variant).data
         return representation
