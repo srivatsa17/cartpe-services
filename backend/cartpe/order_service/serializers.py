@@ -1,41 +1,37 @@
 from rest_framework import serializers
 from order_service.models import Order, OrderItem
 from order_service.constants import OrderStatus, OrderMethod
-from product_service.models import Product, Image
+from product_service.models import Product, ProductVariant
+from product_service.serializers import ProductVariantSerializer
 from shipping_service.models import UserAddress
 from shipping_service.serializers import UserAddressSerializer
 from payment_service.models import Payment
 from payment_service.serializers import PaymentSerializer
 
 class OrderItemProductSerializer(serializers.ModelSerializer):
-    brand = serializers.SerializerMethodField()
-    featured_image = serializers.SerializerMethodField()
-
-    def get_brand(self, obj):
-        return obj.brand.name
-
-    def get_featured_image(self, obj):
-        # Retrieve the featured image for the product
-        return Image.objects.filter(product=obj, is_featured=True).first().image
+    brand = serializers.CharField(source="brand.name", read_only = True)
+    category = serializers.CharField(source="category.name", read_only = True)
+    category_slug = serializers.CharField(source="category.slug", read_only = True)
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'slug', 'brand', 'featured_image']
+        fields = ["id", "name", "slug", "description", "brand", "category", "category_slug"]
 
 class OrderItemSerializer(serializers.ModelSerializer):
     order = serializers.SlugRelatedField(slug_field = 'id', read_only = True)
-    product = serializers.SlugRelatedField(slug_field = 'id', queryset = Product.objects.all())
+    product = OrderItemProductSerializer(source="product_variant.product", read_only=True)
+    product_variant = serializers.SlugRelatedField(slug_field = 'id', queryset = ProductVariant.objects.all())
     quantity = serializers.IntegerField(min_value = 1, max_value = 10)
     created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'order', 'product', 'quantity', 'created_at', 'updated_at']
+        fields = ['id', 'order', 'product', 'product_variant', 'quantity', 'created_at', 'updated_at']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["product"] = OrderItemProductSerializer(instance=instance.product).data
+        representation["product_variant"] = ProductVariantSerializer(instance=instance.product_variant).data
         return representation
 
 class OrderSerializer(serializers.ModelSerializer):

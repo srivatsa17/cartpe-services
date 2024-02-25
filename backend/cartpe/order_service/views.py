@@ -96,7 +96,7 @@ class OrderAPIView(generics.GenericAPIView):
 
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(
-            serializer.errors or payment_serializer.errors or order_items_serializer.errors, 
+            serializer.errors or order_items_serializer.errors or payment_serializer.errors, 
             status = status.HTTP_400_BAD_REQUEST
         )
     
