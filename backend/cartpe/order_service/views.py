@@ -10,8 +10,14 @@ from razorpay_integration.views import razorpay_api_client
 from razorpay_integration.serializers import RazorPayOrderSerializer
 from payment_service.models import Payment
 from payment_service.serializers import PaymentSerializer
+from django.core.cache import cache
 
 # Create your views here.
+
+""" 
+10 days is the default timeout for orders.
+"""
+DEFAULT_ORDERS_REDIS_TIMEOUT = 10 * 60 * 60 * 24
 
 class RazorPayOrderAPIView(generics.GenericAPIView):
     """
@@ -43,6 +49,9 @@ class OrderAPIView(generics.GenericAPIView):
     def get_object(self):
         return self.request.user
 
+    def get_redis_cache_key(self):
+        return "user:{user}:orders".format(user = self.get_object())
+
     def get_queryset(self):
         orders = (
                     Order.objects
@@ -53,9 +62,18 @@ class OrderAPIView(generics.GenericAPIView):
         return orders
 
     def get(self, request):
-        orders = self.get_queryset()
-        serializer = self.serializer_class(orders, many = True)
-        return Response(serializer.data)
+        if not cache.has_key(self.get_redis_cache_key()):
+            orders = self.get_queryset()
+            serializer = self.serializer_class(orders, many = True)
+            """
+            Set the serialized data in redis cache with key format set to user:<user email>:orders 
+            and timeout as 10 days.
+            """
+            cache.set(self.get_redis_cache_key(), serializer.data, DEFAULT_ORDERS_REDIS_TIMEOUT)
+            return Response(serializer.data)
+
+        """ Return the cached response """
+        return Response(cache.get(self.get_redis_cache_key()))
 
     def post(self, request):
         serializer = self.serializer_class(data = request.data)
@@ -93,6 +111,10 @@ class OrderAPIView(generics.GenericAPIView):
 
             # Send order confirmation email
             send_order_confirmation_email_task.delay(order_data=serializer.data)
+            
+            # Delete the existing cached orders in redis
+            if cache.get(self.get_redis_cache_key()) is not None:
+                cache.delete(self.get_redis_cache_key())
 
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(
