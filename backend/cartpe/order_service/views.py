@@ -14,7 +14,7 @@ from django.core.cache import cache
 
 # Create your views here.
 
-""" 
+"""
 10 days is the default timeout for orders.
 """
 DEFAULT_ORDERS_REDIS_TIMEOUT = 10 * 60 * 60 * 24
@@ -66,7 +66,7 @@ class OrderAPIView(generics.GenericAPIView):
             orders = self.get_queryset()
             serializer = self.serializer_class(orders, many = True)
             """
-            Set the serialized data in redis cache with key format set to user:<user email>:orders 
+            Set the serialized data in redis cache with key format set to user:<user email>:orders
             and timeout as 10 days.
             """
             cache.set(self.get_redis_cache_key(), serializer.data, DEFAULT_ORDERS_REDIS_TIMEOUT)
@@ -80,23 +80,29 @@ class OrderAPIView(generics.GenericAPIView):
         order_items_serializer = OrderItemSerializer(data = request.data.get('order_items'), many = True)
         payment_serializer = PaymentSerializer(data = request.data.get('payment_details'))
 
-        if  serializer.is_valid() and order_items_serializer.is_valid() and payment_serializer.is_valid():
+        if serializer.is_valid() and order_items_serializer.is_valid() and payment_serializer.is_valid():
             if serializer.validated_data['method'] == OrderMethod.UPI:
                 razorpay_api_client.verify_payment_signature(
                     razorpay_order_id = serializer.validated_data.get("razorpay_order_id"),
                     razorpay_payment_id = serializer.validated_data.get("razorpay_payment_id"),
                     razorpay_signature = serializer.validated_data.get("razorpay_signature")
                 )
+
+                razorpay_order_details = razorpay_api_client.fetch_order(razorpay_order_id=serializer.validated_data.get("razorpay_order_id"))
+
                 serializer.validated_data['is_paid'] = True
-                serializer.validated_data['pending_amount'] = 0.0
+                # Convert data stored by razorpay in paisa into rupees
+                serializer.validated_data['amount_paid'] = razorpay_order_details['amount_paid'] / 100
+                serializer.validated_data['amount_due'] = razorpay_order_details['amount_due'] / 100
             else:
-                # For Cash on delivery, set is_paid=False and update pending amount with entire amount value.
+                # For Cash on delivery, set is_paid=False and update paid and due amount.
                 serializer.validated_data['is_paid'] = False
-                serializer.validated_data['pending_amount'] = serializer.validated_data['amount']
+                serializer.validated_data['amount_paid'] = 0.0
+                serializer.validated_data['amount_due'] = serializer.validated_data['amount']
 
             serializer.validated_data['user'] = self.get_object()
             serializer.validated_data['status'] = OrderStatus.CONFIRMED
-            
+
             order = serializer.save()
 
             # We are creating a list of OrderItem objects because of bulk_create method on OrderItem class.
@@ -111,17 +117,17 @@ class OrderAPIView(generics.GenericAPIView):
 
             # Send order confirmation email
             send_order_confirmation_email_task.delay(order_data=serializer.data)
-            
+
             # Delete the existing cached orders in redis
-            if cache.get(self.get_redis_cache_key()) is not None:
+            if cache.has_key(self.get_redis_cache_key()):
                 cache.delete(self.get_redis_cache_key())
 
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(
-            serializer.errors or order_items_serializer.errors or payment_serializer.errors, 
+            serializer.errors or order_items_serializer.errors or payment_serializer.errors,
             status = status.HTTP_400_BAD_REQUEST
         )
-    
+
 class OrderByIdAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer

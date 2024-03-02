@@ -18,6 +18,16 @@ class RazorPayAPIView():
 
         except Exception:
             raise ValidationError("Failed to create razorpay order.")
+        
+    def fetch_order(self, **kwargs):
+        order_id = kwargs['razorpay_order_id']
+
+        try:
+            order_details = RAZORPAY_CLIENT.order.fetch(order_id)
+            return order_details
+
+        except Exception:
+            raise ValidationError(f"Failed to fetch razorpay order {order_id}.")
 
     def verify_payment_signature(self, **kwargs):
         try:

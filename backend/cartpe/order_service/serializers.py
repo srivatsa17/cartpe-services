@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from order_service.models import Order, OrderItem
-from order_service.constants import OrderStatus, OrderMethod
+from order_service.constants import OrderStatus, OrderMethod, OrderRefundStatus
 from product_service.models import Product, ProductVariant
 from product_service.serializers import ProductVariantSerializer
 from shipping_service.models import UserAddress
@@ -36,11 +36,14 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False)
-    pending_amount = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False, read_only = True)
+    amount_paid = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False, read_only = True)
+    amount_due = serializers.DecimalField(max_digits = 7, decimal_places = 2, coerce_to_string = False, read_only = True)
+    amount_refundable = serializers.DecimalField(default = 0, max_digits = 7, decimal_places = 2, coerce_to_string = False)
     user = serializers.SlugRelatedField(slug_field = 'email', read_only = True)
     user_address = serializers.SlugRelatedField(slug_field = 'id', queryset = UserAddress.objects.all())
     is_paid = serializers.BooleanField(default = False)
     status = serializers.ChoiceField(choices = OrderStatus.ORDER_STATUS_CHOICES, default = OrderStatus.PENDING)
+    refund_status = serializers.ChoiceField(choices = OrderRefundStatus.ORDER_REFUND_STATUS_CHOICES, default = OrderRefundStatus.NA)
     method = serializers.ChoiceField(choices = OrderMethod.ORDER_METHOD_CHOICES, default = OrderMethod.UPI)
     razorpay_order_id = serializers.CharField(min_length = 1, max_length = 50, allow_null = True, allow_blank = True)
     razorpay_payment_id = serializers.CharField(min_length = 1, max_length = 50, allow_null = True, allow_blank = True)
@@ -51,8 +54,9 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'id', 'amount', 'pending_amount', 'user', 'user_address', 'is_paid', 'status', 'method', 'razorpay_order_id',
-            'razorpay_payment_id', 'razorpay_signature', 'created_at', 'updated_at'
+            'id', 'amount', 'amount_paid', 'amount_due', 'amount_refundable', 'user', 'user_address', 'is_paid', 
+            'status', 'method', 'refund_status', 'razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature', 
+            'created_at', 'updated_at'
         ]
 
     def validate(self, attrs):
