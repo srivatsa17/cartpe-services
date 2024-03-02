@@ -88,7 +88,9 @@ class OrderAPIView(generics.GenericAPIView):
                     razorpay_signature = serializer.validated_data.get("razorpay_signature")
                 )
 
-                razorpay_order_details = razorpay_api_client.fetch_order(razorpay_order_id=serializer.validated_data.get("razorpay_order_id"))
+                razorpay_order_details = razorpay_api_client.fetch_order(
+                    razorpay_order_id=serializer.validated_data.get("razorpay_order_id")
+                )
 
                 serializer.validated_data['is_paid'] = True
                 # Convert data stored by razorpay in paisa into rupees
