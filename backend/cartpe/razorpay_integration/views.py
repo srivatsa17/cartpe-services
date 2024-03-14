@@ -40,5 +40,22 @@ class RazorPayAPIView():
 
         except Exception:
             raise ValidationError("Failed to verify the payment signature.")
+        
+    def create_refund(self, **kwargs):
+        order_id = kwargs['razorpay_order_id']
+        payment_id = kwargs['razorpay_payment_id']
+        amount = int(kwargs['amount'] * 100)
+
+        try:
+            refund_details = RAZORPAY_CLIENT.payment.refund(payment_id, {
+                "amount": amount,
+                "speed": "normal",
+            })
+            return refund_details
+
+        except Exception as e:
+            raise ValidationError(
+                f"Failed to create refund for order {order_id}. Razorpay Response - {e}."
+            )
 
 razorpay_api_client = RazorPayAPIView()

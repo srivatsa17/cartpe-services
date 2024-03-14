@@ -47,6 +47,7 @@ class OrderSerializer(serializers.ModelSerializer):
     method = serializers.ChoiceField(choices = OrderMethod.ORDER_METHOD_CHOICES, default = OrderMethod.UPI)
     razorpay_order_id = serializers.CharField(min_length = 1, max_length = 50, allow_null = True, allow_blank = True)
     razorpay_payment_id = serializers.CharField(min_length = 1, max_length = 50, allow_null = True, allow_blank = True)
+    razorpay_refund_id = serializers.CharField(min_length = 1, max_length = 50, allow_null = True, allow_blank = True)
     razorpay_signature = serializers.CharField(min_length = 1, max_length = 255, allow_null = True, allow_blank = True)
     created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
@@ -56,7 +57,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'amount', 'amount_paid', 'amount_due', 'amount_refundable', 'user', 'user_address', 'is_paid', 
             'status', 'method', 'refund_status', 'razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature', 
-            'created_at', 'updated_at'
+            'razorpay_refund_id', 'created_at', 'updated_at'
         ]
 
     def validate(self, attrs):

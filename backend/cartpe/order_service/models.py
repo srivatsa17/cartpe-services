@@ -18,6 +18,7 @@ class Order(models.Model):
     method = models.CharField(max_length = 255, choices = OrderMethod.ORDER_METHOD_CHOICES, default = OrderMethod.UPI, null = False, blank = False)
     razorpay_order_id = models.CharField(max_length = 255, null = True, blank = True)
     razorpay_payment_id = models.CharField(max_length = 255, null = True, blank = True)
+    razorpay_refund_id = models.CharField(max_length = 255, null = True, blank = True)
     razorpay_signature = models.CharField(max_length = 255, null = True, blank = True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)

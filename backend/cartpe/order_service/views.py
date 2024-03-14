@@ -4,7 +4,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from order_service.models import Order, OrderItem
 from order_service.serializers import OrderSerializer, OrderItemSerializer
-from order_service.constants import OrderStatus, OrderMethod
+from order_service.constants import OrderStatus, OrderMethod, OrderRefundStatus
 from order_service.tasks import send_order_confirmation_email_task
 from razorpay_integration.views import razorpay_api_client
 from razorpay_integration.serializers import RazorPayOrderSerializer
@@ -89,7 +89,7 @@ class OrderAPIView(generics.GenericAPIView):
                 )
 
                 razorpay_order_details = razorpay_api_client.fetch_order(
-                    razorpay_order_id=serializer.validated_data.get("razorpay_order_id")
+                    razorpay_order_id = serializer.validated_data.get("razorpay_order_id")
                 )
 
                 serializer.validated_data['is_paid'] = True
@@ -140,8 +140,39 @@ class OrderByIdAPIView(generics.GenericAPIView):
         except Order.DoesNotExist:
             response = { "message" : "Unable to find order with id " + str(id) }
             raise NotFound(response)
+        
+    def get_redis_cache_key(self):
+        return "user:{user}:orders".format(user = self.request.user)
 
     def get(self, request, id):
         order = self.get_object(id)
         serializer = self.serializer_class(order, many = False)
         return Response(serializer.data)
+
+    def patch(self, request, id):
+        order = self.get_object(id)
+        serializer = self.serializer_class(order, data = request.data, partial = True)
+        
+        if serializer.is_valid():            
+            if serializer.validated_data['status'] == OrderStatus.CANCELLED:
+                serializer.validated_data['amount_refundable'] = order.amount_paid
+                """ The following code does not work for test razorpay account. """
+                """
+                if order.method == OrderMethod.UPI:
+                    razorpay_refund_details = razorpay_api_client.create_refund(
+                        razorpay_order_id = order.razorpay_order_id,
+                        razorpay_payment_id = order.razorpay_payment_id,
+                        amount = order.amount
+                    )
+                    serializer.validated_data['razorpay_refund_id'] = razorpay_refund_details["id"]
+                """
+            serializer.validated_data['refund_status'] = OrderRefundStatus.COMPLETED
+
+            serializer.save()
+
+            # Delete the existing cached orders in redis
+            if cache.has_key(self.get_redis_cache_key()):
+                cache.delete(self.get_redis_cache_key())
+
+            return Response(serializer.data)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
