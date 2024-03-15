@@ -11,6 +11,12 @@ from product_service.models import Product, Category, Brand, WishList
 from product_service.filters import ProductFilter
 from haystack.query import SearchQuerySet
 import ast
+from django.core.cache import cache
+
+"""
+10 days is the default timeout for wishlist.
+"""
+DEFAULT_WISHLIST_REDIS_TIMEOUT = 10 * 60 * 60 * 24
 
 class RoutesAPIView(generics.GenericAPIView):
     """
@@ -218,7 +224,7 @@ class CategorySearchAPIView(generics.GenericAPIView):
             )
 
         return Response(results, status = status.HTTP_200_OK)
-    
+
 class WishListAPIView(generics.GenericAPIView):
     """
     API View for handling HTTP `GET` and `POST` requests related to the `Wishlist` model.
@@ -228,24 +234,41 @@ class WishListAPIView(generics.GenericAPIView):
 
     def get_object(self):
         return self.request.user
-    
+
+    def get_redis_cache_key(self):
+        return "user:{user}:wishlist".format(user = self.get_object())
+
     def get_queryset(self):
         user = self.get_object()
         return WishList.objects.filter(user = user).order_by('updated_at')
-    
+
     def get(self, request):
-        wishlisted_products = self.get_queryset()
-        serializer = self.serializer_class(wishlisted_products, many = True)
-        return Response(serializer.data)
+        if not cache.has_key(self.get_redis_cache_key()):
+            wishlisted_products = self.get_queryset()
+            serializer = self.serializer_class(wishlisted_products, many = True)
+            """
+            Set the serialized data in redis cache with key format set to user:<user email>:wishlist
+            and timeout as 10 days.
+            """
+            cache.set(self.get_redis_cache_key(), serializer.data, DEFAULT_WISHLIST_REDIS_TIMEOUT)
+            return Response(serializer.data)
+
+        """ Return the cached response """
+        return Response(cache.get(self.get_redis_cache_key()))
 
     def post(self, request):
         serializer = self.serializer_class(data = request.data, context = { "user" : self.get_object() })
         if serializer.is_valid():
             serializer.validated_data["user"] = self.get_object()
             serializer.save()
+
+            # Delete the existing cached wishlist in redis
+            if cache.has_key(self.get_redis_cache_key()):
+                cache.delete(self.get_redis_cache_key())
+
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    
+
 class WishListByIdAPIView(generics.GenericAPIView):
     """
     API View for handling HTTP `GET` and `DELETE` requests related to a `Wishlist` model's instance.
@@ -259,12 +282,12 @@ class WishListByIdAPIView(generics.GenericAPIView):
         except WishList.DoesNotExist:
             response = { "message" : "Unable to find wishlist product with id " + str(id) }
             raise NotFound(response)
-    
+
     def get(self, request, id):
         wishlisted_product = self.get_object(id)
         serializer = self.serializer_class(wishlisted_product, many = False)
         return Response(serializer.data)
-    
+
     def delete(self, request, id):
         wishlisted_product = self.get_object(id)
         wishlisted_product.delete()
