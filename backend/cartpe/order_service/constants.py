@@ -6,7 +6,6 @@ class OrderStatus:
     DELIVERED = "DELIVERED"
     CANCELLED = "CANCELLED"
     RETURNED = "RETURNED"
-    REFUNDED = "REFUNDED"
 
     ORDER_STATUS_CHOICES = [
         (PENDING, PENDING),
@@ -16,7 +15,6 @@ class OrderStatus:
         (DELIVERED, DELIVERED),
         (CANCELLED, CANCELLED),
         (RETURNED, RETURNED),
-        (REFUNDED, REFUNDED)
     ]
 
 class OrderMethod:
@@ -26,4 +24,19 @@ class OrderMethod:
     ORDER_METHOD_CHOICES = [
         (UPI, UPI),
         (COD, COD)
+    ]
+
+class OrderRefundStatus:
+    NA = "NA"
+    INITIATED = "INITIATED"
+    PARTIAL = "PARTIAL"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+
+    ORDER_REFUND_STATUS_CHOICES = [
+        (NA, NA),
+        (INITIATED, INITIATED),
+        (PARTIAL, PARTIAL),
+        (COMPLETED, COMPLETED),
+        (FAILED, FAILED),
     ]

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 import uuid
 from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
@@ -40,30 +41,49 @@ class Brand(models.Model):
         self.slug = slugify(self.name)
         super(Brand, self).save(*args, **kwargs)
 
-class Attribute(models.Model):
+class ProductVariantProperty(models.Model):
     name = models.CharField(max_length = 255, null = True, blank = True)
 
     def __str__(self) -> str:
         return self.name
 
-class AttributeValue(models.Model):
+class ProductVariantPropertyValue(models.Model):
     value = models.CharField(max_length = 255, null = True, blank = True)
-    attribute = models.ForeignKey(Attribute, on_delete = models.CASCADE, null = True, blank = True, related_name = 'attribute_values')
+    property = models.ForeignKey(
+        ProductVariantProperty, on_delete = models.CASCADE, null = True, blank = True, 
+        related_name = 'product_variant_property_values'
+    )
 
     def __str__(self) -> str:
-        return self.value
+        return "%s - %s" % (self.property.name, self.value)
 
 class Product(models.Model):
-    sku = models.UUIDField(primary_key = False, default = uuid.uuid4, editable = False)
     name = models.CharField(max_length = 255, unique = True, null = False, blank = False)
     slug = models.SlugField(max_length = 255, null = True, blank = True)
     description = models.TextField(null = False, blank = False)
-    price = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
     brand = models.ForeignKey(Brand, on_delete = models.SET_NULL, null = True, blank = True, related_name = 'products')
     category = models.ForeignKey(Category, on_delete = models.SET_NULL, null = True, blank = True, related_name = 'products')
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Product, self).save(*args, **kwargs)
+
+class ProductVariant(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_variants'
+    )
+    name = models.CharField(max_length = 255, unique = True, null = False, blank = False)
+    sku = models.UUIDField(primary_key = False, default = uuid.uuid4, editable = False)
+    images = ArrayField(models.URLField(max_length = 255, null = False, blank = False))
+    price = models.DecimalField(max_digits = 7, decimal_places = 2, null = False, blank = False)
     discount = models.PositiveSmallIntegerField(default = 0, null = False, blank = False)
     stock_count = models.PositiveIntegerField(default = 0, null = False, blank = False)
-    attributes = models.ManyToManyField(Attribute, blank = True, related_name = 'products')
+    properties = models.ManyToManyField(ProductVariantPropertyValue, blank = True, related_name = 'product_variants')
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -78,22 +98,8 @@ class Product(models.Model):
     def __str__(self):
         return str(self.name)
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(Product, self).save(*args, **kwargs)
-
-class Image(models.Model):
-    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_images')
-    image = models.URLField(max_length = 255, null = False, blank = False)
-    is_featured = models.BooleanField(default = False)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-    def __str__(self):
-        return str(self.image)
-
 class WishList(models.Model):
-    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
+    product_variant = models.ForeignKey(ProductVariant, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
     user = models.ForeignKey(User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
