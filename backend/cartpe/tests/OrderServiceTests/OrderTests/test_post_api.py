@@ -5,12 +5,11 @@ from rest_framework import status
 import json
 from auth_service.models import User
 from shipping_service.models import Country, Address, UserAddress
-from product_service.models import Product, Brand, Image
+from product_service.models import Product, ProductVariant, Brand
 from order_service.constants import OrderMethod, OrderStatus
 
 # Global variables
 CONTENT_TYPE = "application/json"
-SAMPLE_IMAGE = "https://cartpe.s3.ap-south-1.amazonaws.com/Products/Canon+80D/canon_80D_image_1.webp"
 
 # Initialize the APIClient app
 client = APIClient()
@@ -69,30 +68,40 @@ class OrderAPITestCase(APITestCase):
             is_default = False
         )
         self.brand = Brand.objects.create(name = "Cannon")
-        self.product = Product.objects.create(
-            name="Canon 80D", description="good product", price=50000, stock_count=10, brand=self.brand
-        )
-        self.image = Image.objects.create(
-            image = SAMPLE_IMAGE, is_featured = True, product = self.product
+        self.product = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.productVariant = ProductVariant.objects.create(
+            product = self.product, 
+            images=['example1.jpg', 'example2.jpg'],
+            price=70000,
+            stock_count = 10
         )
 
     @patch("order_service.views.razorpay_api_client")
-    def test_create_upi_order_success(self, mock_razorpay_api_client):
-        mock_verify_payment_signature = MagicMock()
-        mock_razorpay_api_client.utility.verify_payment_signature = mock_verify_payment_signature
-        mock_verify_payment_signature.return_value = { "razorpay_signature": "verified_signature" }
+    @patch("order_service.views.cache")
+    def test_create_upi_order_success(self, mock_cache, mock_razorpay_api_client):        
+        mock_razorpay_api_client.utility.verify_payment_signature.return_value = { 
+            "razorpay_signature": "verified_signature" 
+        }
+
+        mock_razorpay_api_client.fetch_order.return_value = {
+            "order_id": "order_xyz",
+            "amount_paid": 100,
+            "amount_due": 0
+        }
+
+        mock_cache.has_key.return_value = True
 
         url = self.get_url()
         data = json.dumps({
             "razorpay_order_id": "order_xyz",
             "razorpay_payment_id": "payment_xyz",
             "razorpay_signature": "verified_signature",
+            "razorpay_refund_id": None,
             "user_address": self.user_address.pk,
             "amount": 100,
-            "pending_amount": 0,
             "method": OrderMethod.UPI,
             "order_items": [{
-                "product": self.product.pk,
+                "productVariant": self.productVariant.pk,
                 "quantity": 2
             }],
             "payment_details": {
@@ -108,6 +117,8 @@ class OrderAPITestCase(APITestCase):
             }
         })
         response = client.post(url, data, content_type=CONTENT_TYPE)
+
+        mock_razorpay_api_client.fetch_order.assert_called_once_with(razorpay_order_id="order_xyz")
 
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertTrue(response.data["is_paid"])
@@ -128,7 +139,7 @@ class OrderAPITestCase(APITestCase):
             "amount": 100,
             "method": OrderMethod.UPI,
             "order_items": [{
-                "product": self.product.pk,
+                "productVariant": self.productVariant.pk,
                 "quantity": 2
             }]
         })
@@ -143,12 +154,13 @@ class OrderAPITestCase(APITestCase):
             "razorpay_order_id": None,
             "razorpay_payment_id": None,
             "razorpay_signature": None,
+            "razorpay_refund_id": None,
             "user_address": self.user_address.pk,
             "amount": 100,
             "pending_amount": 0,
             "method": OrderMethod.COD,
             "order_items": [{
-                "product": self.product.pk,
+                "productVariant": self.productVariant.pk,
                 "quantity": 2
             }],
             "payment_details": {
@@ -179,7 +191,7 @@ class OrderAPITestCase(APITestCase):
             "amount": 100,
             "method": OrderMethod.COD,
             "order_items": [{
-                "product": self.product.pk,
+                "productVariant": self.productVariant.pk,
                 "quantity": 2
             }]
         })

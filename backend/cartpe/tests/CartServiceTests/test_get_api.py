@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from product_service.models import Product
+from product_service.models import Product, ProductVariant
 from auth_service.models import User
 import redis
 
@@ -21,7 +21,13 @@ class GetCartItemsAPITest(APITestCase):
         self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
         client.force_authenticate(user = self.user)
 
-        self.product = Product.objects.create(name = "iphone 13", description = "ok product", price = 70000, stock_count = 1)
+        self.product = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.productVariant = ProductVariant.objects.create(
+            product = self.product, 
+            images=['example1.jpg', 'example2.jpg'],
+            price=70000,
+            stock_count = 10
+        )
 
     def get_url(self):
         url = reverse("cart")

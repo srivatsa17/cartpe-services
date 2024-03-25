@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from unittest.mock import patch
 import json
 from cart_service.serializers import CartSerializer
-from product_service.models import Product
+from product_service.models import Product, ProductVariant
 from auth_service.models import User
 import redis
 
@@ -26,7 +26,13 @@ class PostCartItemsAPITest(APITestCase):
         self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
         client.force_authenticate(user = self.user)
 
-        self.product = Product.objects.create(name = "iphone 13", description = "ok product", price = 70000, stock_count = 1)
+        self.product = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.productVariant = ProductVariant.objects.create(
+            product = self.product, 
+            images=['example1.jpg', 'example2.jpg'],
+            price=70000,
+            stock_count = 10
+        )
 
     def get_url(self):
         url = reverse("cart")
@@ -37,7 +43,7 @@ class PostCartItemsAPITest(APITestCase):
 
     def test_post_with_valid_data(self):
         url = self.get_url()
-        data = json.dumps({ "product": { "id" : self.product.id}, "quantity": 2 })
+        data = json.dumps({ "product": { "id" : self.product.id }, "quantity": 2 })
         response = client.post(url, data = data, content_type = CONTENT_TYPE)
 
         self.assertEqual({ "cartItems": [{ "product": { "id": self.product.id }, "quantity": 2 }]}, response.data)
