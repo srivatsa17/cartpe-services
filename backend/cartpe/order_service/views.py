@@ -157,9 +157,17 @@ class OrderByIdAPIView(generics.GenericAPIView):
             if serializer.validated_data["status"] == OrderStatus.CANCELLED:
                 serializer.validated_data["amount_refundable"] = order.amount_paid
                 serializer.validated_data["refund_status"] = OrderRefundStatus.COMPLETED
-            else:
-                return Response(serializer.data, status = status.HTTP_200_OK)
-        
+                """ The following code does not work for test razorpay account. """
+                """
+                if order.method == OrderMethod.UPI:
+                    razorpay_refund_details = razorpay_api_client.create_refund(
+                        razorpay_order_id = order.razorpay_order_id,
+                        razorpay_payment_id = order.razorpay_payment_id,
+                        amount = order.amount
+                    )
+                    serializer.validated_data["razorpay_refund_id"] = razorpay_refund_details["id"]
+                """
+
             serializer.save()
 
             # Delete the existing cached orders in redis
