@@ -3,10 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from auth_service.models import User
 from shipping_service.models import Country, Address, UserAddress
-from product_service.models import Product
 from order_service.models import Order
 from order_service.constants import OrderMethod
 from payment_service.models import Payment
+from unittest.mock import patch
 
 # Global variables
 CONTENT_TYPE = "application/json"
@@ -32,9 +32,9 @@ class OrderAPITestCase(APITestCase):
             name = "test_user", user = self.user, address = self.address, alternate_phone = "1234567890", type = "Home",
             is_default = False
         )
-        self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
         self.order = Order.objects.create(
-            user_address=self.user_address, amount=100, pending_amount=0, method=OrderMethod.COD, user=self.user
+            method=OrderMethod.COD, user_address=self.user_address, amount=123.00, amount_due=123.00,
+            amount_paid=0.00, amount_refundable=0.00, user=self.user
         )
         self.payment = Payment.objects.create(
             total_mrp = 2129.99, total_discount_price = 153, total_selling_price = 1976.99, convenience_fee = 10,
@@ -42,7 +42,22 @@ class OrderAPITestCase(APITestCase):
             order = self.order
         )
 
-    def test_get_order_list_success(self):
+    @patch('order_service.views.cache')
+    def test_get_order_list_success(self, mock_cache):
+        url = self.get_url()
+        mock_cache.get.return_value = {}
+
+        with patch('order_service.views.cache.set') as mock_set:
+            response = client.get(url)
+
+        self.assertIsNotNone(response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        mock_set.assert_not_called()
+
+    @patch('order_service.views.cache')
+    def test_get_order_list_cached_success(self, mock_cache):
+        mock_cache.has_key.return_value = None
+
         url = self.get_url()
         response = client.get(url)
 
@@ -67,9 +82,9 @@ class OrderByIdAPITestCase(APITestCase):
             name = "test_user", user = self.user, address = self.address, alternate_phone = "1234567890", type = "Home",
             is_default = False
         )
-        self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
         self.order = Order.objects.create(
-            user_address=self.user_address, amount=100, pending_amount=0, method=OrderMethod.COD, user=self.user
+            method=OrderMethod.COD, user_address=self.user_address, amount=123.00, amount_due=123.00,
+            amount_paid=0.00, amount_refundable=0.00, user=self.user
         )
         self.payment = Payment.objects.create(
             total_mrp = 2129.99, total_discount_price = 153, total_selling_price = 1976.99, convenience_fee = 10,

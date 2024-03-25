@@ -54,3 +54,28 @@ class TestRazorPayAPIView(TestCase):
             )
 
         self.assertEqual(str(response.exception.detail[0]), "Failed to verify the payment signature.")
+
+    @patch("razorpay_integration.views.RAZORPAY_CLIENT.order.fetch")
+    def test_fetch_order_success(self, mock_fetch):
+        razorpay_api = RazorPayAPIView()
+        mock_order_id = "test_order_id"
+        mock_order_details = { "amount_paid": 5000, "amount_due": 0 }
+        mock_fetch.return_value = mock_order_details
+
+        response = razorpay_api.fetch_order(razorpay_order_id=mock_order_id)
+
+        self.assertEqual(mock_order_details, response)
+        mock_fetch.assert_called_once_with(mock_order_id)
+
+    @patch("razorpay_integration.views.RAZORPAY_CLIENT.order.fetch")
+    def test_fetch_order_failure(self, mock_fetch):
+        razorpay_api = RazorPayAPIView()
+        mock_order_id = "test_order_id"
+        mock_fetch.side_effect = Exception("Failed to fetch razorpay order test_order_id.")
+
+        # Call the create_order method and expect a ValidationError
+        with self.assertRaises(ValidationError) as response:
+            razorpay_api.fetch_order(razorpay_order_id = mock_order_id)
+
+        self.assertEqual("Failed to fetch razorpay order test_order_id.", str(response.exception.detail[0]))
+        mock_fetch.assert_called_once_with(mock_order_id)

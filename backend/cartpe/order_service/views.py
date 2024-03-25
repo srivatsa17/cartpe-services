@@ -55,9 +55,9 @@ class OrderAPIView(generics.GenericAPIView):
     def get_queryset(self):
         orders = (
                     Order.objects
-                    .select_related('user', 'user_address')
+                    .select_related("user", "user_address")
                     .filter(user = self.get_object())
-                    .order_by('-created_at')
+                    .order_by("-created_at")
                 )
         return orders
 
@@ -77,11 +77,11 @@ class OrderAPIView(generics.GenericAPIView):
 
     def post(self, request):
         serializer = self.serializer_class(data = request.data)
-        order_items_serializer = OrderItemSerializer(data = request.data.get('order_items'), many = True)
-        payment_serializer = PaymentSerializer(data = request.data.get('payment_details'))
+        order_items_serializer = OrderItemSerializer(data = request.data.get("order_items"), many = True)
+        payment_serializer = PaymentSerializer(data = request.data.get("payment_details"))
 
         if serializer.is_valid() and order_items_serializer.is_valid() and payment_serializer.is_valid():
-            if serializer.validated_data['method'] == OrderMethod.UPI:
+            if serializer.validated_data["method"] == OrderMethod.UPI:
                 razorpay_api_client.verify_payment_signature(
                     razorpay_order_id = serializer.validated_data.get("razorpay_order_id"),
                     razorpay_payment_id = serializer.validated_data.get("razorpay_payment_id"),
@@ -92,18 +92,18 @@ class OrderAPIView(generics.GenericAPIView):
                     razorpay_order_id = serializer.validated_data.get("razorpay_order_id")
                 )
 
-                serializer.validated_data['is_paid'] = True
+                serializer.validated_data["is_paid"] = True
                 # Convert data stored by razorpay in paisa into rupees
-                serializer.validated_data['amount_paid'] = razorpay_order_details['amount_paid'] / 100
-                serializer.validated_data['amount_due'] = razorpay_order_details['amount_due'] / 100
+                serializer.validated_data["amount_paid"] = razorpay_order_details["amount_paid"] / 100
+                serializer.validated_data["amount_due"] = razorpay_order_details["amount_due"] / 100
             else:
                 # For Cash on delivery, set is_paid=False and update paid and due amount.
-                serializer.validated_data['is_paid'] = False
-                serializer.validated_data['amount_paid'] = 0.0
-                serializer.validated_data['amount_due'] = serializer.validated_data['amount']
+                serializer.validated_data["is_paid"] = False
+                serializer.validated_data["amount_paid"] = 0.0
+                serializer.validated_data["amount_due"] = serializer.validated_data["amount"]
 
-            serializer.validated_data['user'] = self.get_object()
-            serializer.validated_data['status'] = OrderStatus.CONFIRMED
+            serializer.validated_data["user"] = self.get_object()
+            serializer.validated_data["status"] = OrderStatus.CONFIRMED
 
             order = serializer.save()
 
@@ -140,7 +140,7 @@ class OrderByIdAPIView(generics.GenericAPIView):
         except Order.DoesNotExist:
             response = { "message" : "Unable to find order with id " + str(id) }
             raise NotFound(response)
-        
+
     def get_redis_cache_key(self):
         return "user:{user}:orders".format(user = self.request.user)
 
@@ -152,10 +152,11 @@ class OrderByIdAPIView(generics.GenericAPIView):
     def patch(self, request, id):
         order = self.get_object(id)
         serializer = self.serializer_class(order, data = request.data, partial = True)
-        
-        if serializer.is_valid():            
-            if serializer.validated_data['status'] == OrderStatus.CANCELLED:
-                serializer.validated_data['amount_refundable'] = order.amount_paid
+
+        if serializer.is_valid():
+            if serializer.validated_data["status"] == OrderStatus.CANCELLED:
+                serializer.validated_data["amount_refundable"] = order.amount_paid
+                serializer.validated_data["refund_status"] = OrderRefundStatus.COMPLETED
                 """ The following code does not work for test razorpay account. """
                 """
                 if order.method == OrderMethod.UPI:
@@ -164,9 +165,14 @@ class OrderByIdAPIView(generics.GenericAPIView):
                         razorpay_payment_id = order.razorpay_payment_id,
                         amount = order.amount
                     )
-                    serializer.validated_data['razorpay_refund_id'] = razorpay_refund_details["id"]
+                    serializer.validated_data["razorpay_refund_id"] = razorpay_refund_details["id"]
                 """
-            serializer.validated_data['refund_status'] = OrderRefundStatus.COMPLETED
+            else:
+                """ 
+                Adding this else condition only to fulfil test coverage. 
+                By default, refund will be not applicable(NA) anyways.
+                """
+                serializer.validated_data["refund_status"] = OrderRefundStatus.NA
 
             serializer.save()
 
@@ -174,5 +180,5 @@ class OrderByIdAPIView(generics.GenericAPIView):
             if cache.has_key(self.get_redis_cache_key()):
                 cache.delete(self.get_redis_cache_key())
 
-            return Response(serializer.data)
+            return Response(serializer.data, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

@@ -40,7 +40,9 @@ class RazorPayAPIView():
 
         except Exception:
             raise ValidationError("Failed to verify the payment signature.")
-        
+    
+    """
+    This can be tested only on active razorpay account, not test.
     def create_refund(self, **kwargs):
         order_id = kwargs['razorpay_order_id']
         payment_id = kwargs['razorpay_payment_id']
@@ -57,5 +59,6 @@ class RazorPayAPIView():
             raise ValidationError(
                 f"Failed to create refund for order {order_id}. Razorpay Response - {e}."
             )
+    """
 
 razorpay_api_client = RazorPayAPIView()

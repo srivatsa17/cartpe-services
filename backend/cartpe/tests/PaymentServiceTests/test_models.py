@@ -16,9 +16,9 @@ class PaymentModelTest(TestCase):
             name = "test_user", user = self.user, address = self.address, alternate_phone = "1234567890", type = "Home",
             is_default = False
         )
-        self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
         self.order = Order.objects.create(
-            method="Cash On Delivery", user_address=self.user_address, amount=123.00, pending_amount=0, user=self.user
+            method="Cash On Delivery", user_address=self.user_address, amount=123.00, amount_due=123.00,
+            amount_paid=0.00, amount_refundable=0.00, user=self.user
         )
         self.payment = Payment.objects.create(
             total_mrp = 2129.99, total_discount_price = 153, total_selling_price = 1976.99, convenience_fee = 10,

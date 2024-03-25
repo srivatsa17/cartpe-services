@@ -1,8 +1,9 @@
 from django.test import TestCase
 from auth_service.models import User
-from product_service.models import Product
+from product_service.models import Product, ProductVariant
 from shipping_service.models import Country, Address, UserAddress
 from order_service.models import Order, OrderItem
+from order_service.constants import OrderMethod
 
 class OrderItemModelTest(TestCase):
     def setUp(self) -> None:
@@ -15,11 +16,18 @@ class OrderItemModelTest(TestCase):
             name = "test_user", user = self.user, address = self.address, alternate_phone = "1234567890", type = "Home",
             is_default = False
         )
-        self.product = Product.objects.create(name="Canon 80D", description="good product", price=50000, stock_count=10)
-        self.order = Order.objects.create(
-            method="Cash On Delivery", user_address=self.user_address, amount=123.00, pending_amount=0, user=self.user
+        self.product = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.productVariant = ProductVariant.objects.create(
+            product = self.product, 
+            images=['example1.jpg', 'example2.jpg'],
+            price=70000,
+            stock_count = 10
         )
-        self.orderItem = OrderItem.objects.create(order=self.order, product=self.product, quantity=2)
+        self.order = Order.objects.create(
+            method=OrderMethod.COD, user_address=self.user_address, amount=123.00, amount_due=123.00,
+            amount_paid=0.00, amount_refundable=0.00, user=self.user
+        )
+        self.orderItem = OrderItem.objects.create(order=self.order, product_variant=self.productVariant, quantity=2)
 
     def test_str_is_equal_to_title(self):
         self.assertEqual(str(self.orderItem.pk), str(OrderItem.objects.get(id = self.orderItem.id)))

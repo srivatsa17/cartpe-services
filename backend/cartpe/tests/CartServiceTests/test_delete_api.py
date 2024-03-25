@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from product_service.models import Product
+from product_service.models import Product, ProductVariant
 from auth_service.models import User
 import redis
 
@@ -22,7 +22,13 @@ class DeleteCartItemsAPITest(APITestCase):
         self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
         client.force_authenticate(user = self.user)
 
-        self.product = Product.objects.create(name = "iphone 13", description = "ok product", price = 70000, stock_count = 1)
+        self.product = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.productVariant = ProductVariant.objects.create(
+            product = self.product, 
+            images=['example1.jpg', 'example2.jpg'],
+            price=70000,
+            stock_count = 10
+        )
 
     def get_url(self):
         url = reverse("cart")
@@ -43,7 +49,13 @@ class DeleteCartItemsByIdAPITest(APITestCase):
         self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
         client.force_authenticate(user = self.user)
 
-        self.product = Product.objects.create(name = "iphone 13", description = "ok product", price = 70000, stock_count = 1)
+        self.product = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.productVariant = ProductVariant.objects.create(
+            product = self.product, 
+            images=['example1.jpg', 'example2.jpg'],
+            price=70000,
+            stock_count = 10
+        )
 
     def get_redis_key(self):
         return "cart:%s" % self.user.id
@@ -54,7 +66,7 @@ class DeleteCartItemsByIdAPITest(APITestCase):
 
     def test_delete_success(self):
         redis_client.set(self.get_redis_key(), "$", { "cartItems": [] })
-        redis_client.arrappend(self.get_redis_key(), "$.cartItems", { "product": {"id" : self.product.id }, "quantity": 2 })
+        redis_client.arrappend(self.get_redis_key(), "$.cartItems", { "product": { "id" : self.product.id }, "quantity": 2 })
 
         url = self.get_url(self.product.id)
         response = client.delete(url)
