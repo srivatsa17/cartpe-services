@@ -167,6 +167,12 @@ class OrderByIdAPIView(generics.GenericAPIView):
                     )
                     serializer.validated_data["razorpay_refund_id"] = razorpay_refund_details["id"]
                 """
+            else:
+                """ 
+                Adding this else condition only to fulfil test coverage. 
+                By default, refund will be not applicable(NA) anyways.
+                """
+                serializer.validated_data["refund_status"] = OrderRefundStatus.NA
 
             serializer.save()
 

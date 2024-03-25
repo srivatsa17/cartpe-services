@@ -44,7 +44,7 @@ class UpdateOrderByIdAPIView(APITestCase):
         )
 
     @patch("order_service.views.cache")
-    def test_update_with_valid_data(self, mock_cache):
+    def test_update_with_cancel_status(self, mock_cache):
         mock_cache.has_key.return_value = None
 
         url = self.get_url(self.order.id)
@@ -56,6 +56,19 @@ class UpdateOrderByIdAPIView(APITestCase):
         self.assertEqual(OrderStatus.CANCELLED, response.data["status"])
         self.assertEqual(Decimal(self.order.amount_paid), response.data["amount_refundable"])
         self.assertEqual(OrderRefundStatus.COMPLETED, response.data["refund_status"])
+        mock_cache.delete.assert_not_called()
+
+    @patch("order_service.views.cache")
+    def test_update_with_shipped_status(self, mock_cache):
+        mock_cache.has_key.return_value = None
+
+        url = self.get_url(self.order.id)
+        data = json.dumps({ "status": OrderStatus.SHIPPED })
+        response = client.patch(url, data=data, content_type=CONTENT_TYPE)
+
+        self.assertIsNotNone(response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(OrderStatus.SHIPPED, response.data["status"])
         mock_cache.delete.assert_not_called()
 
     @patch("order_service.views.cache")
@@ -75,7 +88,7 @@ class UpdateOrderByIdAPIView(APITestCase):
         mock_cache.delete.assert_called_once()
 
     @patch("order_service.views.cache")
-    def test_get_with_invalid_data(self, mock_cache):
+    def test_get_with_non_existing_id(self, mock_cache):
         mock_cache.has_key.return_value = None
 
         url = self.get_url(1000)
@@ -88,7 +101,7 @@ class UpdateOrderByIdAPIView(APITestCase):
         mock_cache.delete.assert_not_called()
 
     @patch("order_service.views.cache")
-    def test_update_with_invalid_data(self, mock_cache):
+    def test_update_with_invalid_choice(self, mock_cache):
         mock_cache.has_key.return_value = None
 
         url = self.get_url(self.order.id)
