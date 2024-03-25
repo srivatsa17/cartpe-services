@@ -88,7 +88,7 @@ class UpdateOrderByIdAPIView(APITestCase):
         mock_cache.delete.assert_called_once()
 
     @patch("order_service.views.cache")
-    def test_get_with_non_existing_id(self, mock_cache):
+    def test_update_with_non_existing_id(self, mock_cache):
         mock_cache.has_key.return_value = None
 
         url = self.get_url(1000)
@@ -101,7 +101,7 @@ class UpdateOrderByIdAPIView(APITestCase):
         mock_cache.delete.assert_not_called()
 
     @patch("order_service.views.cache")
-    def test_update_with_invalid_choice(self, mock_cache):
+    def test_update_with_invalid_status_choice(self, mock_cache):
         mock_cache.has_key.return_value = None
 
         url = self.get_url(self.order.id)
