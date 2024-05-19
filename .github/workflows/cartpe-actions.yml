@@ -6,6 +6,40 @@ on:
     pull_request:
         branches: ["master"]
 
+env:
+    # Django configurations
+    DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+    DEBUG: ${{ secrets.DEBUG }}
+
+    # Database configurations
+    DATABASE_ENGINE: ${{ secrets.DATABASE_ENGINE }}
+    DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+    DATABASE_USER: ${{ secrets.DATABASE_USER }}
+    DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+    DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+    DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+
+    # Cache configurations
+    CACHE_BACKEND: ${{ secrets.CACHE_BACKEND }}
+    CACHE_LOCATION: ${{ secrets.CACHE_LOCATION }}
+    CACHE_CLIENT_CLASS: ${{ secrets.CACHE_CLIENT_CLASS }}
+
+    # Email configurations
+    EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+    EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+    EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+    EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+    EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+    EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+
+    # Search engine configurations
+    SEARCH_ENGINE: ${{ secrets.SEARCH_ENGINE }}
+    SEARCH_ENGINE_URL: ${{ secrets.SEARCH_ENGINE_URL }}
+
+    # Razorpay configurations
+    RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
+    RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET}}
+
 jobs:
     Test-backend:
         runs-on:  ubuntu-latest
