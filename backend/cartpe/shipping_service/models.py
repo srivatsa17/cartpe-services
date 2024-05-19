@@ -34,7 +34,7 @@ class UserAddress(models.Model):
     user = models.ForeignKey(to = User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'user_address')
     address = models.ForeignKey(to = Address, on_delete = models.CASCADE, null = False, blank = False, related_name = 'user_address')
     alternate_phone = models.CharField(max_length = 10, null = False, blank = False)
-    type = models.CharField(null = False, blank = False, choices = ADDRESS_TYPE_CHOICES)
+    type = models.CharField(max_length = 255, null = False, blank = False, choices = ADDRESS_TYPE_CHOICES)
     is_default = models.BooleanField(null = False, blank = False, default = False)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
