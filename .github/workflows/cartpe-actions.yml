@@ -19,27 +19,6 @@ env:
     DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
     DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
 
-    # Cache configurations
-    CACHE_BACKEND: ${{ secrets.CACHE_BACKEND }}
-    CACHE_LOCATION: ${{ secrets.CACHE_LOCATION }}
-    CACHE_CLIENT_CLASS: ${{ secrets.CACHE_CLIENT_CLASS }}
-
-    # Email configurations
-    EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
-    EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
-    EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
-    EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
-    EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
-    EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
-
-    # Search engine configurations
-    SEARCH_ENGINE: ${{ secrets.SEARCH_ENGINE }}
-    SEARCH_ENGINE_URL: ${{ secrets.SEARCH_ENGINE_URL }}
-
-    # Razorpay configurations
-    RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
-    RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET}}
-
 jobs:
     Test-backend:
         runs-on:  ubuntu-latest
@@ -54,9 +33,9 @@ jobs:
             postgres:
                 image: postgres:latest
                 env:
-                    POSTGRES_DB: testdb
-                    POSTGRES_USER: postgres
-                    POSTGRES_PASSWORD: root123
+                    POSTGRES_DB: ${{ secrets.DATABASE_NAME }}
+                    POSTGRES_USER: ${{ secrets.DATABASE_USER }}
+                    POSTGRES_PASSWORD: ${{ secrets.DATABASE_PORT }}
                 ports:
                     - 5432:5432
                 # Set health checks to wait until postgres has started
