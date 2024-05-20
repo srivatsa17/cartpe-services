@@ -109,8 +109,8 @@ class WishList(models.Model):
         return str(self.pk)
 
 class ProductReview(models.Model):
-    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_review')
-    user = models.ForeignKey(User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_review')
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_reviews')
+    user = models.ForeignKey(User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_reviews')
     headline = models.CharField(max_length = 255, null = False, blank = False)
     rating = models.PositiveSmallIntegerField(null = False, blank = False, validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField(null = True, blank = True)
