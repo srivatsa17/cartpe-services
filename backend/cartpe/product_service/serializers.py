@@ -5,6 +5,7 @@ from product_service.models import (
     ProductVariantPropertyValue, ProductVariantProperty, ProductVariant, Product, Category, Brand, WishList,
     ProductReview
 )
+from django.db.models import Avg
 
 class ProductReviewSerializer(serializers.ModelSerializer):
     """
@@ -73,14 +74,19 @@ class ProductSerializer(serializers.ModelSerializer):
     category_slug = serializers.CharField(source="category.slug", read_only=True)
     product_variants = ProductVariantSerializer(many=True)
     product_review = ProductReviewSerializer(many=True, read_only=True)
+    average_rating = serializers.SerializerMethodField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+
+    def get_average_rating(self, obj):
+        average_rating = ProductReview.objects.filter(product=obj).aggregate(Avg('rating'))['rating__avg']
+        return average_rating if average_rating is not None else 0
 
     class Meta:
         model = Product
         fields = [
             "id", "name", "slug", "description", "brand", "category", "category_slug",
-            "product_variants", "product_review", "created_at", "updated_at",
+            "product_variants", "product_review", "average_rating", "created_at", "updated_at",
         ]
 
     def validate(self, attrs):
