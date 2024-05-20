@@ -5,9 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from product_service.routes import routes
 from product_service.serializers import (
-    ProductSerializer, CategorySerializer, BrandSerializer, ProductVariantSerializer, WishListSerializer
+    ProductSerializer, CategorySerializer, BrandSerializer, ProductVariantSerializer, WishListSerializer, 
+    ProductReviewSerializer
 )
-from product_service.models import Product, Category, Brand, WishList
+from product_service.models import Product, Category, Brand, WishList, ProductReview
 from product_service.filters import ProductFilter
 from haystack.query import SearchQuerySet
 import ast
@@ -292,3 +293,22 @@ class WishListByIdAPIView(generics.GenericAPIView):
         wishlisted_product = self.get_object(id)
         wishlisted_product.delete()
         return Response(status = status.HTTP_204_NO_CONTENT)
+
+class ProductReviewAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `POST` requests related to the `ProductReview` model.
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProductReviewSerializer
+
+    def get_object(self):
+        return self.request.user
+
+    def post(self, request):
+        serializer = self.serializer_class(data = request.data)
+
+        if serializer.is_valid():
+            serializer.validated_data["user"] = self.get_object()
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

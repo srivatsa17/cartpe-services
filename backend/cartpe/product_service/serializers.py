@@ -2,8 +2,28 @@ from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 from rest_framework.validators import UniqueTogetherValidator
 from product_service.models import (
-    ProductVariantPropertyValue, ProductVariantProperty, ProductVariant, Product, Category, Brand, WishList
+    ProductVariantPropertyValue, ProductVariantProperty, ProductVariant, Product, Category, Brand, WishList,
+    ProductReview
 )
+
+class ProductReviewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the `ProductReview` model's fields.
+    """
+    product = serializers.SlugRelatedField(slug_field="id", queryset=Product.objects.all())
+    user = serializers.SerializerMethodField(read_only=True)
+    headline = serializers.CharField(min_length=1, max_length=255)
+    rating = serializers.IntegerField(min_value=1, max_value=5)
+    comment = serializers.CharField(min_length=1, max_length=500, required=False)
+    created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+
+    def get_user(self, instance):
+        return f"{instance.user.first_name} {instance.user.last_name}"
+
+    class Meta:
+        model = ProductReview
+        fields = ["id", "product", "user", "headline", "rating", "comment", "created_at", "updated_at"]
 
 class ProductVariantPropertyValueSerializer(serializers.ModelSerializer):
     """
@@ -52,6 +72,7 @@ class ProductSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field="name", queryset=Category.objects.all())
     category_slug = serializers.CharField(source="category.slug", read_only=True)
     product_variants = ProductVariantSerializer(many=True)
+    product_review = ProductReviewSerializer(many=True, read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
@@ -59,7 +80,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = [
             "id", "name", "slug", "description", "brand", "category", "category_slug",
-            "product_variants", "created_at", "updated_at",
+            "product_variants", "product_review", "created_at", "updated_at",
         ]
 
     def validate(self, attrs):
