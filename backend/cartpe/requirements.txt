@@ -28,7 +28,7 @@ djangorestframework-recursive==0.1.2
 djangorestframework-simplejwt==5.2.2
 filelock==3.14.0
 identify==2.5.36
-idna==3.4
+idna==3.7
 isort==5.12.0
 kombu==5.3.0
 lazy-object-proxy==1.9.0
