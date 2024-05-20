@@ -1,0 +1,42 @@
+class OrderStatus:
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    SHIPPED = "SHIPPED"
+    OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY"
+    DELIVERED = "DELIVERED"
+    CANCELLED = "CANCELLED"
+    RETURNED = "RETURNED"
+
+    ORDER_STATUS_CHOICES = [
+        (PENDING, PENDING),
+        (CONFIRMED, CONFIRMED),
+        (SHIPPED, SHIPPED),
+        (OUT_FOR_DELIVERY, OUT_FOR_DELIVERY),
+        (DELIVERED, DELIVERED),
+        (CANCELLED, CANCELLED),
+        (RETURNED, RETURNED),
+    ]
+
+class OrderMethod:
+    UPI = "UPI"
+    COD = "Cash On Delivery"
+
+    ORDER_METHOD_CHOICES = [
+        (UPI, UPI),
+        (COD, COD)
+    ]
+
+class OrderRefundStatus:
+    NA = "NA"
+    INITIATED = "INITIATED"
+    PARTIAL = "PARTIAL"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+
+    ORDER_REFUND_STATUS_CHOICES = [
+        (NA, NA),
+        (INITIATED, INITIATED),
+        (PARTIAL, PARTIAL),
+        (COMPLETED, COMPLETED),
+        (FAILED, FAILED),
+    ]
