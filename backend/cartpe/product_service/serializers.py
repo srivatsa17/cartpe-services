@@ -5,7 +5,7 @@ from product_service.models import (
     ProductVariantPropertyValue, ProductVariantProperty, ProductVariant, Product, Category, Brand, WishList,
     ProductReview
 )
-from django.db.models import Avg
+from django.db.models import Avg, Count
 
 class ProductReviewSerializer(serializers.ModelSerializer):
     """
@@ -76,6 +76,7 @@ class ProductSerializer(serializers.ModelSerializer):
     product_reviews = ProductReviewSerializer(many=True, read_only=True)
     average_rating = serializers.SerializerMethodField(read_only=True)
     review_count = serializers.SerializerMethodField(read_only=True)
+    rating_counts = serializers.SerializerMethodField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
@@ -86,12 +87,28 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_review_count(self, obj):
         review_count = ProductReview.objects.filter(product=obj).count()
         return review_count
+    
+    def get_rating_counts(self, obj):
+        rating_counts = (
+            ProductReview.objects
+            .filter(product=obj)
+            .values('rating')
+            .annotate(count=Count('rating'))
+            .order_by('rating')
+        )
+
+        # Create a dictionary to hold the counts for each rating value from 1 to 5
+        rating_dict = {i: 0 for i in range(1, 6)}
+        for rating in rating_counts:
+            rating_dict[rating['rating']] = rating['count']
+        return rating_dict
 
     class Meta:
         model = Product
         fields = [
             "id", "name", "slug", "description", "brand", "category", "category_slug",
-            "product_variants", "product_reviews", "average_rating", "review_count", "created_at", "updated_at",
+            "product_variants", "product_reviews", "average_rating", "review_count", 
+            "rating_counts", "created_at", "updated_at",
         ]
 
     def validate(self, attrs):
