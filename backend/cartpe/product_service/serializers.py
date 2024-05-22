@@ -15,7 +15,7 @@ class ProductReviewSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField(read_only=True)
     headline = serializers.CharField(min_length=1, max_length=255)
     rating = serializers.IntegerField(min_value=1, max_value=5)
-    comment = serializers.CharField(min_length=1, max_length=500, required=False)
+    comment = serializers.CharField(min_length=1, max_length=500, required=False, allow_blank=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
