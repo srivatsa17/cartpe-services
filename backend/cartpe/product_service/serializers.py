@@ -11,8 +11,8 @@ class ProductReviewSerializer(serializers.ModelSerializer):
     """
     Serializer for the `ProductReview` model's fields.
     """
-    product = serializers.SlugRelatedField(slug_field="id", queryset=Product.objects.all())
     user = serializers.SerializerMethodField(read_only=True)
+    user_full_name = serializers.SerializerMethodField(read_only=True)
     headline = serializers.CharField(min_length=1, max_length=255)
     rating = serializers.IntegerField(min_value=1, max_value=5)
     comment = serializers.CharField(min_length=1, max_length=500, required=False, allow_blank=True)
@@ -20,11 +20,17 @@ class ProductReviewSerializer(serializers.ModelSerializer):
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
     def get_user(self, instance):
+        return instance.user.email
+
+    def get_user_full_name(self, instance):
         return f"{instance.user.first_name} {instance.user.last_name}"
 
     class Meta:
         model = ProductReview
-        fields = ["id", "product", "user", "headline", "rating", "comment", "created_at", "updated_at"]
+        fields = [
+            "id", "user", "user_full_name", "headline", "rating", "comment", 
+            "created_at", "updated_at"
+        ]
 
 class ProductVariantPropertyValueSerializer(serializers.ModelSerializer):
     """
@@ -73,7 +79,6 @@ class ProductSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field="name", queryset=Category.objects.all())
     category_slug = serializers.CharField(source="category.slug", read_only=True)
     product_variants = ProductVariantSerializer(many=True)
-    product_reviews = ProductReviewSerializer(many=True, read_only=True)
     average_rating = serializers.SerializerMethodField(read_only=True)
     review_count = serializers.SerializerMethodField(read_only=True)
     rating_counts = serializers.SerializerMethodField(read_only=True)
@@ -107,7 +112,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = [
             "id", "name", "slug", "description", "brand", "category", "category_slug",
-            "product_variants", "product_reviews", "average_rating", "review_count", 
+            "product_variants", "average_rating", "review_count", 
             "rating_counts", "created_at", "updated_at",
         ]
 

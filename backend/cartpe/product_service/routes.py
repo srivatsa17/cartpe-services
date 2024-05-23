@@ -7,7 +7,7 @@ routes = [
     # Product categories model
     productsBaseUrl + '/categories',                # Get all product categories or Create one
     productsBaseUrl + '/categories/<id>',           # Get/Update/Delete a particular product category
-    productsBaseUrl + 'categories/search',          # Get a list of related product categories based on a search
+    productsBaseUrl + '/categories/search',          # Get a list of related product categories based on a search
 
     # Product brands model
     productsBaseUrl + '/brands',                    # Get all product brands or Create one
@@ -18,6 +18,6 @@ routes = [
     productsBaseUrl + '/wishlist/<id>',             # Get/Update/Delete a particular user product wishlist
 
     # Product reviews model
-    productsBaseUrl + '/review',                    # Create review for a product
-    productsBaseUrl + '/review/<id>',               # Get/Update/Delete a particular review for a product
+    productsBaseUrl + '/<product_id>/reviews',       # Get a product review or Create one
+    productsBaseUrl + '/<product_id>/reviews/<id>',  # Get/Update/Delete a particular review for a product
 ]

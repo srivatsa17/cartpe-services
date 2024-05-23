@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from product_service.routes import routes
 from product_service.serializers import (
-    ProductSerializer, CategorySerializer, BrandSerializer, ProductVariantSerializer, WishListSerializer, 
+    ProductSerializer, CategorySerializer, BrandSerializer, ProductVariantSerializer, WishListSerializer,
     ProductReviewSerializer
 )
 from product_service.models import Product, Category, Brand, WishList, ProductReview
@@ -304,11 +304,28 @@ class ProductReviewAPIView(generics.GenericAPIView):
     def get_object(self):
         return self.request.user
 
-    def post(self, request):
+    def get_queryset(self, **kwargs):
+        if not Product.objects.filter(id = kwargs['product_id']).exists():
+            response = { "message" : f"Unable to find product with id {kwargs['product_id']}" }
+            raise NotFound(response)
+
+        return ProductReview.objects.filter(product=kwargs['product_id']).order_by('-created_at')
+
+    def get(self, request, **kwargs):
+        product_reviews = self.get_queryset(**kwargs)
+        serializer = self.serializer_class(product_reviews, many = True)
+        return Response(serializer.data)
+
+    def post(self, request, **kwargs):
         serializer = self.serializer_class(data = request.data)
+
+        if not Product.objects.filter(id = kwargs['product_id']).exists():
+            response = { "message" : f"Unable to find product with id {kwargs['product_id']}" }
+            raise NotFound(response)
 
         if serializer.is_valid():
             serializer.validated_data["user"] = self.get_object()
+            serializer.validated_data["product"] = Product.objects.get(id = kwargs['product_id'])
             serializer.save()
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
@@ -320,28 +337,30 @@ class ProductReviewByIdAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ProductReviewSerializer
 
-    def get_object(self, id):
+    def get_object(self, **kwargs):
         try:
-            return ProductReview.objects.get(id = id)
+            return ProductReview.objects.get(product = kwargs["product_id"], id = kwargs["id"])
         except ProductReview.DoesNotExist:
-            response = { "message" : "Unable to find product review with id " + str(id) }
+            response = {
+                "message" : f"Unable to find review with id {kwargs['id']} for product {kwargs['product_id']}"
+            }
             raise NotFound(response)
-        
-    def get(self, request, id):
-        product_review = self.get_object(id)
+
+    def get(self, request, **kwargs):
+        product_review = self.get_object(**kwargs)
         serializer = self.serializer_class(product_review, many = False)
         return Response(serializer.data)
 
-    def patch(self, request, id):
-        product_review = self.get_object(id)
+    def patch(self, request, **kwargs):
+        product_review = self.get_object(**kwargs)
         serializer = self.serializer_class(product_review, data = request.data, partial = True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    
-    def delete(self, request, id):
-        product_review = self.get_object(id)
+
+    def delete(self, request, **kwargs):
+        product_review = self.get_object(**kwargs)
         product_review.delete()
         return Response(status = status.HTTP_204_NO_CONTENT)
