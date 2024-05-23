@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
 from mptt.models import MPTTModel, TreeForeignKey
 from auth_service.models import User
+from django.db.models import Avg
 
 class Category(MPTTModel):
     name = models.CharField(max_length = 255, null = False, blank = False)
@@ -73,6 +74,25 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super(Product, self).save(*args, **kwargs)
+
+    """
+    This function is used to get the product rating average by using the reverse lookup for product_reviews
+    which is a related name to `Product` model from `ProductReview` model.
+    This function is used by `ProductSerializer` and `ProductRatingSerializer`
+    """
+    def rating_average(self):
+        average_rating = self.product_reviews.aggregate(Avg('rating'))['rating__avg']
+        if average_rating is None:
+            return 0
+        return int(average_rating) if average_rating.is_integer() else round(average_rating, 2)
+    
+    """
+    This function is used to get the product rating count by using the reverse lookup for product_reviews
+    which is a related name to `Product` model from `ProductReview` model.
+    This function is used by `ProductSerializer` and `ProductRatingSerializer`
+    """
+    def rating_count(self):
+        return self.product_reviews.count()
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(

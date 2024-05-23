@@ -41,13 +41,10 @@ class ProductRatingSerializer(serializers.ModelSerializer):
     rating_distribution = serializers.SerializerMethodField(read_only=True)
 
     def get_rating_average(self, obj):
-        average_rating = obj.product_reviews.aggregate(Avg('rating'))['rating__avg']
-        if average_rating is None:
-            return 0
-        return int(average_rating) if average_rating.is_integer() else round(average_rating, 2)
+        return obj.rating_average()
 
     def get_rating_count(self, obj):
-        return obj.product_reviews.count()
+        return obj.rating_count()
 
     def get_rating_distribution(self, obj):
         rating_distribution = (
@@ -111,14 +108,22 @@ class ProductSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field="name", queryset=Category.objects.all())
     category_slug = serializers.CharField(source="category.slug", read_only=True)
     product_variants = ProductVariantSerializer(many=True)
+    rating_average = serializers.SerializerMethodField(read_only=True)
+    rating_count = serializers.SerializerMethodField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+
+    def get_rating_average(self, obj):
+        return obj.rating_average()
+
+    def get_rating_count(self, obj):
+        return obj.rating_count()
 
     class Meta:
         model = Product
         fields = [
             "id", "name", "slug", "description", "brand", "category", "category_slug",
-            "product_variants", "created_at", "updated_at",
+            "product_variants", "rating_average", "rating_count", "created_at", "updated_at",
         ]
 
     def validate(self, attrs):
