@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from product_service.routes import routes
 from product_service.serializers import (
     ProductSerializer, CategorySerializer, BrandSerializer, ProductVariantSerializer, WishListSerializer,
-    ProductReviewSerializer
+    ProductReviewSerializer, ProductRatingSerializer
 )
 from product_service.models import Product, Category, Brand, WishList, ProductReview
 from product_service.filters import ProductFilter
@@ -364,3 +364,24 @@ class ProductReviewByIdAPIView(generics.GenericAPIView):
         product_review = self.get_object(**kwargs)
         product_review.delete()
         return Response(status = status.HTTP_204_NO_CONTENT)
+
+class ProductRatingAPIView(generics.GenericAPIView):
+    """
+    API View for handling HTTP `GET` requests for the product rating metrics.
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProductRatingSerializer
+
+    def get_object(self, **kwargs):
+        try:
+            return Product.objects.get(id = kwargs["product_id"])
+        except Product.DoesNotExist:
+            response = {
+                "message" : f"Unable to find product with id {kwargs['product_id']}"
+            }
+            raise NotFound(response)
+
+    def get(self, request, **kwargs):
+        product = self.get_object(**kwargs)
+        serializer = self.serializer_class(product, many = False)
+        return Response(serializer.data)

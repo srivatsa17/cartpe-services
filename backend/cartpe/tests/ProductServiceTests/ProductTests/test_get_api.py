@@ -25,10 +25,6 @@ class GetAllProductsTest(APITestCase):
             price=70000,
             stock_count = 10
         )
-        # Adding just to get coverage for ratings count in product serializer.
-        self.product_review = ProductReview.objects.create(
-            product = self.product1, user = self.user, headline = "Amazing product", rating = 5
-        )
 
     def test_get_with_valid_data(self):
         url = self.get_url()

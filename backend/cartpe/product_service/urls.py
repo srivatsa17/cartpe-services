@@ -13,5 +13,6 @@ urlpatterns = [
     path('wishlist', views.WishListAPIView.as_view(), name="wishlist"),
     path('wishlist/<int:id>', views.WishListByIdAPIView.as_view(), name="wishlist_by_id"),
     path('<int:product_id>/reviews', views.ProductReviewAPIView.as_view(), name="product_review"),
-    path('<int:product_id>/reviews/<int:id>', views.ProductReviewByIdAPIView.as_view(), name="product_review_by_id")
+    path('<int:product_id>/reviews/<int:id>', views.ProductReviewByIdAPIView.as_view(), name="product_review_by_id"),
+    path('<int:product_id>/rating', views.ProductRatingAPIView.as_view(), name="product_rating")
 ]
