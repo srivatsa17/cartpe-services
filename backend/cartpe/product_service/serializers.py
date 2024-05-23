@@ -36,11 +36,11 @@ class ProductRatingSerializer(serializers.ModelSerializer):
     """
     Serializer to get the product rating metrics.
     """
-    average_rating = serializers.SerializerMethodField(read_only=True)
+    rating_average = serializers.SerializerMethodField(read_only=True)
     rating_count = serializers.SerializerMethodField(read_only=True)
     rating_distribution = serializers.SerializerMethodField(read_only=True)
 
-    def get_average_rating(self, obj):
+    def get_rating_average(self, obj):
         average_rating = obj.product_reviews.aggregate(Avg('rating'))['rating__avg']
         if average_rating is None:
             return 0
@@ -62,7 +62,7 @@ class ProductRatingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["average_rating", "rating_count", "rating_distribution"]
+        fields = ["rating_average", "rating_count", "rating_distribution"]
 
 class ProductVariantPropertyValueSerializer(serializers.ModelSerializer):
     """
