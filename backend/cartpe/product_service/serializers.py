@@ -87,7 +87,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_average_rating(self, obj):
         average_rating = ProductReview.objects.filter(product=obj).aggregate(Avg('rating'))['rating__avg']
-        return average_rating if average_rating is not None else 0
+        if average_rating is None:
+            return 0
+        return int(average_rating) if average_rating.is_integer() else round(average_rating, 2)
     
     def get_review_count(self, obj):
         review_count = ProductReview.objects.filter(product=obj).count()
