@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from product_service.models import Product, ProductVariant
+from product_service.models import Product, ProductVariant, ProductReview
 from auth_service.models import User
 
 # Initialize the APIClient app
@@ -24,6 +24,10 @@ class GetAllProductsTest(APITestCase):
             images=['example1.jpg', 'example2.jpg'],
             price=70000,
             stock_count = 10
+        )
+        # Adding just to get coverage for ratings count in product serializer.
+        self.product_review = ProductReview.objects.create(
+            product = self.product1, user = self.user, headline = "Amazing product", rating = 5
         )
 
     def test_get_with_valid_data(self):

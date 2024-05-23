@@ -13,8 +13,8 @@ client = APIClient()
 class PostProductReviewTest(APITestCase):
     """ Test module for POST request for ProductReviewAPIView API """
 
-    def get_url(self):
-        url = reverse("product_review")
+    def get_url(self, product_id):
+        url = reverse("product_review", kwargs = { "product_id": product_id })
         return url
 
     def setUp(self):
@@ -24,7 +24,7 @@ class PostProductReviewTest(APITestCase):
         self.product = Product.objects.create(name = "iphone 13", description = "ok product")
 
     def test_post_with_valid_data(self):
-        url = self.get_url()
+        url = self.get_url(self.product.id)
         data = json.dumps({
             "product": self.product.id,
             "headline": "Extraordinary product",
@@ -35,10 +35,19 @@ class PostProductReviewTest(APITestCase):
         self.assertIsNotNone(response.data)
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
 
-    def test_get_with_invalid_data(self):
-        url = self.get_url()
+    def test_post_with_invalid_data(self):
+        url = self.get_url(self.product.id)
         response = client.post(
             url, data=json.dumps({ "headline": "Extraordinary product" }), content_type=CONTENT_TYPE
         )
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_post_with_non_existing_id(self):
+        url = self.get_url(1000)
+        response = client.post(
+            url, data=json.dumps({ "headline": "Extraordinary product" }), content_type=CONTENT_TYPE
+        )
+
+        self.assertEqual("Unable to find product with id 1000", str(response.data["message"]))
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)

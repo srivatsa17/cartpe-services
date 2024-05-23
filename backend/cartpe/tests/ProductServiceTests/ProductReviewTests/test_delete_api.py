@@ -10,8 +10,8 @@ client = APIClient()
 class DeleteProductReviewByIdTest(APITestCase):
     """ Test module for DELETE request for ProductReviewByIdAPIView API """
 
-    def get_url(self, product_review_id):
-        url = reverse("product_review_by_id", kwargs = { "id": product_review_id })
+    def get_url(self, product_id, product_review_id):
+        url = reverse("product_review_by_id", kwargs = { "product_id": product_id, "id": product_review_id })
         return url
 
     def setUp(self):
@@ -24,15 +24,17 @@ class DeleteProductReviewByIdTest(APITestCase):
         )
 
     def test_delete_with_existing_id(self):
-        url = self.get_url(self.product_review.id)
+        url = self.get_url(self.product.id, self.product_review.id)
         response = client.delete(url)
 
         self.assertIsNone(response.data)
         self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
 
     def test_delete_with_non_existing_id(self):
-        url = self.get_url(1000)
+        url = self.get_url(self.product.id, 1000)
         response = client.delete(url)
 
-        self.assertEqual("Unable to find product review with id 1000", str(response.data["message"]))
+        self.assertEqual(
+            f"Unable to find review with id 1000 for product {self.product.id}", str(response.data["message"])
+        )
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
