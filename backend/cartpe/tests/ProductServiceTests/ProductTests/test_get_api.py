@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from product_service.models import Product, ProductVariant
+from product_service.models import Product, ProductVariant, ProductReview
 from auth_service.models import User
 
 # Initialize the APIClient app

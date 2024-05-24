@@ -2,8 +2,64 @@ from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 from rest_framework.validators import UniqueTogetherValidator
 from product_service.models import (
-    ProductVariantPropertyValue, ProductVariantProperty, ProductVariant, Product, Category, Brand, WishList
+    ProductVariantPropertyValue, ProductVariantProperty, ProductVariant, Product, Category, Brand, WishList,
+    ProductReview
 )
+from django.db.models import Avg, Count
+
+class ProductReviewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the `ProductReview` model's fields.
+    """
+    user = serializers.SerializerMethodField(read_only=True)
+    user_full_name = serializers.SerializerMethodField(read_only=True)
+    headline = serializers.CharField(min_length=1, max_length=255)
+    rating = serializers.IntegerField(min_value=1, max_value=5)
+    comment = serializers.CharField(min_length=1, max_length=500, required=False, allow_blank=True)
+    created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+
+    def get_user(self, instance):
+        return instance.user.email
+
+    def get_user_full_name(self, instance):
+        return f"{instance.user.first_name} {instance.user.last_name}"
+
+    class Meta:
+        model = ProductReview
+        fields = [
+            "id", "user", "user_full_name", "headline", "rating", "comment",
+            "created_at", "updated_at"
+        ]
+
+class ProductRatingSerializer(serializers.ModelSerializer):
+    """
+    Serializer to get the product rating metrics.
+    """
+    rating_average = serializers.SerializerMethodField(read_only=True)
+    rating_count = serializers.SerializerMethodField(read_only=True)
+    rating_distribution = serializers.SerializerMethodField(read_only=True)
+
+    def get_rating_average(self, obj):
+        return obj.rating_average()
+
+    def get_rating_count(self, obj):
+        return obj.rating_count()
+
+    def get_rating_distribution(self, obj):
+        rating_distribution = (
+            obj.product_reviews.values('rating').annotate(count=Count('rating')).order_by('rating')
+        )
+
+        # Create a dictionary to hold the counts for each rating value from 1 to 5
+        rating_dict = {i: 0 for i in range(1, 6)}
+        for rating in rating_distribution:
+            rating_dict[rating['rating']] = rating['count']
+        return rating_dict
+
+    class Meta:
+        model = Product
+        fields = ["rating_average", "rating_count", "rating_distribution"]
 
 class ProductVariantPropertyValueSerializer(serializers.ModelSerializer):
     """
@@ -52,14 +108,22 @@ class ProductSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field="name", queryset=Category.objects.all())
     category_slug = serializers.CharField(source="category.slug", read_only=True)
     product_variants = ProductVariantSerializer(many=True)
+    rating_average = serializers.SerializerMethodField(read_only=True)
+    rating_count = serializers.SerializerMethodField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+
+    def get_rating_average(self, obj):
+        return obj.rating_average()
+
+    def get_rating_count(self, obj):
+        return obj.rating_count()
 
     class Meta:
         model = Product
         fields = [
             "id", "name", "slug", "description", "brand", "category", "category_slug",
-            "product_variants", "created_at", "updated_at",
+            "product_variants", "rating_average", "rating_count", "created_at", "updated_at",
         ]
 
     def validate(self, attrs):
@@ -185,7 +249,7 @@ class WishlistProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ["id", "name", "slug", "description", "brand", "category", "category_slug"]
-    
+
 class WishListSerializer(serializers.ModelSerializer):
     product = WishlistProductSerializer(source="product_variant.product", read_only=True)
     product_variant = serializers.SlugRelatedField(slug_field="id", queryset=ProductVariant.objects.all())

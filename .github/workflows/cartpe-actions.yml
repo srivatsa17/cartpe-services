@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
     push:
-        branches: ["master", "Development"]
+        branches: ["master", "development"]
     pull_request:
         branches: ["master"]
 
@@ -41,7 +41,7 @@ env:
     RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET}}
 
 jobs:
-    Test-backend:
+    Unit-Test-And-Coverage:
         runs-on:  ubuntu-latest
         defaults:
             run:

@@ -2,8 +2,10 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 import uuid
 from django.utils.text import slugify
+from django.core.validators import MinValueValidator, MaxValueValidator
 from mptt.models import MPTTModel, TreeForeignKey
 from auth_service.models import User
+from django.db.models import Avg
 
 class Category(MPTTModel):
     name = models.CharField(max_length = 255, null = False, blank = False)
@@ -73,6 +75,25 @@ class Product(models.Model):
         self.slug = slugify(self.name)
         super(Product, self).save(*args, **kwargs)
 
+    """
+    This function is used to get the product rating average by using the reverse lookup for product_reviews
+    which is a related name to `Product` model from `ProductReview` model.
+    This function is used by `ProductSerializer` and `ProductRatingSerializer`
+    """
+    def rating_average(self):
+        average_rating = self.product_reviews.aggregate(Avg('rating'))['rating__avg']
+        if average_rating is None:
+            return 0
+        return int(average_rating) if average_rating.is_integer() else round(average_rating, 2)
+    
+    """
+    This function is used to get the product rating count by using the reverse lookup for product_reviews
+    which is a related name to `Product` model from `ProductReview` model.
+    This function is used by `ProductSerializer` and `ProductRatingSerializer`
+    """
+    def rating_count(self):
+        return self.product_reviews.count()
+
 class ProductVariant(models.Model):
     product = models.ForeignKey(
         Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_variants'
@@ -101,6 +122,18 @@ class ProductVariant(models.Model):
 class WishList(models.Model):
     product_variant = models.ForeignKey(ProductVariant, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
     user = models.ForeignKey(User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'wishlist')
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return str(self.pk)
+
+class ProductReview(models.Model):
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_reviews')
+    user = models.ForeignKey(User, on_delete = models.CASCADE, null = False, blank = False, related_name = 'product_reviews')
+    headline = models.CharField(max_length = 255, null = False, blank = False)
+    rating = models.PositiveSmallIntegerField(null = False, blank = False, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(null = True, blank = True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
