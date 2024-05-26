@@ -3,7 +3,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from auth_service.serializers import (
-    RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, LogoutSerializer,
+    RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, GoogleLoginSerializer, LogoutSerializer,
     ChangePasswordSerializer, DeactivateAccountSerializer
 )
 from auth_service.tasks import send_verification_email_task
@@ -55,6 +55,15 @@ class LoginAPIView(generics.GenericAPIView):
         if serializer.is_valid():
             return Response(serializer.data, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class GoogleLoginAPIView(generics.GenericAPIView):
+    serializer_class = GoogleLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            return Response(serializer.validated_data, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
