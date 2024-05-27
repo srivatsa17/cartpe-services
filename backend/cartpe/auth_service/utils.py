@@ -32,13 +32,7 @@ class GoogleLogin():
     4. The db is checked if user with the obtained email exists or not. If yes, we pass the user details along with \
     tokens just like normal login flow. Else, we register the user in db and then pass on the tokens and user details.
     """
-    def get_google_access_token(self, code = None, redirect_uri = None):
-        if not code:
-            raise ValidationError("Field code is required.")
-        
-        if not redirect_uri:
-            raise ValidationError("Field redirect_uri is required.")
-
+    def get_google_access_token(self, code, redirect_uri):
         data = {
             "code": code,
             "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
