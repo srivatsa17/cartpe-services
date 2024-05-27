@@ -3,8 +3,6 @@ name: CI/CD
 on:
     push:
         branches: ["master", "development"]
-    pull_request:
-        branches: ["master"]
 
 env:
     # Django configurations
@@ -38,7 +36,14 @@ env:
 
     # Razorpay configurations
     RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
-    RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET}}
+    RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET }}
+
+    # Google OAuth configurations
+    GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+    GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+
+    # Frontend configurations
+    BASE_FRONTEND_URL: ${{ secrets.BASE_FRONTEND_URL }}
 
 jobs:
     Unit-Test-And-Coverage:

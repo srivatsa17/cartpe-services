@@ -4,6 +4,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from auth_service.models import User
 from auth_service.token import account_activation_token
+from auth_service.utils import google_api_client
+from cartpe import settings
 
 MIN_PASSWORD_LENGTH = 6
 MAX_PASSWORD_LENGTH = 70
@@ -17,16 +19,16 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'first_name', 'last_name', 'password', 'is_verified', 'is_active', 'is_staff', 'profile_picture',
-            'gender', 'created_at', 'updated_at'
+            "id", "email", "first_name", "last_name", "password", "is_verified", "is_active", "is_staff", "profile_picture",
+            "gender", "created_at", "updated_at"
         ]
         read_only_fields = [
-            'first_name', 'last_name', 'is_verified', 'is_active', 'is_staff', 'profile_picture', 'gender', 'created_at',
-            'updated_at'
+            "first_name", "last_name", "is_verified", "is_active", "is_staff", "profile_picture", "gender", "created_at",
+            "updated_at"
         ]
 
     def validate(self, attrs):
-        email = attrs.get('email', '')
+        email = attrs.get("email", "")
 
         if User.objects.filter(email = email).exists():
             raise serializers.ValidationError({
@@ -43,12 +45,12 @@ class EmailVerificationSerializer(serializers.Serializer):
     token = serializers.CharField(min_length = 10, max_length = 100)
 
     class Meta:
-        fields = ['uid', 'token']
+        fields = ["uid", "token"]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        uid = attrs.get('uid', '')
-        token = attrs.get('token', '')
+        uid = attrs.get("uid", "")
+        token = attrs.get("token", "")
 
         try:
             pk = urlsafe_base64_decode(uid).decode()
@@ -75,12 +77,12 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'password', 'tokens']
+        fields = ["email", "first_name", "last_name", "password", "tokens"]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        email = attrs.get('email', '')
-        password = attrs.get('password', '')
+        email = attrs.get("email", "")
+        password = attrs.get("password", "")
 
         # authenticate() checks for user.is_active field as well.
         # If user.is_active is False, authenticate method returns None, denying the login for inactive users.
@@ -96,11 +98,47 @@ class LoginSerializer(serializers.ModelSerializer):
 
         return user
 
+class GoogleLoginSerializer(serializers.Serializer):
+    code = serializers.CharField()
+
+    class Meta:
+        fields = ["code"]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        code = attrs.get("code", "")
+
+        redirect_uri = f"{settings.BASE_FRONTEND_URL}/user/login/google"
+        access_token = google_api_client.get_google_access_token(code=code, redirect_uri=redirect_uri)
+        user_data = google_api_client.get_google_user_info(access_token=access_token)
+        user = None
+
+        try:
+            user = User.objects.get(email=user_data["email"])
+        except User.DoesNotExist:
+            user = User.objects.create(
+                email = user_data.get("email", ""),
+                first_name = user_data.get("given_name", ""),
+                last_name = user_data.get("family_name", ""),
+                is_verified = user_data.get("email_verified", False),
+                profile_picture = user_data.get("picture", None),
+                is_active = True
+            )
+
+        data = {
+            "email" : user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "tokens": user.tokens
+        }
+
+        return data
+
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
 
     class Meta:
-        fields = ['refresh_token']
+        fields = ["refresh_token"]
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
@@ -109,17 +147,17 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['old_password', 'new_password', 'confirm_new_password']
+        fields = ["old_password", "new_password", "confirm_new_password"]
 
     def containsLetterAndNumber(self, input):
         return input.isalnum() and not input.isalpha() and not input.isdigit()
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        user = self.context.get('user', '')
-        old_password = attrs.get('old_password', '')
-        new_password = attrs.get('new_password', '')
-        confirm_new_password = attrs.get('confirm_new_password', '')
+        user = self.context.get("user", "")
+        old_password = attrs.get("old_password", "")
+        new_password = attrs.get("new_password", "")
+        confirm_new_password = attrs.get("confirm_new_password", "")
 
         if not user.check_password(old_password):
             raise ValidationError("Old password is incorrect.")
@@ -139,4 +177,4 @@ class DeactivateAccountSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
 
     class Meta:
-        fields = ['refresh_token']
+        fields = ["refresh_token"]
