@@ -40,6 +40,44 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
+class GoogleRegisterSerializer(serializers.Serializer):
+    code = serializers.CharField()
+
+    class Meta:
+        fields = ["code"]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        code = attrs.get("code", "")
+
+        redirect_uri = f"{settings.BASE_FRONTEND_URL}/user/register/google"
+        access_token = google_api_client.get_google_access_token(code=code, redirect_uri=redirect_uri)
+        user_data = google_api_client.get_google_user_info(access_token=access_token)
+
+        if User.objects.filter(email = user_data["email"]).exists():
+            raise ValidationError({
+                "message": "A user with same email-id already exists"
+            })
+
+        user = User.objects.create(
+            email = user_data.get("email", ""),
+            first_name = user_data.get("given_name", ""),
+            last_name = user_data.get("family_name", ""),
+            profile_picture = user_data.get("picture", None),
+            is_verified = user_data.get("email_verified", False),
+            is_active = True
+        )
+
+        data = {
+            "email" : user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name or None,
+            "profile_picture": user.profile_picture or None,
+            "tokens": user.tokens
+        }
+
+        return data
+
 class EmailVerificationSerializer(serializers.Serializer):
     uid = serializers.CharField(min_length = 1, max_length = 20)
     token = serializers.CharField(min_length = 10, max_length = 100)
@@ -77,7 +115,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["email", "first_name", "last_name", "password", "tokens"]
+        fields = ["email", "first_name", "last_name", "profile_picture", "password", "tokens"]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
@@ -128,7 +166,8 @@ class GoogleLoginSerializer(serializers.Serializer):
         data = {
             "email" : user.email,
             "first_name": user.first_name,
-            "last_name": user.last_name,
+            "last_name": user.last_name or None,
+            "profile_picture": user.profile_picture or None,
             "tokens": user.tokens
         }
 

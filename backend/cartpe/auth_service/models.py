@@ -47,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_verified = models.BooleanField(default = False)
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
-    profile_picture = models.ImageField(max_length = 255, null = True, blank = True)
+    profile_picture = models.URLField(null = True, blank = True)
     gender = models.CharField(max_length = 10, choices = GENDER_CHOICES, null = True, blank = True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
