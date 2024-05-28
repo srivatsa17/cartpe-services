@@ -283,6 +283,9 @@ class WishListByIdAPIView(generics.GenericAPIView):
         except WishList.DoesNotExist:
             response = { "message" : "Unable to find wishlist product with id " + str(id) }
             raise NotFound(response)
+    
+    def get_redis_cache_key(self):
+        return "user:{user}:wishlist".format(user = self.request.user)
 
     def get(self, request, id):
         wishlisted_product = self.get_object(id)
@@ -292,6 +295,11 @@ class WishListByIdAPIView(generics.GenericAPIView):
     def delete(self, request, id):
         wishlisted_product = self.get_object(id)
         wishlisted_product.delete()
+
+        # Delete the existing cached wishlist in redis
+        if cache.has_key(self.get_redis_cache_key()):
+            cache.delete(self.get_redis_cache_key())
+
         return Response(status = status.HTTP_204_NO_CONTENT)
 
 class ProductReviewAPIView(generics.GenericAPIView):
