@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Product, ProductVariant, WishList
 from auth_service.models import User
+from unittest.mock import patch
 
 # Initialize the APIClient app
 client = APIClient()
@@ -40,3 +41,14 @@ class DeleteWishlistByIdTest(APITestCase):
 
         self.assertEqual("Unable to find wishlist product with id 1000", str(response.data["message"]))
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    @patch('product_service.views.cache')
+    def test_delete_with_delete_cached_data(self, mock_cache):
+        mock_cache.has_key.return_value = True
+
+        url = self.get_url(self.wishlist.id)
+        response = client.delete(url)
+
+        self.assertIsNone(response.data)
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        mock_cache.delete.assert_called_once()
