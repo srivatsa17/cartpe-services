@@ -19,12 +19,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "id", "email", "first_name", "last_name", "password", "is_verified", "is_active", "is_staff", "profile_picture",
-            "gender", "created_at", "updated_at"
+            "id", "email", "first_name", "last_name", "password", "is_verified", "is_active", "is_staff",
+            "created_at", "updated_at"
         ]
         read_only_fields = [
-            "first_name", "last_name", "is_verified", "is_active", "is_staff", "profile_picture", "gender", "created_at",
-            "updated_at"
+            "first_name", "last_name", "is_verified", "is_active", "is_staff", "created_at", "updated_at"
         ]
 
     def validate(self, attrs):
@@ -63,7 +62,6 @@ class GoogleRegisterSerializer(serializers.Serializer):
             email = user_data.get("email", ""),
             first_name = user_data.get("given_name", ""),
             last_name = user_data.get("family_name", ""),
-            profile_picture = user_data.get("picture", None),
             is_verified = user_data.get("email_verified", False),
             is_active = True
         )
@@ -72,7 +70,6 @@ class GoogleRegisterSerializer(serializers.Serializer):
             "email" : user.email,
             "first_name": user.first_name,
             "last_name": user.last_name or None,
-            "profile_picture": user.profile_picture or None,
             "tokens": user.tokens
         }
 
@@ -115,7 +112,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["email", "first_name", "last_name", "profile_picture", "password", "tokens"]
+        fields = ["email", "first_name", "last_name", "password", "tokens"]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
@@ -159,7 +156,6 @@ class GoogleLoginSerializer(serializers.Serializer):
                 first_name = user_data.get("given_name", ""),
                 last_name = user_data.get("family_name", ""),
                 is_verified = user_data.get("email_verified", False),
-                profile_picture = user_data.get("picture", None),
                 is_active = True
             )
 
@@ -167,7 +163,6 @@ class GoogleLoginSerializer(serializers.Serializer):
             "email" : user.email,
             "first_name": user.first_name,
             "last_name": user.last_name or None,
-            "profile_picture": user.profile_picture or None,
             "tokens": user.tokens
         }
 
@@ -217,3 +212,25 @@ class DeactivateAccountSerializer(serializers.Serializer):
 
     class Meta:
         fields = ["refresh_token"]
+
+class EditProfileSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+
+    class Meta:
+        model = User
+        fields = [
+            "id", "email", "first_name", "last_name", "gender", "phone", "date_of_birth",
+            "created_at", "updated_at"
+        ]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        email = attrs.get("email", "")
+
+        if len(email):
+            raise ValidationError({
+                "message": "Email cannot be updated."
+            })
+
+        return attrs

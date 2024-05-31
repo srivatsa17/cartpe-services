@@ -13,4 +13,5 @@ urlpatterns = [
     path('logout', views.LogoutAPIView.as_view(), name="logout"),
     path('change-password', views.ChangePasswordAPIView.as_view(), name="change-password"),
     path('deactivate', views.DeactivateAccountAPIView.as_view(), name="deactivate"),
+    path('edit-profile', views.EditProfileAPIView.as_view(), name="edit-profile")
 ]
