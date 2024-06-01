@@ -125,7 +125,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
         if not user:
             raise AuthenticationFailed(
-                "Please ensure that your credentials are valid and that the user account is enabled."
+                "Please ensure that your credentials are valid and that the user account is active."
             )
 
         if not user.is_verified:
@@ -150,6 +150,10 @@ class GoogleLoginSerializer(serializers.Serializer):
 
         try:
             user = User.objects.get(email=user_data["email"])
+
+            if not user.is_active:
+                raise AuthenticationFailed("User account is not active.")
+
         except User.DoesNotExist:
             user = User.objects.create(
                 email = user_data.get("email", ""),

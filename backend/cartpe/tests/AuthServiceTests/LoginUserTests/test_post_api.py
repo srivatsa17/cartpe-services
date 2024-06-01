@@ -50,7 +50,7 @@ class PostLoginUserTest(APITestCase):
 
         self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
         self.assertEqual(
-            "Please ensure that your credentials are valid and that the user account is enabled.", response.data["detail"]
+            "Please ensure that your credentials are valid and that the user account is active.", response.data["detail"]
         )
 
     def test_login_with_invalid_credentials(self):
@@ -60,7 +60,7 @@ class PostLoginUserTest(APITestCase):
 
         self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
         self.assertEqual(
-            "Please ensure that your credentials are valid and that the user account is enabled.", response.data["detail"]
+            "Please ensure that your credentials are valid and that the user account is active.", response.data["detail"]
         )
 
     def test_login_with_non_verified_user(self):

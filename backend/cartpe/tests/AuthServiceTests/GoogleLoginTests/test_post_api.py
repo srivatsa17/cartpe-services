@@ -2,6 +2,7 @@ from unittest import mock
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.urls import reverse
+from auth_service.models import User
 import json
 
 # Global variables
@@ -38,7 +39,14 @@ class GoogleLoginAPITestCase(APITestCase):
 
     @mock.patch("requests.post")
     @mock.patch("requests.get")
-    def test_success(self, mock_get, mock_post):
+    def test_success_with_existing_user(self, mock_get, mock_post):
+        self.user = User.objects.create(
+            email = self.mocked_user_info["email"],
+            password = "abcdef",
+            first_name = self.mocked_user_info["given_name"],
+            last_name = self.mocked_user_info["family_name"]
+        )
+
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = self.mocked_token_response
 
@@ -56,6 +64,57 @@ class GoogleLoginAPITestCase(APITestCase):
         self.assertEqual(self.mocked_user_info["email"], response.data["email"])
         self.assertEqual(self.mocked_user_info["given_name"], response.data["first_name"])
         self.assertEqual(self.mocked_user_info["family_name"], response.data["last_name"])
+
+    @mock.patch("requests.post")
+    @mock.patch("requests.get")
+    def test_success_with_non_existing_user(self, mock_get, mock_post):
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = self.mocked_token_response
+
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = self.mocked_user_info
+
+        data = json.dumps({
+            "code": "mocked_authorization_code"
+        })
+
+        url = self.get_url()
+        response = client.post(url, data=data, content_type=CONTENT_TYPE)
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(self.mocked_user_info["email"], response.data["email"])
+        self.assertEqual(self.mocked_user_info["given_name"], response.data["first_name"])
+        self.assertEqual(self.mocked_user_info["family_name"], response.data["last_name"])
+
+    @mock.patch("requests.post")
+    @mock.patch("requests.get")
+    def test_failure_with_inactive_user(self, mock_get, mock_post):
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = self.mocked_token_response
+
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = self.mocked_user_info
+
+        self.user = User.objects.create(
+            email = self.mocked_user_info["email"],
+            password = "abcdef",
+            first_name = self.mocked_user_info["given_name"],
+            last_name = self.mocked_user_info["family_name"],
+        )
+
+        # Set user's is_active state to false
+        self.user.is_active = False
+        self.user.save()
+
+        data = json.dumps({
+            "code": "mocked_authorization_code"
+        })
+
+        url = self.get_url()
+        response = client.post(url, data=data, content_type=CONTENT_TYPE)
+
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+        self.assertEqual("User account is not active.", str(response.data["detail"]))
 
     @mock.patch("requests.post")
     def test_failure_with_no_code(self, mock_post):
