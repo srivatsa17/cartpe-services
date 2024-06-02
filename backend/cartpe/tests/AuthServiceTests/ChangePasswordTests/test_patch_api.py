@@ -18,13 +18,13 @@ class ChangePasswordTests(APITestCase):
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
+        self.user = User.objects.create_user(email = "testuser@example.com", password = "test@123")
         client.force_authenticate(user = self.user)
 
     def test_change_password_success(self):
         url = self.get_url()
         data = json.dumps({
-            "old_password" : "abcdef",
+            "old_password" : "test@123",
             "new_password" : "testuser123",
             "confirm_new_password" : "testuser123"
         })
@@ -47,7 +47,7 @@ class ChangePasswordTests(APITestCase):
     def test_change_password_with_wrong_old_password(self):
         url = self.get_url()
         data = json.dumps({
-            "old_password" : "abcdefg",
+            "old_password" : "test@1234",
             "new_password" : "testuser123",
             "confirm_new_password" : "testuser123"
         })
@@ -59,9 +59,9 @@ class ChangePasswordTests(APITestCase):
     def test_change_password_with_same_password(self):
         url = self.get_url()
         data = json.dumps({
-            "old_password" : "abcdef",
-            "new_password" : "abcdef",
-            "confirm_new_password" : "abcdef"
+            "old_password" : "test@123",
+            "new_password" : "test@123",
+            "confirm_new_password" : "test@123"
         })
         response = client.patch(url, data = data, content_type = CONTENT_TYPE)
 
@@ -71,7 +71,7 @@ class ChangePasswordTests(APITestCase):
     def test_change_password_with_no_alphanumeric_chars(self):
         url = self.get_url()
         data = json.dumps({
-            "old_password" : "abcdef",
+            "old_password" : "test@123",
             "new_password" : "testuser",
             "confirm_new_password" : "testuser"
         })
@@ -83,7 +83,7 @@ class ChangePasswordTests(APITestCase):
     def test_change_password_with_unmatched_new_passwords(self):
         url = self.get_url()
         data = json.dumps({
-            "old_password" : "abcdef",
+            "old_password" : "test@123",
             "new_password" : "testuser123",
             "confirm_new_password" : "testuser12"
         })

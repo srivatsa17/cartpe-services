@@ -19,12 +19,12 @@ class PostLoginUserTest(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            email = "testuser@example.com", password = "abcdef", first_name = "testuser", last_name = "testuser"
+            email = "testuser@example.com", password = "test@123", first_name = "testuser", last_name = "testuser"
         )
 
     def test_login_success(self):
         url = self.get_url()
-        data = json.dumps({ "email" : "testuser@example.com", "password" : "abcdef" })
+        data = json.dumps({ "email" : "testuser@example.com", "password" : "test@123" })
         self.user.is_verified = True
         self.user.save()
 
@@ -45,7 +45,7 @@ class PostLoginUserTest(APITestCase):
 
     def test_login_with_non_existing_user(self):
         url = self.get_url()
-        data = json.dumps({ "email" : "nonexistinguser@example.com", "password" : "abcdef" })
+        data = json.dumps({ "email" : "nonexistinguser@example.com", "password" : "test@123" })
         response = client.post(url, data = data, content_type = CONTENT_TYPE)
 
         self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
@@ -55,7 +55,7 @@ class PostLoginUserTest(APITestCase):
 
     def test_login_with_invalid_credentials(self):
         url = self.get_url()
-        data = json.dumps({ "email" : "testuser@example.com", "password" : "qwerty" })
+        data = json.dumps({ "email" : "testuser@example.com", "password" : "test@1234" })
         response = client.post(url, data = data, content_type = CONTENT_TYPE)
 
         self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
@@ -65,7 +65,7 @@ class PostLoginUserTest(APITestCase):
 
     def test_login_with_non_verified_user(self):
         url = self.get_url()
-        data = json.dumps({ "email" : "testuser@example.com", "password" : "abcdef" })
+        data = json.dumps({ "email" : "testuser@example.com", "password" : "test@123" })
 
         response = client.post(url, data = data, content_type = CONTENT_TYPE)
 

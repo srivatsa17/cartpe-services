@@ -6,9 +6,10 @@ from auth_service.models import User
 from auth_service.token import account_activation_token
 from auth_service.utils import google_api_client
 from cartpe import settings
+import re
 
-MIN_PASSWORD_LENGTH = 6
-MAX_PASSWORD_LENGTH = 70
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_LENGTH = 255
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(min_length = 2, max_length = 255)
@@ -187,8 +188,10 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         model = User
         fields = ["old_password", "new_password", "confirm_new_password"]
 
-    def containsLetterAndNumber(self, input):
-        return input.isalnum() and not input.isalpha() and not input.isdigit()
+    def containsAlphaAndDigits(self, input):
+        # Regular expression to match at least one alphabet and one digit
+        pattern = r'(?=.*[a-zA-Z])(?=.*\d)'
+        return bool(re.search(pattern, input))
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
@@ -203,7 +206,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         if old_password == new_password:
             raise ValidationError("New password is same as Old password.")
 
-        if not self.containsLetterAndNumber(new_password):
+        if not self.containsAlphaAndDigits(new_password):
             raise ValidationError("Password should contain alphabets and digits.")
 
         if new_password != confirm_new_password:
