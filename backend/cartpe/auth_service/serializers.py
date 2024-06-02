@@ -9,7 +9,7 @@ from cartpe import settings
 import re
 
 MIN_PASSWORD_LENGTH = 8
-MAX_PASSWORD_LENGTH = 70
+MAX_PASSWORD_LENGTH = 255
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(min_length = 2, max_length = 255)
