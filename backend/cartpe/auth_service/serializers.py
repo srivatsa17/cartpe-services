@@ -19,12 +19,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "id", "email", "first_name", "last_name", "password", "is_verified", "is_active", "is_staff", "profile_picture",
-            "gender", "created_at", "updated_at"
+            "id", "email", "first_name", "last_name", "password", "is_verified", "is_active", "is_staff",
+            "created_at", "updated_at"
         ]
         read_only_fields = [
-            "first_name", "last_name", "is_verified", "is_active", "is_staff", "profile_picture", "gender", "created_at",
-            "updated_at"
+            "first_name", "last_name", "is_verified", "is_active", "is_staff", "created_at", "updated_at"
         ]
 
     def validate(self, attrs):
@@ -39,6 +38,42 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+class GoogleRegisterSerializer(serializers.Serializer):
+    code = serializers.CharField()
+
+    class Meta:
+        fields = ["code"]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        code = attrs.get("code", "")
+
+        redirect_uri = f"{settings.BASE_FRONTEND_URL}/user/register/google"
+        access_token = google_api_client.get_google_access_token(code=code, redirect_uri=redirect_uri)
+        user_data = google_api_client.get_google_user_info(access_token=access_token)
+
+        if User.objects.filter(email = user_data["email"]).exists():
+            raise ValidationError({
+                "message": "A user with same email-id already exists"
+            })
+
+        user = User.objects.create(
+            email = user_data.get("email", ""),
+            first_name = user_data.get("given_name", ""),
+            last_name = user_data.get("family_name", ""),
+            is_verified = user_data.get("email_verified", False),
+            is_active = True
+        )
+
+        data = {
+            "email" : user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name or None,
+            "tokens": user.tokens
+        }
+
+        return data
 
 class EmailVerificationSerializer(serializers.Serializer):
     uid = serializers.CharField(min_length = 1, max_length = 20)
@@ -90,7 +125,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
         if not user:
             raise AuthenticationFailed(
-                "Please ensure that your credentials are valid and that the user account is enabled."
+                "Please ensure that your credentials are valid and that the user account is active."
             )
 
         if not user.is_verified:
@@ -115,20 +150,23 @@ class GoogleLoginSerializer(serializers.Serializer):
 
         try:
             user = User.objects.get(email=user_data["email"])
+
+            if not user.is_active:
+                raise AuthenticationFailed("User account is not active.")
+
         except User.DoesNotExist:
             user = User.objects.create(
                 email = user_data.get("email", ""),
                 first_name = user_data.get("given_name", ""),
                 last_name = user_data.get("family_name", ""),
                 is_verified = user_data.get("email_verified", False),
-                profile_picture = user_data.get("picture", None),
                 is_active = True
             )
 
         data = {
             "email" : user.email,
             "first_name": user.first_name,
-            "last_name": user.last_name,
+            "last_name": user.last_name or None,
             "tokens": user.tokens
         }
 
@@ -178,3 +216,25 @@ class DeactivateAccountSerializer(serializers.Serializer):
 
     class Meta:
         fields = ["refresh_token"]
+
+class EditProfileSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+
+    class Meta:
+        model = User
+        fields = [
+            "id", "email", "first_name", "last_name", "gender", "phone", "date_of_birth",
+            "created_at", "updated_at"
+        ]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        email = attrs.get("email", "")
+
+        if len(email):
+            raise ValidationError({
+                "message": "Email cannot be updated."
+            })
+
+        return attrs

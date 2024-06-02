@@ -3,8 +3,9 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from auth_service.serializers import (
-    RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, GoogleLoginSerializer, LogoutSerializer,
-    ChangePasswordSerializer, DeactivateAccountSerializer
+    RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, GoogleLoginSerializer, 
+    GoogleRegisterSerializer, LogoutSerializer, ChangePasswordSerializer, DeactivateAccountSerializer,
+    EditProfileSerializer
 )
 from auth_service.tasks import send_verification_email_task
 from auth_service.routes import routes
@@ -30,6 +31,15 @@ class RegisterUserAPIView(generics.GenericAPIView):
 
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class GoogleRegisterAPIView(generics.GenericAPIView):
+    serializer_class = GoogleRegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            return Response(serializer.validated_data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyUserEmailAPIView(generics.GenericAPIView):
     serializer_class = EmailVerificationSerializer
@@ -111,4 +121,24 @@ class DeactivateAccountAPIView(generics.GenericAPIView):
             user.save()
             response = { "message" : "Account deactivated successfully." }
             return Response(response, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    
+class EditProfileAPIView(generics.GenericAPIView):
+    serializer_class = EditProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def get(self, request):
+        user = self.get_object()
+        serializer = self.serializer_class(user, many = False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        user = self.get_object()
+        serializer = self.serializer_class(instance = user, data = request.data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
