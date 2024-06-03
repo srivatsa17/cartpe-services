@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'shipping_service.apps.ShippingServiceConfig',
     'order_service.apps.OrderServiceConfig',
     'payment_service.apps.PaymentServiceConfig',
+    'customer_service.apps.CustomerServiceConfig',
 ]
 
 MIDDLEWARE = [
