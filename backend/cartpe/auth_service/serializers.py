@@ -241,3 +241,21 @@ class EditProfileSerializer(serializers.ModelSerializer):
             })
 
         return attrs
+    
+class ResetPasswordRequestSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(min_length = 3, max_length = 255)
+
+    class Meta:
+        model = User
+        fields = [ "email" ]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        email = attrs.get("email", "")
+
+        if not User.objects.filter(email = email).exists():
+            raise ValidationError({
+                "message": "Email does not exist."
+            })
+        
+        return attrs

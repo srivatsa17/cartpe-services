@@ -3,11 +3,11 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from auth_service.serializers import (
-    RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, GoogleLoginSerializer, 
+    RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, GoogleLoginSerializer,
     GoogleRegisterSerializer, LogoutSerializer, ChangePasswordSerializer, DeactivateAccountSerializer,
-    EditProfileSerializer
+    EditProfileSerializer, ResetPasswordRequestSerializer
 )
-from auth_service.tasks import send_verification_email_task
+from auth_service.tasks import send_verification_email_task, send_reset_password_email_task
 from auth_service.routes import routes
 
 # Create your views here.
@@ -122,7 +122,7 @@ class DeactivateAccountAPIView(generics.GenericAPIView):
             response = { "message" : "Account deactivated successfully." }
             return Response(response, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    
+
 class EditProfileAPIView(generics.GenericAPIView):
     serializer_class = EditProfileSerializer
     permission_classes = [IsAuthenticated]
@@ -141,4 +141,19 @@ class EditProfileAPIView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordRequestAPIView(generics.GenericAPIView):
+    serializer_class = ResetPasswordRequestSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+
+            # Get the email from serializer and use it to send email for password reset.
+            user_email = serializer.validated_data['email']
+            send_reset_password_email_task.delay(user_email = user_email)
+
+            response = { "message": "Password reset link has been sent to the provided email." }
+            return Response(response, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
