@@ -27,6 +27,7 @@ urlpatterns = [
                 path('cart/', include('cart_service.urls')),
                 path('shipping/', include('shipping_service.urls')),
                 path('orders/', include('order_service.urls')),
+                path('customer-service/', include('customer_service.urls')),
             ]
         ),
     ),
