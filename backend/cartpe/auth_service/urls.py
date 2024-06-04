@@ -14,5 +14,6 @@ urlpatterns = [
     path('change-password', views.ChangePasswordAPIView.as_view(), name="change-password"),
     path('deactivate', views.DeactivateAccountAPIView.as_view(), name="deactivate"),
     path('edit-profile', views.EditProfileAPIView.as_view(), name="edit-profile"),
-    path('reset-password', views.ResetPasswordRequestAPIView.as_view(), name="reset-password")
+    path('reset-password', views.ResetPasswordRequestAPIView.as_view(), name="reset-password"),
+    path('reset-password-confirm', views.ResetPasswordConfirmAPIView.as_view(), name="reset-password-confirm")
 ]

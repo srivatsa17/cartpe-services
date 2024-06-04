@@ -5,7 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from auth_service.serializers import (
     RegisterUserSerializer, EmailVerificationSerializer, LoginSerializer, GoogleLoginSerializer,
     GoogleRegisterSerializer, LogoutSerializer, ChangePasswordSerializer, DeactivateAccountSerializer,
-    EditProfileSerializer, ResetPasswordRequestSerializer
+    EditProfileSerializer, ResetPasswordRequestSerializer, ResetPasswordConfirmSerializer
 )
 from auth_service.tasks import send_verification_email_task, send_reset_password_email_task
 from auth_service.routes import routes
@@ -155,5 +155,15 @@ class ResetPasswordRequestAPIView(generics.GenericAPIView):
             send_reset_password_email_task.delay(user_email = user_email)
 
             response = { "message": "Password reset link has been sent to the provided email." }
+            return Response(response, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordConfirmAPIView(generics.GenericAPIView):
+    serializer_class = ResetPasswordConfirmSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            response = { "message": "Password reset successful." }
             return Response(response, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
