@@ -154,7 +154,8 @@ class OrderByIdAPIView(generics.GenericAPIView):
         serializer = self.serializer_class(order, data = request.data, partial = True)
 
         if serializer.is_valid():
-            if serializer.validated_data["status"] == OrderStatus.CANCELLED:
+            if serializer.validated_data["status"] == OrderStatus.CANCELLED or \
+                serializer.validated_data["status"] == OrderStatus.RETURNED:
                 serializer.validated_data["amount_refundable"] = order.amount_paid
                 serializer.validated_data["refund_status"] = OrderRefundStatus.COMPLETED
                 """ The following code does not work for test razorpay account. """
