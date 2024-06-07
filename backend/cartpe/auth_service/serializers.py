@@ -1,5 +1,6 @@
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from auth_service.models import User
@@ -239,5 +240,72 @@ class EditProfileSerializer(serializers.ModelSerializer):
             raise ValidationError({
                 "message": "Email cannot be updated."
             })
+
+        return attrs
+    
+class ResetPasswordRequestSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(min_length = 3, max_length = 255)
+
+    class Meta:
+        model = User
+        fields = [ "email" ]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        email = attrs.get("email", "")
+
+        if not User.objects.filter(email = email).exists():
+            raise ValidationError({
+                "message": "Email does not exist."
+            })
+        
+        return attrs
+    
+class ResetPasswordConfirmSerializer(serializers.Serializer):
+    new_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
+    confirm_new_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
+    uid = serializers.CharField(min_length = 1, max_length = 20)
+    token = serializers.CharField(min_length = 10, max_length = 100)
+
+    class Meta:
+        fields = [ "new_password", "confirm_new_password", "uid", "token" ]
+
+    def containsAlphaAndDigits(self, input):
+        # Regular expression to match at least one alphabet and one digit
+        pattern = r'(?=.*[a-zA-Z])(?=.*\d)'
+        return bool(re.search(pattern, input))
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        new_password = attrs.get("new_password", "")
+        confirm_new_password = attrs.get("confirm_new_password", "")
+        uid = attrs.get("uid", "")
+        token = attrs.get("token", "")
+
+        if not self.containsAlphaAndDigits(new_password):
+            raise ValidationError("Password should contain alphabets and digits.")
+
+        if new_password != confirm_new_password:
+            raise ValidationError("New passwords not matching.")
+        
+        try:
+            pk = urlsafe_base64_decode(uid).decode()
+        except Exception:
+            raise ValidationError("Error occurred while decoding base64 user id")
+
+        if not pk.isnumeric():
+            raise ValidationError("Invalid type received for user id")
+
+        if not User.objects.filter(pk = pk).exists():
+            raise ValidationError("Unable to find user")
+
+        user = User.objects.get(pk = pk)
+        is_token_valid = default_token_generator.check_token(user, token)
+
+        if not is_token_valid:
+            raise ValidationError("Invalid or expired token")
+
+        user.set_password(new_password)
+        user.save()
 
         return attrs
