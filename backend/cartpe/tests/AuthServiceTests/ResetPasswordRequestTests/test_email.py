@@ -9,7 +9,6 @@ class SendResetPasswordEmailTest(TestCase):
 
     def setUp(self):
         self.user_email = "testuser@example.com"
-        self.current_site = "127.0.0.1:3000"
 
     def test_user_does_not_exist(self):
         response = send_reset_password_email(self.user_email)

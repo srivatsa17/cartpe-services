@@ -161,8 +161,7 @@
 														<tr>
 															<td class="pad">
 																<div class="alignment" align="center">
-                                                                    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://{{ domain }}/verify-email/{{ uid }}/{{ token }}" style="height:42px;width:140px;v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#3c7590"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
-                                                                    <a href="http://{{ domain }}/user/verify-email/{{ uid }}/{{ token }}" target="_blank" 
+                                                                    <a href="{{ domain }}/user/verify-email/{{ uid }}/{{ token }}" target="_blank" 
 																		style="text-decoration:none;display:inline-block;color:#ffffff;
                                                                         background-color:#3c7590;border-radius:4px;width:auto;border-top:0px solid transparent;
                                                                         font-weight:400;border-right:0px solid transparent;border-bottom:0px solid transparent;
@@ -190,9 +189,9 @@
                                                                         If that doesn't work, copy and paste the following link in your browser:
                                                                     </p>
 																	<p style="margin: 0;">
-                                                                        <a href="http://{{ domain }}/user/verify-email/{{ uid }}/{{ token }}" target="_blank" style="text-decoration: underline; color: #0788cf;"
+                                                                        <a href="{{ domain }}/user/verify-email/{{ uid }}/{{ token }}" target="_blank" style="text-decoration: underline; color: #0788cf;"
                                                                             rel="noopener"
-                                                                        > http://{{ domain }}/user/verify-email/{{ uid }}/{{ token }}
+                                                                        > {{ domain }}/user/verify-email/{{ uid }}/{{ token }}
                                                                         </a>
                                                                     </p>
 																</div>

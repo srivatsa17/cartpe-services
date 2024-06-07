@@ -19,7 +19,7 @@ def send_verification_email(user_email):
             return { "status" : 400 }
 
         user = User.objects.get(email = user_email)
-        current_site = "localhost:3000"             # TODO: To be changed once frontend url is configured
+        current_site = settings.BASE_FRONTEND_URL
 
         message = {
             'subject' : email_subject,
@@ -57,7 +57,7 @@ def send_reset_password_email(user_email):
             return { "status" : 400 }
 
         user = User.objects.get(email = user_email)
-        current_site = "localhost:3000"             # TODO: To be changed once frontend url is configured
+        current_site = settings.BASE_FRONTEND_URL
 
         message = {
             'subject' : email_subject,

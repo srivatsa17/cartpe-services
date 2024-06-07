@@ -7,7 +7,6 @@ class SendVerificationEmailTest(TestCase):
 
     def setUp(self):
         self.user_email = "testuser@example.com"
-        self.current_site = "127.0.0.1:3000"
 
     @patch("auth_service.email.EmailMultiAlternatives.send")
     def test_send_verification_email_success(self, mock_send):

@@ -7,8 +7,8 @@ logger = get_task_logger(__name__)
 
 @shared_task
 def send_verification_email_task(user_email):
-    logger.info("Received email - '%s' from RegisterUserAPIView" % user_email)
-    logger.info("Sending verification email to %s" % user_email)
+    logger.info(f"Received email - '{user_email}' from RegisterUserAPIView")
+    logger.info(f"Sending verification email to {user_email}")
 
     response = send_verification_email(user_email=user_email)
 
@@ -17,7 +17,7 @@ def send_verification_email_task(user_email):
         logger.error(response)
         return "Verification email was not sent"
 
-    return "Successfully sent verification email to %s" % user_email
+    return f"Successfully sent verification email to {user_email}"
 
 @shared_task
 def send_reset_password_email_task(user_email):
