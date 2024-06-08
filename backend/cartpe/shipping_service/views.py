@@ -4,6 +4,13 @@ from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from shipping_service.models import Country, Address, UserAddress
 from shipping_service.serializers import CountrySerializer, AddressSerializer, UserAddressSerializer
+from shipping_service.routes import routes
+
+class RoutesAPIView(generics.GenericAPIView):
+    queryset = routes
+
+    def get(self, request):
+        return Response(self.get_queryset())
 
 class CountryAPIView(generics.GenericAPIView):
     serializer_class = CountrySerializer

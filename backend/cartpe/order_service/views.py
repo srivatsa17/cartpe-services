@@ -6,6 +6,7 @@ from order_service.models import Order, OrderItem
 from order_service.serializers import OrderSerializer, OrderItemSerializer
 from order_service.constants import OrderStatus, OrderMethod, OrderRefundStatus
 from order_service.tasks import send_order_confirmation_email_task
+from order_service.routes import routes
 from razorpay_integration.views import razorpay_api_client
 from razorpay_integration.serializers import RazorPayOrderSerializer
 from payment_service.models import Payment
@@ -18,6 +19,12 @@ from django.core.cache import cache
 10 days is the default timeout for orders.
 """
 DEFAULT_ORDERS_REDIS_TIMEOUT = 10 * 60 * 60 * 24
+
+class RoutesAPIView(generics.GenericAPIView):
+    queryset = routes
+
+    def get(self, request):
+        return Response(self.get_queryset())
 
 class RazorPayOrderAPIView(generics.GenericAPIView):
     """

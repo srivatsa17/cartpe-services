@@ -2,6 +2,13 @@ from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from customer_service.serializers import ContactUsSerializer
+from customer_service.routes import routes
+
+class RoutesAPIView(generics.GenericAPIView):
+    queryset = routes
+
+    def get(self, request):
+        return Response(self.get_queryset())
 
 class ContactUsAPIView(generics.GenericAPIView):
     serializer_class = ContactUsSerializer

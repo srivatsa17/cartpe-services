@@ -1,11 +1,18 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+from cart_service.routes import routes
 from cart_service.serializers import CartSerializer, CartByIdSerializer
 import redis
 
 # Initialise JSON redis instance
 redis_client = redis.Redis().json()
+
+class RoutesAPIView(generics.GenericAPIView):
+    queryset = routes
+
+    def get(self, request):
+        return Response(self.get_queryset())
 
 class CartAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
