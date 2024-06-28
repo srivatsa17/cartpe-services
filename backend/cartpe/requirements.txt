@@ -22,7 +22,7 @@ django-haystack==3.2.1
 django-js-asset==2.0.0
 django-mptt==0.14.0
 django-redis==5.3.0
-djangorestframework==3.14.0
+djangorestframework==3.15.2
 djangorestframework-camel-case==1.4.2
 djangorestframework-recursive==0.1.2
 djangorestframework-simplejwt==5.2.2
@@ -58,7 +58,7 @@ six==1.16.0
 sqlparse==0.5.0
 tomlkit==0.11.7
 tzdata==2023.3
-urllib3==2.0.7
+urllib3==2.2.2
 vine==5.0.0
 virtualenv==20.26.2
 wcwidth==0.2.6
