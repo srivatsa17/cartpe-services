@@ -1,0 +1,106 @@
+services:
+    nginx:
+        restart: unless-stopped
+        container_name: nginx
+        image: nginx:1.27-alpine
+        ports:
+            - 80:80
+        volumes:
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - django_volume:/app/cartpe/
+        networks:
+            - cartpe
+
+    postgres:
+        restart: unless-stopped
+        image: postgres:latest
+        container_name: postgres
+        environment:
+            - POSTGRES_DB=testdb
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=root123
+        ports:
+            - 5432:5432
+        volumes:
+            - postgres_volume:/var/lib/postgresql/data
+        networks:
+            - cartpe
+
+    redis:
+        restart: unless-stopped
+        image: redis/redis-stack-server:latest
+        container_name: redis
+        ports:
+            - 6379:6379
+        volumes:
+            - redis_volume:/data
+        networks:
+            - cartpe
+
+    cartpe:
+        restart: unless-stopped
+        image: cartpe-backend:1.0
+        container_name: cartpe-backend
+        build:
+            context: .
+            dockerfile: ./docker/cartpe/Dockerfile
+        entrypoint:
+            - ./docker/cartpe/server-entrypoint.sh
+        volumes:
+            - django_volume:/app/cartpe/
+        ports:
+            - 8000:8000
+        depends_on:
+            - postgres
+            - redis
+            - solr
+        env_file: 
+            - ../../.env
+        networks:
+            - cartpe
+    
+    celery:
+        restart: unless-stopped
+        container_name: celery
+        build:
+            context: .
+            dockerfile: ./docker/cartpe/Dockerfile
+        entrypoint: 
+            - ./docker/celery/worker-entrypoint.sh
+        volumes:
+            - django_volume:/app/cartpe/
+        env_file: 
+            - ../../.env
+        depends_on:
+            - cartpe
+            - redis
+        networks:
+            - cartpe
+
+    solr:
+        restart: unless-stopped
+        image: solr:9.3
+        container_name: solr
+        ports:
+            - 8983:8983
+        command:
+            - solr-precreate
+            - cartpe_core
+        volumes:
+            - solr_volume:/var/solr
+        depends_on:
+            - postgres
+        links:
+            - postgres:postgres
+        networks:
+            - cartpe
+
+volumes:
+    django_volume: {}
+    postgres_volume: {}
+    redis_volume: {}
+    solr_volume: {}
+
+networks:
+    cartpe: 
+        driver: bridge

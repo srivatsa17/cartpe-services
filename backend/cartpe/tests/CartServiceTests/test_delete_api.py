@@ -3,16 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from product_service.models import Product, ProductVariant
 from auth_service.models import User
-import redis
+from django.core.cache import cache
 
 # Initialize the APIClient app
 client = APIClient()
-
-# Global variables
-CONTENT_TYPE = "application/json"
-
-# Initialise JSON redis instance
-redis_client = redis.Redis().json()
 
 class DeleteCartItemsAPITest(APITestCase):
     """ Test module for DELETE request for CartAPIView API """
@@ -24,7 +18,7 @@ class DeleteCartItemsAPITest(APITestCase):
 
         self.product = Product.objects.create(name = "iphone 13", description = "ok product")
         self.productVariant = ProductVariant.objects.create(
-            product = self.product, 
+            product = self.product,
             images=['example1.jpg', 'example2.jpg'],
             price=70000,
             stock_count = 10
@@ -51,22 +45,22 @@ class DeleteCartItemsByIdAPITest(APITestCase):
 
         self.product = Product.objects.create(name = "iphone 13", description = "ok product")
         self.productVariant = ProductVariant.objects.create(
-            product = self.product, 
+            product = self.product,
             images=['example1.jpg', 'example2.jpg'],
             price=70000,
             stock_count = 10
         )
 
     def get_redis_key(self):
-        return "cart:%s" % self.user.id
+        return "user:{user}:cart".format(user = self.user)
 
     def get_url(self, product_id):
         url = reverse("cart_by_id", kwargs = { "id" : product_id })
         return url
 
     def test_delete_success(self):
-        redis_client.set(self.get_redis_key(), "$", { "cartItems": [] })
-        redis_client.arrappend(self.get_redis_key(), "$.cartItems", { "product": { "id" : self.product.id }, "quantity": 2 })
+        cache_data = {"cartItems": [{ "product": { "id" : self.product.id }, "quantity": 2 }]}
+        cache.set(self.get_redis_key(), cache_data, timeout=1)
 
         url = self.get_url(self.product.id)
         response = client.delete(url)
@@ -74,14 +68,25 @@ class DeleteCartItemsByIdAPITest(APITestCase):
         self.assertEqual({ "cartItems": [] }, response.data)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-    def test_delete_failure(self):
+    def test_delete_with_empty_cart(self):
+        cache_data = { "cartItems": [] }
+        cache.set(self.get_redis_key(), cache_data, timeout=2)
+
         url = self.get_url(self.product.id)
         response = client.delete(url)
 
-        self.assertEqual("Empty cart found for user.", str(response.data["message"][0]))
+        self.assertEqual("Cart is empty", str(response.data["message"][0]))
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_delete_with_non_existing_product(self):
+        cache_data = { "cartItems": [{ "product": { "id" : self.product.id }, "quantity": 2 }] }
+        cache.set(self.get_redis_key(), cache_data, timeout=2)
+
+        url = self.get_url(self.product.id + 1)
+        response = client.delete(url)
+
+        self.assertEqual(f"Product with id = {self.product.id + 1} does not exist in the cart.", str(response.data["message"][0]))
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
 
     def tearDown(self):
-        redis_key = self.get_redis_key()
-        if redis_client.get(redis_key):
-            redis_client.delete(redis_key)
+        cache.delete(self.get_redis_key())
