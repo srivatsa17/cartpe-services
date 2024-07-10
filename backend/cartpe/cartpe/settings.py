@@ -118,10 +118,13 @@ DATABASES = {
     }
 }
 
+REDIS_HOST = config('REDIS_HOST', default='localhost')
+REDIS_PORT = config('REDIS_PORT', default='6379')
+
 CACHES = {
     "default": {
         "BACKEND": config('CACHE_BACKEND'),
-        "LOCATION": config('CACHE_LOCATION'),
+        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}",
         "OPTIONS": {
             "CLIENT_CLASS": config('CACHE_CLIENT_CLASS'),
         }
@@ -209,8 +212,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Celery settings
-CELERY_BROKER_URL = config('CACHE_LOCATION')
-CELERY_RESULT_BACKEND = config('CACHE_LOCATION')
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 # Email settings
 EMAIL_BACKEND = config('EMAIL_BACKEND')

@@ -18,6 +18,8 @@ env:
     DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
 
     # Cache configurations
+    REDIS_HOST: ${{ secrets.REDIS_HOST }}
+    REDIS_PORT: ${{ secrets.REDIS_PORT }}
     CACHE_BACKEND: ${{ secrets.CACHE_BACKEND }}
     CACHE_LOCATION: ${{ secrets.CACHE_LOCATION }}
     CACHE_CLIENT_CLASS: ${{ secrets.CACHE_CLIENT_CLASS }}
