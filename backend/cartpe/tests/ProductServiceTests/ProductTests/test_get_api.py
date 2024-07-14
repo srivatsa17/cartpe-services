@@ -7,23 +7,24 @@ from auth_service.models import User
 # Initialize the APIClient app
 client = APIClient()
 
+
 class GetAllProductsTest(APITestCase):
-    """ Test module for GET request for ProductAPIView API """
+    """Test module for GET request for ProductAPIView API"""
 
     def get_url(self):
         url = reverse("products")
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
-        self.product1 = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.product1 = Product.objects.create(name="iphone 13", description="ok product")
         self.productVariant = ProductVariant.objects.create(
-            product = self.product1, 
-            images=['example1.jpg', 'example2.jpg'],
+            product=self.product1,
+            images=["example1.jpg", "example2.jpg"],
             price=70000,
-            stock_count = 10
+            stock_count=10,
         )
 
     def test_get_with_valid_data(self):
@@ -33,23 +34,24 @@ class GetAllProductsTest(APITestCase):
         self.assertIsNotNone(response.data)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
+
 class GetProductByIdTest(APITestCase):
-    """ Test module for GET request for ProductByIdAPIView API """
+    """Test module for GET request for ProductByIdAPIView API"""
 
     def get_url(self, product_id):
-        url = reverse("product_by_id", kwargs = { "id" : product_id })
+        url = reverse("product_by_id", kwargs={"id": product_id})
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
-        self.product1 = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.product1 = Product.objects.create(name="iphone 13", description="ok product")
         self.productVariant = ProductVariant.objects.create(
-            product = self.product1, 
-            images=['example1.jpg', 'example2.jpg'],
+            product=self.product1,
+            images=["example1.jpg", "example2.jpg"],
             price=70000,
-            stock_count = 10
+            stock_count=10,
         )
 
     def test_get_with_valid_id(self):

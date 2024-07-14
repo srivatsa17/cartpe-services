@@ -6,8 +6,9 @@ from product_service.search_indexes import CategoryIndex
 # Initialize the APIClient app
 client = APIClient()
 
+
 class CategoryIndexTestCase(APITestCase):
-    """ Test module for CategoryIndex class """
+    """Test module for CategoryIndex class"""
 
     def test_get_model(self):
         category_index = CategoryIndex()

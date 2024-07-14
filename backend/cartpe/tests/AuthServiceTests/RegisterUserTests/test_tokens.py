@@ -4,6 +4,7 @@ from datetime import datetime
 from auth_service.models import User
 from auth_service.token import AccountActivationTokenGenerator
 
+
 class AccountActivationTokenGeneratorTest(TestCase):
     def setUp(self):
         self.user = User.objects.create(email="testuser@example.com", password="testuser")
@@ -12,7 +13,9 @@ class AccountActivationTokenGeneratorTest(TestCase):
     def test_make_hash_value(self):
         timestamp = datetime.now()
         expected_hash = (
-            six.text_type(self.user.pk) + six.text_type(timestamp) + six.text_type(self.user.is_verified)
+            six.text_type(self.user.pk)
+            + six.text_type(timestamp)
+            + six.text_type(self.user.is_verified)
         )
         generated_hash = self.token_generator._make_hash_value(self.user, timestamp)
         self.assertEqual(generated_hash, expected_hash)

@@ -11,8 +11,9 @@ CONTENT_TYPE = "application/json"
 # Initialize the APIClient app
 client = APIClient()
 
+
 class GoogleLoginAPITestCase(APITestCase):
-    """ Test module for POST request for GoogleLoginAPIView API """
+    """Test module for POST request for GoogleLoginAPIView API"""
 
     def get_url(self):
         url = reverse("google-login")
@@ -24,7 +25,7 @@ class GoogleLoginAPITestCase(APITestCase):
             "expires_in": 3599,
             "token_type": "Bearer",
             "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
-            "refresh_token": "mocked_refresh_token"
+            "refresh_token": "mocked_refresh_token",
         }
         self.mocked_user_info = {
             "id": "1234567890",
@@ -34,17 +35,17 @@ class GoogleLoginAPITestCase(APITestCase):
             "given_name": "Test",
             "family_name": "User",
             "picture": "http://example.com/picture.jpg",
-            "locale": "en"
+            "locale": "en",
         }
 
     @mock.patch("requests.post")
     @mock.patch("requests.get")
     def test_success_with_existing_user(self, mock_get, mock_post):
         self.user = User.objects.create(
-            email = self.mocked_user_info["email"],
-            password = "abcdef",
-            first_name = self.mocked_user_info["given_name"],
-            last_name = self.mocked_user_info["family_name"]
+            email=self.mocked_user_info["email"],
+            password="abcdef",
+            first_name=self.mocked_user_info["given_name"],
+            last_name=self.mocked_user_info["family_name"],
         )
 
         mock_post.return_value.status_code = 200
@@ -53,9 +54,7 @@ class GoogleLoginAPITestCase(APITestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = self.mocked_user_info
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
@@ -74,9 +73,7 @@ class GoogleLoginAPITestCase(APITestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = self.mocked_user_info
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
@@ -96,19 +93,17 @@ class GoogleLoginAPITestCase(APITestCase):
         mock_get.return_value.json.return_value = self.mocked_user_info
 
         self.user = User.objects.create(
-            email = self.mocked_user_info["email"],
-            password = "abcdef",
-            first_name = self.mocked_user_info["given_name"],
-            last_name = self.mocked_user_info["family_name"],
+            email=self.mocked_user_info["email"],
+            password="abcdef",
+            first_name=self.mocked_user_info["given_name"],
+            last_name=self.mocked_user_info["family_name"],
         )
 
         # Set user's is_active state to false
         self.user.is_active = False
         self.user.save()
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
@@ -133,11 +128,9 @@ class GoogleLoginAPITestCase(APITestCase):
     def test_with_not_ok_response_from_access_token_url(self, mock_post):
         mock_post.return_value.status_code = 400
         mock_post.return_value.ok = False
-        mock_post.return_value.json.return_value = { "error": "invalid_grant" }
+        mock_post.return_value.json.return_value = {"error": "invalid_grant"}
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
@@ -153,15 +146,15 @@ class GoogleLoginAPITestCase(APITestCase):
         del self.mocked_token_response["access_token"]
         mock_post.return_value.json.return_value = self.mocked_token_response
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertEqual("Unable to fetch access token from Google response.", str(response.data["message"][0]))
+        self.assertEqual(
+            "Unable to fetch access token from Google response.", str(response.data["message"][0])
+        )
 
     @mock.patch("requests.post")
     @mock.patch("requests.get")
@@ -174,9 +167,7 @@ class GoogleLoginAPITestCase(APITestCase):
         self.mocked_token_response["access_token"] = None
         mock_get.return_value.json.return_value = "Field access_token is required."
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
@@ -194,12 +185,12 @@ class GoogleLoginAPITestCase(APITestCase):
         mock_get.return_value.ok = False
         mock_get.return_value.json.return_value = "Failed to obtain user info from Google."
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertEqual("Failed to obtain user info from Google.", str(response.data["message"][0]))
+        self.assertEqual(
+            "Failed to obtain user info from Google.", str(response.data["message"][0])
+        )

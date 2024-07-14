@@ -5,8 +5,9 @@ from rest_framework import status
 # Initialize the APIClient app
 client = APIClient()
 
+
 class GetRoutesTest(APITestCase):
-    """ Test module for GET request for RoutesAPIView API """
+    """Test module for GET request for RoutesAPIView API"""
 
     def get_url(self):
         url = reverse("cart_routes")

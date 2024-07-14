@@ -8,25 +8,26 @@ from unittest.mock import patch
 # Initialize the APIClient app
 client = APIClient()
 
+
 class DeleteWishlistByIdTest(APITestCase):
-    """ Test module for DELETE request for WishListByIdAPIView API """
+    """Test module for DELETE request for WishListByIdAPIView API"""
 
     def get_url(self, product_id):
-        url = reverse("wishlist_by_id", kwargs = { "id": product_id })
+        url = reverse("wishlist_by_id", kwargs={"id": product_id})
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
-        self.product1 = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.product1 = Product.objects.create(name="iphone 13", description="ok product")
         self.productVariant = ProductVariant.objects.create(
-            product = self.product1, 
-            images=['example1.jpg', 'example2.jpg'],
+            product=self.product1,
+            images=["example1.jpg", "example2.jpg"],
             price=70000,
-            stock_count = 10
+            stock_count=10,
         )
-        self.wishlist = WishList.objects.create(product_variant = self.productVariant, user = self.user)
+        self.wishlist = WishList.objects.create(product_variant=self.productVariant, user=self.user)
 
     def test_delete_with_existing_id(self):
         url = self.get_url(self.wishlist.id)
@@ -39,10 +40,12 @@ class DeleteWishlistByIdTest(APITestCase):
         url = self.get_url(1000)
         response = client.delete(url)
 
-        self.assertEqual("Unable to find wishlist product with id 1000", str(response.data["message"]))
+        self.assertEqual(
+            "Unable to find wishlist product with id 1000", str(response.data["message"])
+        )
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
-    @patch('product_service.views.cache')
+    @patch("product_service.views.cache")
     def test_delete_with_delete_cached_data(self, mock_cache):
         mock_cache.has_key.return_value = True
 

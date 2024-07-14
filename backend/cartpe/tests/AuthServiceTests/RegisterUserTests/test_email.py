@@ -2,8 +2,9 @@ from django.test import TestCase
 from unittest.mock import patch, Mock
 from auth_service.email import send_verification_email
 
+
 class SendVerificationEmailTest(TestCase):
-    """ Test module for send_verification_email method """
+    """Test module for send_verification_email method"""
 
     def setUp(self):
         self.user_email = "testuser@example.com"
@@ -13,9 +14,9 @@ class SendVerificationEmailTest(TestCase):
         user = Mock()
         user.pk = 123
 
-        with patch("auth_service.email.User.objects.filter") as mock_user_filter, \
-            patch("auth_service.email.User.objects.get") as mock_user_get, \
-            patch("auth_service.email.render_to_string") as mock_render_to_string:
+        with patch("auth_service.email.User.objects.filter") as mock_user_filter, patch(
+            "auth_service.email.User.objects.get"
+        ) as mock_user_get, patch("auth_service.email.render_to_string") as mock_render_to_string:
 
             # Mock the filter method to return True, indicating the user exists
             mock_user_filter.return_value.exists.return_value = True
@@ -37,7 +38,7 @@ class SendVerificationEmailTest(TestCase):
             mock_send.assert_called_once()
 
             # Assert the expected return value
-            expectedResponse = { "status" : 200 }
+            expectedResponse = {"status": 200}
             self.assertEqual(receivedResponse, expectedResponse)
 
     @patch("auth_service.email.EmailMultiAlternatives")
@@ -49,9 +50,9 @@ class SendVerificationEmailTest(TestCase):
         mock_send = mock_email_instance.send
         mock_send.side_effect = Exception("Email sending failed")
 
-        with patch("auth_service.email.User.objects.filter") as mock_filter, \
-            patch("auth_service.email.User.objects.get") as mock_get, \
-            patch("auth_service.email.render_to_string") as mock_render_to_string:
+        with patch("auth_service.email.User.objects.filter") as mock_filter, patch(
+            "auth_service.email.User.objects.get"
+        ) as mock_get, patch("auth_service.email.render_to_string") as mock_render_to_string:
 
             # Mock the filter method to return True, indicating the user exists
             mock_filter.return_value.exists.return_value = True
@@ -74,14 +75,14 @@ class SendVerificationEmailTest(TestCase):
                 subject="Verify your Email",
                 body="Verification Email",
                 from_email="CartPe <cartpe.site@gmail.com>",
-                to=[self.user_email]
+                to=[self.user_email],
             )
 
             # Assert that the send method of EmailMultiAlternatives was called
             mock_send.assert_called_once()
 
             # Assert the expected return value
-            expectedResponse = { "status": 400, "error": "Email sending failed" }
+            expectedResponse = {"status": 400, "error": "Email sending failed"}
             self.assertEqual(receivedResponse, expectedResponse)
 
     @patch("auth_service.email.EmailMultiAlternatives.send")
@@ -100,5 +101,5 @@ class SendVerificationEmailTest(TestCase):
             mock_send.assert_not_called()
 
             # Assert the expected return value
-            expectedResponse = { "status": 400 }
+            expectedResponse = {"status": 400}
             self.assertEqual(receivedResponse, expectedResponse)

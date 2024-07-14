@@ -8,19 +8,22 @@ from auth_service.models import User
 # Initialize the APIClient app
 client = APIClient()
 
+
 class GetAllCategoriesTest(APITestCase):
-    """ Test module for GET request for CategoryAPIView API """
+    """Test module for GET request for CategoryAPIView API"""
 
     def get_url(self):
         url = reverse("categories")
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
-        self.men = Category.objects.create(name = "Men", description = "Clothing", parent = None)
-        self.topwear = Category.objects.create(name = "Topwear", description = "Topwear for men", parent = self.men)
+        self.men = Category.objects.create(name="Men", description="Clothing", parent=None)
+        self.topwear = Category.objects.create(
+            name="Topwear", description="Topwear for men", parent=self.men
+        )
 
     def test_get_all_categories(self):
         url = self.get_url()
@@ -29,19 +32,22 @@ class GetAllCategoriesTest(APITestCase):
         self.assertIsNotNone(response.data)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
+
 class GetCategoryByIdTest(APITestCase):
-    """ Test module for GET request for CategoryByIdAPIView API """
+    """Test module for GET request for CategoryByIdAPIView API"""
 
     def get_url(self, category_id):
-        url = reverse("category_by_id", kwargs = { "id" : category_id })
+        url = reverse("category_by_id", kwargs={"id": category_id})
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
-        self.men = Category.objects.create(name = "Men", description = "Clothing", parent = None)
-        self.topwear = Category.objects.create(name = "Topwear", description = "Topwear for men", parent = self.men)
+        self.men = Category.objects.create(name="Men", description="Clothing", parent=None)
+        self.topwear = Category.objects.create(
+            name="Topwear", description="Topwear for men", parent=self.men
+        )
 
     def test_get_category_by_id_with_valid_id(self):
         url = self.get_url(self.men.id)
@@ -57,12 +63,13 @@ class GetCategoryByIdTest(APITestCase):
         self.assertEqual("Unable to find category with id 1000", response.data["message"])
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
+
 class SearchCategoriesTest(APITestCase):
-    """ Test module for GET request for CategorySearchAPIView API """
+    """Test module for GET request for CategorySearchAPIView API"""
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
     def get_url(self, searchKey=None):
         url = reverse("category_search") + f"?q={searchKey}"
@@ -81,8 +88,8 @@ class SearchCategoriesTest(APITestCase):
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(
-            [{ "id": 1, "name": "Men", "slug": "men" }, { "id": 2, "name": "Women", "slug": "women" }],
-            response.data
+            [{"id": 1, "name": "Men", "slug": "men"}, {"id": 2, "name": "Women", "slug": "women"}],
+            response.data,
         )
 
     @patch("product_service.views.SearchQuerySet")
@@ -98,7 +105,8 @@ class SearchCategoriesTest(APITestCase):
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(
-            [{"id": 1, "name": "Men", "slug": "men"}, {"id": 2, "name": "Women", "slug": "women"}], response.data
+            [{"id": 1, "name": "Men", "slug": "men"}, {"id": 2, "name": "Women", "slug": "women"}],
+            response.data,
         )
 
     @patch("product_service.views.SearchQuerySet")
