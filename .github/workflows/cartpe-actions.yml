@@ -47,8 +47,33 @@ env:
     BASE_FRONTEND_URL: ${{ vars.BASE_FRONTEND_URL }}
 
 jobs:
-    Unit-Test-And-Coverage:
+    format:
         runs-on:  ubuntu-latest
+        defaults:
+            run:
+                working-directory: 'backend/cartpe'
+        strategy:
+            max-parallel: 4
+            matrix:
+                python-version: ["3.11"]
+        steps:
+        -   uses: actions/checkout@v4
+        -   name: Set up Python ${{ matrix.python-version }}
+            uses: actions/setup-python@v5
+            with:
+                python-version: ${{ matrix.python-version }}
+
+        -   name: Install Dependencies
+            run: |
+                python3 -m pip install --upgrade pip
+                pip3 install -r requirements.txt
+
+        -   name: Check formatting
+            run: black . --check
+
+    unit-test-and-coverage:
+        runs-on:  ubuntu-latest
+        needs: format
         defaults:
             run:
                 working-directory: 'backend/cartpe'
