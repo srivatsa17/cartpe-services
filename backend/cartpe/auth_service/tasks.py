@@ -5,6 +5,7 @@ from auth_service.email import send_verification_email, send_reset_password_emai
 
 logger = get_task_logger(__name__)
 
+
 @shared_task
 def send_verification_email_task(user_email):
     logger.info(f"Received email - '{user_email}' from RegisterUserAPIView")
@@ -12,12 +13,13 @@ def send_verification_email_task(user_email):
 
     response = send_verification_email(user_email=user_email)
 
-    if response['status'] == 400:
+    if response["status"] == 400:
         logger.error("Email was not sent because of errors")
         logger.error(response)
         return "Verification email was not sent"
 
     return f"Successfully sent verification email to {user_email}"
+
 
 @shared_task
 def send_reset_password_email_task(user_email):
@@ -26,7 +28,7 @@ def send_reset_password_email_task(user_email):
 
     response = send_reset_password_email(user_email=user_email)
 
-    if response['status'] == 400:
+    if response["status"] == 400:
         logger.error("Email was not sent because of errors.")
         logger.error(response)
         return "Reset password email was not sent."

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+
 class CartSerializer(serializers.Serializer):
     product = serializers.DictField()
     quantity = serializers.IntegerField(min_value=1, max_value=10)
@@ -14,11 +15,12 @@ class CartSerializer(serializers.Serializer):
 
         return attrs
 
+
 class CartByIdSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(min_value=1, max_value=10, required=False)
 
     class Meta:
-        fields = ['quantity']
+        fields = ["quantity"]
 
     def validate(self, attrs):
         cart = self.context.get("cart")

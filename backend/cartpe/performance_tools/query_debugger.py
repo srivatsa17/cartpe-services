@@ -2,6 +2,7 @@ from django.db import connection
 import time
 import functools
 
+
 def query_debugger(func):
 
     @functools.wraps(func)

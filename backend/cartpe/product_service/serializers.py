@@ -2,15 +2,23 @@ from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 from rest_framework.validators import UniqueTogetherValidator
 from product_service.models import (
-    ProductVariantPropertyValue, ProductVariantProperty, ProductVariant, Product, Category, Brand, WishList,
-    ProductReview
+    ProductVariantPropertyValue,
+    ProductVariantProperty,
+    ProductVariant,
+    Product,
+    Category,
+    Brand,
+    WishList,
+    ProductReview,
 )
 from django.db.models import Avg, Count
+
 
 class ProductReviewSerializer(serializers.ModelSerializer):
     """
     Serializer for the `ProductReview` model's fields.
     """
+
     user = serializers.SerializerMethodField(read_only=True)
     user_full_name = serializers.SerializerMethodField(read_only=True)
     headline = serializers.CharField(min_length=1, max_length=255)
@@ -28,14 +36,22 @@ class ProductReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductReview
         fields = [
-            "id", "user", "user_full_name", "headline", "rating", "comment",
-            "created_at", "updated_at"
+            "id",
+            "user",
+            "user_full_name",
+            "headline",
+            "rating",
+            "comment",
+            "created_at",
+            "updated_at",
         ]
+
 
 class ProductRatingSerializer(serializers.ModelSerializer):
     """
     Serializer to get the product rating metrics.
     """
+
     rating_average = serializers.SerializerMethodField(read_only=True)
     rating_count = serializers.SerializerMethodField(read_only=True)
     rating_distribution = serializers.SerializerMethodField(read_only=True)
@@ -48,23 +64,25 @@ class ProductRatingSerializer(serializers.ModelSerializer):
 
     def get_rating_distribution(self, obj):
         rating_distribution = (
-            obj.product_reviews.values('rating').annotate(count=Count('rating')).order_by('rating')
+            obj.product_reviews.values("rating").annotate(count=Count("rating")).order_by("rating")
         )
 
         # Create a dictionary to hold the counts for each rating value from 1 to 5
         rating_dict = {i: 0 for i in range(1, 6)}
         for rating in rating_distribution:
-            rating_dict[rating['rating']] = rating['count']
+            rating_dict[rating["rating"]] = rating["count"]
         return rating_dict
 
     class Meta:
         model = Product
         fields = ["rating_average", "rating_count", "rating_distribution"]
 
+
 class ProductVariantPropertyValueSerializer(serializers.ModelSerializer):
     """
     Serializer for the `ProductVariantPropertyValue` model's fields.
     """
+
     name = serializers.CharField(source="property.name", min_length=1, max_length=255)
     value = serializers.CharField(min_length=1, max_length=255)
 
@@ -72,10 +90,12 @@ class ProductVariantPropertyValueSerializer(serializers.ModelSerializer):
         model = ProductVariantPropertyValue
         fields = ["id", "property_id", "name", "value"]
 
+
 class ProductVariantSerializer(serializers.ModelSerializer):
     """
     Serializer for the `ProductVariant` model's fields.
     """
+
     name = serializers.CharField(min_length=1, max_length=255, read_only=True)
     sku = serializers.UUIDField(format="hex_verbose", read_only=True)
     images = serializers.ListField(child=serializers.URLField(max_length=255))
@@ -83,7 +103,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     discount = serializers.IntegerField(min_value=0, max_value=100)
     stock_count = serializers.IntegerField(min_value=0)
     properties = ProductVariantPropertyValueSerializer(many=True)
-    available_properties = serializers.SerializerMethodField(read_only = True)
+    available_properties = serializers.SerializerMethodField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
@@ -93,14 +113,28 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariant
         fields = [
-            "id", "product_id", "name", "sku", "images", "price", "discount", "discounted_price", "selling_price",
-            "stock_count", "properties", "available_properties", "created_at", "updated_at",
+            "id",
+            "product_id",
+            "name",
+            "sku",
+            "images",
+            "price",
+            "discount",
+            "discounted_price",
+            "selling_price",
+            "stock_count",
+            "properties",
+            "available_properties",
+            "created_at",
+            "updated_at",
         ]
+
 
 class ProductSerializer(serializers.ModelSerializer):
     """
     Serializer for the `Product` model's fields.
     """
+
     name = serializers.CharField(min_length=1, max_length=255)
     slug = serializers.SlugField(min_length=1, max_length=255, read_only=True)
     description = serializers.CharField(min_length=1, max_length=255)
@@ -122,17 +156,31 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            "id", "name", "slug", "description", "brand", "category", "category_slug",
-            "product_variants", "rating_average", "rating_count", "created_at", "updated_at",
+            "id",
+            "name",
+            "slug",
+            "description",
+            "brand",
+            "category",
+            "category_slug",
+            "product_variants",
+            "rating_average",
+            "rating_count",
+            "created_at",
+            "updated_at",
         ]
 
     def validate(self, attrs):
         productName = attrs.get("name", "")
 
         if Product.objects.filter(name__iexact=productName).exists():
-            raise serializers.ValidationError({
-                "message": "Product '" + productName + "' already exists and cannot be created again."
-            })
+            raise serializers.ValidationError(
+                {
+                    "message": "Product '"
+                    + productName
+                    + "' already exists and cannot be created again."
+                }
+            )
 
         return super().validate(attrs)
 
@@ -167,21 +215,30 @@ class ProductSerializer(serializers.ModelSerializer):
                 property_name = property_data["property"]["name"]
                 property_value = property_data["value"]
 
-                property_instance, _ = ProductVariantProperty.objects.get_or_create(name__iexact=property_name)
-                property_value_instance, _ = (
-                    ProductVariantPropertyValue.objects.get_or_create(property=property_instance, value=property_value)
+                property_instance, _ = ProductVariantProperty.objects.get_or_create(
+                    name__iexact=property_name
+                )
+                property_value_instance, _ = ProductVariantPropertyValue.objects.get_or_create(
+                    property=property_instance, value=property_value
                 )
 
                 product_variant_instance.properties.add(property_value_instance)
 
         return product
 
+
 class CategorySerializer(serializers.ModelSerializer):
-    name = serializers.CharField(min_length=1, max_length=255, allow_blank=False, trim_whitespace=True)
+    name = serializers.CharField(
+        min_length=1, max_length=255, allow_blank=False, trim_whitespace=True
+    )
     slug = serializers.SlugField(min_length=1, max_length=255, read_only=True)
-    description = serializers.CharField(min_length=1, max_length=255, allow_blank=False, trim_whitespace=True)
+    description = serializers.CharField(
+        min_length=1, max_length=255, allow_blank=False, trim_whitespace=True
+    )
     level = serializers.IntegerField(read_only=True)
-    parent = serializers.SlugRelatedField(slug_field="name", allow_null=True, queryset=Category.objects.all())
+    parent = serializers.SlugRelatedField(
+        slug_field="name", allow_null=True, queryset=Category.objects.all()
+    )
     children = RecursiveField(many=True, read_only=True)
     products = ProductSerializer(many=True, read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
@@ -190,7 +247,16 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = [
-            "id", "name", "slug", "description", "level", "parent", "children", "products", "created_at", "updated_at",
+            "id",
+            "name",
+            "slug",
+            "description",
+            "level",
+            "parent",
+            "children",
+            "products",
+            "created_at",
+            "updated_at",
         ]
         validators = [
             UniqueTogetherValidator(queryset=Category.objects.all(), fields=["name", "parent"])
@@ -205,9 +271,9 @@ class CategorySerializer(serializers.ModelSerializer):
         # Handling special condition where parent can be Null.
         # This is not handled by UniqueTogetherValidator as there is no check for type 'None' in db by the validator.
         if parentName is None and isCategoryFound:
-            raise serializers.ValidationError({
-                "message": "The fields name, parent must make a unique set."
-            })
+            raise serializers.ValidationError(
+                {"message": "The fields name, parent must make a unique set."}
+            )
 
         return super().validate(attrs)
 
@@ -215,10 +281,15 @@ class CategorySerializer(serializers.ModelSerializer):
         category = Category.objects.create(**validated_data)
         return category
 
+
 class BrandSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(min_length=1, max_length=255, allow_blank=False, trim_whitespace=True)
+    name = serializers.CharField(
+        min_length=1, max_length=255, allow_blank=False, trim_whitespace=True
+    )
     slug = serializers.SlugField(min_length=1, max_length=255, read_only=True)
-    description = serializers.CharField(min_length=1, max_length=255, allow_blank=False, trim_whitespace=True)
+    description = serializers.CharField(
+        min_length=1, max_length=255, allow_blank=False, trim_whitespace=True
+    )
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
@@ -231,9 +302,13 @@ class BrandSerializer(serializers.ModelSerializer):
         isBrandFound = Brand.objects.filter(name__iexact=brandName).exists()
 
         if isBrandFound:
-            raise serializers.ValidationError({
-                "message": "Brand '" + brandName + "' already exists and cannot be created or updated again."
-            })
+            raise serializers.ValidationError(
+                {
+                    "message": "Brand '"
+                    + brandName
+                    + "' already exists and cannot be created or updated again."
+                }
+            )
 
         return super().validate(attrs)
 
@@ -241,18 +316,22 @@ class BrandSerializer(serializers.ModelSerializer):
         brand = Brand.objects.create(**validated_data)
         return brand
 
+
 class WishlistProductSerializer(serializers.ModelSerializer):
-    brand = serializers.CharField(source="brand.name", read_only = True)
-    category = serializers.CharField(source="category.name", read_only = True)
-    category_slug = serializers.CharField(source="category.slug", read_only = True)
+    brand = serializers.CharField(source="brand.name", read_only=True)
+    category = serializers.CharField(source="category.name", read_only=True)
+    category_slug = serializers.CharField(source="category.slug", read_only=True)
 
     class Meta:
         model = Product
         fields = ["id", "name", "slug", "description", "brand", "category", "category_slug"]
 
+
 class WishListSerializer(serializers.ModelSerializer):
     product = WishlistProductSerializer(source="product_variant.product", read_only=True)
-    product_variant = serializers.SlugRelatedField(slug_field="id", queryset=ProductVariant.objects.all())
+    product_variant = serializers.SlugRelatedField(
+        slug_field="id", queryset=ProductVariant.objects.all()
+    )
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
@@ -272,5 +351,7 @@ class WishListSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["product_variant"] = ProductVariantSerializer(instance=instance.product_variant).data
+        representation["product_variant"] = ProductVariantSerializer(
+            instance=instance.product_variant
+        ).data
         return representation
