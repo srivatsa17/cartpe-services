@@ -9,17 +9,12 @@ from auth_service.utils import google_api_client
 from cartpe import settings
 import re
 
-MIN_PASSWORD_LENGTH = 8
-MAX_PASSWORD_LENGTH = 255
-
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(min_length=2, max_length=255)
-    last_name = serializers.CharField(min_length=2, max_length=255)
+    last_name = serializers.CharField(min_length=1, max_length=255)
     email = serializers.EmailField(min_length=3, max_length=255, allow_blank=False)
-    password = serializers.CharField(
-        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
-    )
+    password = serializers.CharField(min_length=8, max_length=255, write_only=True)
 
     class Meta:
         model = User
@@ -130,9 +125,7 @@ class EmailVerificationSerializer(serializers.Serializer):
 
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(min_length=3, max_length=255, allow_blank=False)
-    password = serializers.CharField(
-        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
-    )
+    password = serializers.CharField(min_length=8, max_length=255, write_only=True)
 
     class Meta:
         model = User
@@ -208,15 +201,9 @@ class LogoutSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
-    old_password = serializers.CharField(
-        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
-    )
-    new_password = serializers.CharField(
-        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
-    )
-    confirm_new_password = serializers.CharField(
-        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
-    )
+    old_password = serializers.CharField(min_length=8, max_length=255, write_only=True)
+    new_password = serializers.CharField(min_length=8, max_length=255, write_only=True)
+    confirm_new_password = serializers.CharField(min_length=8, max_length=255, write_only=True)
 
     class Meta:
         model = User
@@ -302,12 +289,8 @@ class ResetPasswordRequestSerializer(serializers.ModelSerializer):
 
 
 class ResetPasswordConfirmSerializer(serializers.Serializer):
-    new_password = serializers.CharField(
-        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
-    )
-    confirm_new_password = serializers.CharField(
-        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
-    )
+    new_password = serializers.CharField(min_length=8, max_length=255, write_only=True)
+    confirm_new_password = serializers.CharField(min_length=8, max_length=255, write_only=True)
     uid = serializers.CharField(min_length=1, max_length=20)
     token = serializers.CharField(min_length=10, max_length=100)
 
