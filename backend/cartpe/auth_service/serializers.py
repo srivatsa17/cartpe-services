@@ -12,34 +12,52 @@ import re
 MIN_PASSWORD_LENGTH = 8
 MAX_PASSWORD_LENGTH = 255
 
+
 class RegisterUserSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(min_length = 2, max_length = 255)
-    last_name = serializers.CharField(min_length = 2, max_length = 255)
-    email = serializers.EmailField(min_length = 3, max_length = 255, allow_blank = False)
-    password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
+    first_name = serializers.CharField(min_length=2, max_length=255)
+    last_name = serializers.CharField(min_length=2, max_length=255)
+    email = serializers.EmailField(min_length=3, max_length=255, allow_blank=False)
+    password = serializers.CharField(
+        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
+    )
 
     class Meta:
         model = User
         fields = [
-            "id", "email", "first_name", "last_name", "password", "is_verified", "is_active", "is_staff",
-            "created_at", "updated_at"
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "password",
+            "is_verified",
+            "is_active",
+            "is_staff",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            "first_name", "last_name", "is_verified", "is_active", "is_staff", "created_at", "updated_at"
+            "first_name",
+            "last_name",
+            "is_verified",
+            "is_active",
+            "is_staff",
+            "created_at",
+            "updated_at",
         ]
 
     def validate(self, attrs):
         email = attrs.get("email", "")
 
-        if User.objects.filter(email = email).exists():
-            raise serializers.ValidationError({
-                "message": "A user with same email-id already exists"
-            })
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                {"message": "A user with same email-id already exists"}
+            )
         return super().validate(attrs)
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
 
 class GoogleRegisterSerializer(serializers.Serializer):
     code = serializers.CharField()
@@ -52,34 +70,35 @@ class GoogleRegisterSerializer(serializers.Serializer):
         code = attrs.get("code", "")
 
         redirect_uri = f"{settings.BASE_FRONTEND_URL}/user/register/google"
-        access_token = google_api_client.get_google_access_token(code=code, redirect_uri=redirect_uri)
+        access_token = google_api_client.get_google_access_token(
+            code=code, redirect_uri=redirect_uri
+        )
         user_data = google_api_client.get_google_user_info(access_token=access_token)
 
-        if User.objects.filter(email = user_data["email"]).exists():
-            raise ValidationError({
-                "message": "A user with same email-id already exists"
-            })
+        if User.objects.filter(email=user_data["email"]).exists():
+            raise ValidationError({"message": "A user with same email-id already exists"})
 
         user = User.objects.create(
-            email = user_data.get("email", ""),
-            first_name = user_data.get("given_name", ""),
-            last_name = user_data.get("family_name", ""),
-            is_verified = user_data.get("email_verified", False),
-            is_active = True
+            email=user_data.get("email", ""),
+            first_name=user_data.get("given_name", ""),
+            last_name=user_data.get("family_name", ""),
+            is_verified=user_data.get("email_verified", False),
+            is_active=True,
         )
 
         data = {
-            "email" : user.email,
+            "email": user.email,
             "first_name": user.first_name,
             "last_name": user.last_name or None,
-            "tokens": user.tokens
+            "tokens": user.tokens,
         }
 
         return data
 
+
 class EmailVerificationSerializer(serializers.Serializer):
-    uid = serializers.CharField(min_length = 1, max_length = 20)
-    token = serializers.CharField(min_length = 10, max_length = 100)
+    uid = serializers.CharField(min_length=1, max_length=20)
+    token = serializers.CharField(min_length=10, max_length=100)
 
     class Meta:
         fields = ["uid", "token"]
@@ -97,10 +116,10 @@ class EmailVerificationSerializer(serializers.Serializer):
         if not pk.isnumeric():
             raise ValidationError("Invalid type received for user id")
 
-        if not User.objects.filter(pk = pk).exists():
+        if not User.objects.filter(pk=pk).exists():
             raise ValidationError("Unable to find user")
 
-        user = User.objects.get(pk = pk)
+        user = User.objects.get(pk=pk)
         isTokenValid = account_activation_token.check_token(user, token)
 
         if not isTokenValid:
@@ -108,9 +127,12 @@ class EmailVerificationSerializer(serializers.Serializer):
 
         return user
 
+
 class LoginSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(min_length = 3, max_length = 255, allow_blank = False)
-    password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
+    email = serializers.EmailField(min_length=3, max_length=255, allow_blank=False)
+    password = serializers.CharField(
+        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
+    )
 
     class Meta:
         model = User
@@ -123,7 +145,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
         # authenticate() checks for user.is_active field as well.
         # If user.is_active is False, authenticate method returns None, denying the login for inactive users.
-        user = authenticate(email = email, password = password)
+        user = authenticate(email=email, password=password)
 
         if not user:
             raise AuthenticationFailed(
@@ -134,6 +156,7 @@ class LoginSerializer(serializers.ModelSerializer):
             raise AuthenticationFailed("Please ensure that your email is verified.")
 
         return user
+
 
 class GoogleLoginSerializer(serializers.Serializer):
     code = serializers.CharField()
@@ -146,7 +169,9 @@ class GoogleLoginSerializer(serializers.Serializer):
         code = attrs.get("code", "")
 
         redirect_uri = f"{settings.BASE_FRONTEND_URL}/user/login/google"
-        access_token = google_api_client.get_google_access_token(code=code, redirect_uri=redirect_uri)
+        access_token = google_api_client.get_google_access_token(
+            code=code, redirect_uri=redirect_uri
+        )
         user_data = google_api_client.get_google_user_info(access_token=access_token)
         user = None
 
@@ -158,21 +183,22 @@ class GoogleLoginSerializer(serializers.Serializer):
 
         except User.DoesNotExist:
             user = User.objects.create(
-                email = user_data.get("email", ""),
-                first_name = user_data.get("given_name", ""),
-                last_name = user_data.get("family_name", ""),
-                is_verified = user_data.get("email_verified", False),
-                is_active = True
+                email=user_data.get("email", ""),
+                first_name=user_data.get("given_name", ""),
+                last_name=user_data.get("family_name", ""),
+                is_verified=user_data.get("email_verified", False),
+                is_active=True,
             )
 
         data = {
-            "email" : user.email,
+            "email": user.email,
             "first_name": user.first_name,
             "last_name": user.last_name or None,
-            "tokens": user.tokens
+            "tokens": user.tokens,
         }
 
         return data
+
 
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
@@ -180,10 +206,17 @@ class LogoutSerializer(serializers.Serializer):
     class Meta:
         fields = ["refresh_token"]
 
+
 class ChangePasswordSerializer(serializers.ModelSerializer):
-    old_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
-    new_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
-    confirm_new_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
+    old_password = serializers.CharField(
+        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
+    )
+    new_password = serializers.CharField(
+        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
+    )
+    confirm_new_password = serializers.CharField(
+        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
+    )
 
     class Meta:
         model = User
@@ -191,7 +224,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
     def containsAlphaAndDigits(self, input):
         # Regular expression to match at least one alphabet and one digit
-        pattern = r'(?=.*[a-zA-Z])(?=.*\d)'
+        pattern = r"(?=.*[a-zA-Z])(?=.*\d)"
         return bool(re.search(pattern, input))
 
     def validate(self, attrs):
@@ -215,21 +248,30 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
         return attrs
 
+
 class DeactivateAccountSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
 
     class Meta:
         fields = ["refresh_token"]
 
+
 class EditProfileSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
-    updated_at = serializers.DateTimeField(read_only = True, format="%d %b %Y, %H:%M")
+    created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
+    updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = User
         fields = [
-            "id", "email", "first_name", "last_name", "gender", "phone", "date_of_birth",
-            "created_at", "updated_at"
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "gender",
+            "phone",
+            "date_of_birth",
+            "created_at",
+            "updated_at",
         ]
 
     def validate(self, attrs):
@@ -237,42 +279,44 @@ class EditProfileSerializer(serializers.ModelSerializer):
         email = attrs.get("email", "")
 
         if len(email):
-            raise ValidationError({
-                "message": "Email cannot be updated."
-            })
+            raise ValidationError({"message": "Email cannot be updated."})
 
         return attrs
-    
+
+
 class ResetPasswordRequestSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(min_length = 3, max_length = 255)
+    email = serializers.EmailField(min_length=3, max_length=255)
 
     class Meta:
         model = User
-        fields = [ "email" ]
+        fields = ["email"]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
         email = attrs.get("email", "")
 
-        if not User.objects.filter(email = email).exists():
-            raise ValidationError({
-                "message": "Email does not exist."
-            })
-        
+        if not User.objects.filter(email=email).exists():
+            raise ValidationError({"message": "Email does not exist."})
+
         return attrs
-    
+
+
 class ResetPasswordConfirmSerializer(serializers.Serializer):
-    new_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
-    confirm_new_password = serializers.CharField(min_length = MIN_PASSWORD_LENGTH, max_length = MAX_PASSWORD_LENGTH, write_only = True)
-    uid = serializers.CharField(min_length = 1, max_length = 20)
-    token = serializers.CharField(min_length = 10, max_length = 100)
+    new_password = serializers.CharField(
+        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
+    )
+    confirm_new_password = serializers.CharField(
+        min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH, write_only=True
+    )
+    uid = serializers.CharField(min_length=1, max_length=20)
+    token = serializers.CharField(min_length=10, max_length=100)
 
     class Meta:
-        fields = [ "new_password", "confirm_new_password", "uid", "token" ]
+        fields = ["new_password", "confirm_new_password", "uid", "token"]
 
     def containsAlphaAndDigits(self, input):
         # Regular expression to match at least one alphabet and one digit
-        pattern = r'(?=.*[a-zA-Z])(?=.*\d)'
+        pattern = r"(?=.*[a-zA-Z])(?=.*\d)"
         return bool(re.search(pattern, input))
 
     def validate(self, attrs):
@@ -287,7 +331,7 @@ class ResetPasswordConfirmSerializer(serializers.Serializer):
 
         if new_password != confirm_new_password:
             raise ValidationError("New passwords not matching.")
-        
+
         try:
             pk = urlsafe_base64_decode(uid).decode()
         except Exception:
@@ -296,10 +340,10 @@ class ResetPasswordConfirmSerializer(serializers.Serializer):
         if not pk.isnumeric():
             raise ValidationError("Invalid type received for user id")
 
-        if not User.objects.filter(pk = pk).exists():
+        if not User.objects.filter(pk=pk).exists():
             raise ValidationError("Unable to find user")
 
-        user = User.objects.get(pk = pk)
+        user = User.objects.get(pk=pk)
         is_token_valid = default_token_generator.check_token(user, token)
 
         if not is_token_valid:

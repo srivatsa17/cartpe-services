@@ -11,8 +11,9 @@ CONTENT_TYPE = "application/json"
 # Initialize the APIClient app
 client = APIClient()
 
+
 class GoogleRegisterAPITestCase(APITestCase):
-    """ Test module for POST request for GoogleRegisterAPIView API """
+    """Test module for POST request for GoogleRegisterAPIView API"""
 
     def get_url(self):
         url = reverse("google-register")
@@ -24,7 +25,7 @@ class GoogleRegisterAPITestCase(APITestCase):
             "expires_in": 3599,
             "token_type": "Bearer",
             "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
-            "refresh_token": "mocked_refresh_token"
+            "refresh_token": "mocked_refresh_token",
         }
         self.mocked_user_info = {
             "id": "1234567890",
@@ -34,7 +35,7 @@ class GoogleRegisterAPITestCase(APITestCase):
             "given_name": "Test",
             "family_name": "User",
             "picture": "http://example.com/picture.jpg",
-            "locale": "en"
+            "locale": "en",
         }
 
     @mock.patch("requests.post")
@@ -46,9 +47,7 @@ class GoogleRegisterAPITestCase(APITestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = self.mocked_user_info
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
@@ -67,20 +66,23 @@ class GoogleRegisterAPITestCase(APITestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = self.mocked_user_info
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         # Make sure another user with same email exist
         User.objects.create_user(
-            email = "testuser@example.com", password = "abcdef", first_name = "testuser", last_name = "testuser"
+            email="testuser@example.com",
+            password="abcdef",
+            first_name="testuser",
+            last_name="testuser",
         )
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertEqual("A user with same email-id already exists", str(response.data["message"][0]))
+        self.assertEqual(
+            "A user with same email-id already exists", str(response.data["message"][0])
+        )
 
     @mock.patch("requests.post")
     def test_failure_with_no_code(self, mock_post):
@@ -99,11 +101,9 @@ class GoogleRegisterAPITestCase(APITestCase):
     def test_with_not_ok_response_from_access_token_url(self, mock_post):
         mock_post.return_value.status_code = 400
         mock_post.return_value.ok = False
-        mock_post.return_value.json.return_value = { "error": "invalid_grant" }
+        mock_post.return_value.json.return_value = {"error": "invalid_grant"}
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
@@ -119,15 +119,15 @@ class GoogleRegisterAPITestCase(APITestCase):
         del self.mocked_token_response["access_token"]
         mock_post.return_value.json.return_value = self.mocked_token_response
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertEqual("Unable to fetch access token from Google response.", str(response.data["message"][0]))
+        self.assertEqual(
+            "Unable to fetch access token from Google response.", str(response.data["message"][0])
+        )
 
     @mock.patch("requests.post")
     @mock.patch("requests.get")
@@ -140,9 +140,7 @@ class GoogleRegisterAPITestCase(APITestCase):
         self.mocked_token_response["access_token"] = None
         mock_get.return_value.json.return_value = "Field access_token is required."
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
@@ -160,12 +158,12 @@ class GoogleRegisterAPITestCase(APITestCase):
         mock_get.return_value.ok = False
         mock_get.return_value.json.return_value = "Failed to obtain user info from Google."
 
-        data = json.dumps({
-            "code": "mocked_authorization_code"
-        })
+        data = json.dumps({"code": "mocked_authorization_code"})
 
         url = self.get_url()
         response = client.post(url, data=data, content_type=CONTENT_TYPE)
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertEqual("Failed to obtain user info from Google.", str(response.data["message"][0]))
+        self.assertEqual(
+            "Failed to obtain user info from Google.", str(response.data["message"][0])
+        )

@@ -7,18 +7,19 @@ from shipping_service.models import Country
 # Initialize the APIClient app
 client = APIClient()
 
+
 class GetAllCountriesTest(APITestCase):
-    """ Test module for GET request for CountryAPIView API """
+    """Test module for GET request for CountryAPIView API"""
 
     def get_url(self):
         url = reverse("country")
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
-        Country.objects.create(name = "India")
+        Country.objects.create(name="India")
 
     def test_get_with_valid_data(self):
         url = self.get_url()

@@ -7,20 +7,23 @@ from auth_service.models import User
 # Initialize the APIClient app
 client = APIClient()
 
+
 class DeleteProductReviewByIdTest(APITestCase):
-    """ Test module for DELETE request for ProductReviewByIdAPIView API """
+    """Test module for DELETE request for ProductReviewByIdAPIView API"""
 
     def get_url(self, product_id, product_review_id):
-        url = reverse("product_review_by_id", kwargs = { "product_id": product_id, "id": product_review_id })
+        url = reverse(
+            "product_review_by_id", kwargs={"product_id": product_id, "id": product_review_id}
+        )
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
-        self.product = Product.objects.create(name = "iphone 13", description = "ok product")
+        self.product = Product.objects.create(name="iphone 13", description="ok product")
         self.product_review = ProductReview.objects.create(
-            product = self.product, user = self.user, headline = "Amazing product", rating = 5
+            product=self.product, user=self.user, headline="Amazing product", rating=5
         )
 
     def test_delete_with_existing_id(self):
@@ -35,6 +38,7 @@ class DeleteProductReviewByIdTest(APITestCase):
         response = client.delete(url)
 
         self.assertEqual(
-            f"Unable to find review with id 1000 for product {self.product.id}", str(response.data["message"])
+            f"Unable to find review with id 1000 for product {self.product.id}",
+            str(response.data["message"]),
         )
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)

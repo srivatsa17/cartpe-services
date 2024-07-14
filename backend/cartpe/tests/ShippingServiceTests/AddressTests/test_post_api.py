@@ -10,31 +10,32 @@ CONTENT_TYPE = "application/json"
 # Initialize the APIClient app
 client = APIClient()
 
+
 class PostAddressTest(APITestCase):
-    """ Test module for POST request for AddressAPIView API """
+    """Test module for POST request for AddressAPIView API"""
 
     def get_url(self):
         url = reverse("address")
         return url
 
     def setUp(self):
-        self.user = User.objects.create_user(email = "testuser@example.com", password = "abcdef")
-        client.force_authenticate(user = self.user)
+        self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
+        client.force_authenticate(user=self.user)
 
-        self.country = Country.objects.create(name = "India")
+        self.country = Country.objects.create(name="India")
         self.valid_data = {
-            "building" : "abc",
-            "area" : "def",
-            "city" : "pqr",
-            "state" : "xyz",
-            "country" : "India",
-            "pin_code" : "123244"
+            "building": "abc",
+            "area": "def",
+            "city": "pqr",
+            "state": "xyz",
+            "country": "India",
+            "pin_code": "123244",
         }
 
     def test_post_with_valid_data(self):
         url = self.get_url()
         data = json.dumps(self.valid_data)
-        response = client.post(url, data = data, content_type = CONTENT_TYPE)
+        response = client.post(url, data=data, content_type=CONTENT_TYPE)
 
         self.assertIsNotNone(response.data)
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
@@ -42,7 +43,7 @@ class PostAddressTest(APITestCase):
     def test_post_with_missing_fields(self):
         url = self.get_url()
         data = json.dumps({})
-        response = client.post(url, data = data, content_type = CONTENT_TYPE)
+        response = client.post(url, data=data, content_type=CONTENT_TYPE)
 
         self.assertEqual("This field is required.", response.data["building"][0])
         self.assertEqual("This field is required.", response.data["area"][0])

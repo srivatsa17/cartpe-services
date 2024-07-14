@@ -4,8 +4,9 @@ from auth_service.models import User
 from auth_service.email import send_reset_password_email
 from cartpe import settings
 
+
 class SendResetPasswordEmailTest(TestCase):
-    """ Test module for send_reset_password_email method """
+    """Test module for send_reset_password_email method"""
 
     def setUp(self):
         self.user_email = "testuser@example.com"
@@ -19,8 +20,10 @@ class SendResetPasswordEmailTest(TestCase):
     @patch("auth_service.email.EmailMultiAlternatives")
     def test_email_sent_successfully(self, mock_email_class, mock_render_to_string):
         User.objects.create_user(
-            email = "testuser@example.com", password = "test@123",
-            first_name = "test_user", last_name = "test_user"
+            email="testuser@example.com",
+            password="test@123",
+            first_name="test_user",
+            last_name="test_user",
         )
 
         # Mock render_to_string
@@ -38,17 +41,21 @@ class SendResetPasswordEmailTest(TestCase):
             subject="Reset your password",
             body="Reset your password",
             from_email="CartPe <%s>" % settings.EMAIL_HOST_USER,
-            to=[self.user_email]
+            to=[self.user_email],
         )
-        mock_email_instance.attach_alternative.assert_called_once_with("<html>Reset your password</html>", "text/html")
+        mock_email_instance.attach_alternative.assert_called_once_with(
+            "<html>Reset your password</html>", "text/html"
+        )
         mock_email_instance.send.assert_called_once()
 
     @patch("auth_service.email.render_to_string")
     @patch("auth_service.email.EmailMultiAlternatives")
     def test_exception_during_email_sending(self, mock_email_class, mock_render_to_string):
         User.objects.create_user(
-            email = "testuser@example.com", password = "test@123",
-            first_name = "test_user", last_name = "test_user"
+            email="testuser@example.com",
+            password="test@123",
+            first_name="test_user",
+            last_name="test_user",
         )
 
         # Mock render_to_string
@@ -68,7 +75,9 @@ class SendResetPasswordEmailTest(TestCase):
             subject="Reset your password",
             body="Reset your password",
             from_email="CartPe <%s>" % settings.EMAIL_HOST_USER,
-            to=[self.user_email]
+            to=[self.user_email],
         )
-        mock_email_instance.attach_alternative.assert_called_once_with("<html>Reset your password</html>", "text/html")
+        mock_email_instance.attach_alternative.assert_called_once_with(
+            "<html>Reset your password</html>", "text/html"
+        )
         mock_email_instance.send.assert_called_once()

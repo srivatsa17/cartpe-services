@@ -17,14 +17,13 @@ class OrderStatus:
         (RETURNED, RETURNED),
     ]
 
+
 class OrderMethod:
     UPI = "UPI"
     COD = "Cash On Delivery"
 
-    ORDER_METHOD_CHOICES = [
-        (UPI, UPI),
-        (COD, COD)
-    ]
+    ORDER_METHOD_CHOICES = [(UPI, UPI), (COD, COD)]
+
 
 class OrderRefundStatus:
     NA = "NA"
