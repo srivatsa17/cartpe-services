@@ -16,7 +16,7 @@ construct==2.10.70
 coverage==7.6.0
 dill==0.3.8
 distlib==0.3.8
-Django==5.0.7
+Django==5.0.8
 django-cors-headers==4.4.0
 django-filter==24.2
 django-haystack==3.3.0
