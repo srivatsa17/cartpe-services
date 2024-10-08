@@ -8,6 +8,7 @@ env:
     # Django configurations
     DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
     DEBUG: ${{ vars.DEBUG }}
+    ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
 
     # Database configurations
     DATABASE_ENGINE: ${{ vars.DATABASE_ENGINE }}
