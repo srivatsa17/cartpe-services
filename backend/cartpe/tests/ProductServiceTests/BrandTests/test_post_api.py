@@ -22,7 +22,11 @@ class PostBrandTest(APITestCase):
         self.user = User.objects.create_user(email="testuser@example.com", password="abcdef")
         client.force_authenticate(user=self.user)
 
-        self.valid_data = {"name": "Google", "description": "Amazing"}
+        self.valid_data = {
+            "name": "Google",
+            "description": "Amazing",
+            "image": "https://www.google.co.in/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+        }
 
     def test_post_with_valid_data(self):
         url = self.get_url()
