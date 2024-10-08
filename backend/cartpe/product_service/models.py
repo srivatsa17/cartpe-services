@@ -29,7 +29,12 @@ class Category(MPTTModel):
 
     def save(self, *args, **kwargs):
         if self.parent:
-            self.slug = slugify("%s %s" % (self.parent.get_root(), self.name))
+            parent_name = str(self.parent.get_root())
+            # Check if the category name starts with the parent's name
+            if self.name.lower().startswith(parent_name.lower()):
+                self.slug = slugify(self.name)
+            else:
+                self.slug = slugify("%s %s" % (parent_name, self.name))
         else:
             self.slug = slugify(self.name)
         super(Category, self).save(*args, **kwargs)
