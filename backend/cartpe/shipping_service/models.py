@@ -48,6 +48,7 @@ class UserAddress(models.Model):
     alternate_phone = models.CharField(max_length=10, null=False, blank=False)
     type = models.CharField(max_length=255, null=False, blank=False, choices=ADDRESS_TYPE_CHOICES)
     is_default = models.BooleanField(null=False, blank=False, default=False)
+    is_active = models.BooleanField(null=False, blank=False, default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

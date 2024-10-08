@@ -59,7 +59,7 @@ class UserAddressAPIView(generics.GenericAPIView):
 
     def get_queryset(self):
         user = self.get_object()
-        return UserAddress.objects.filter(user=user).order_by("id")
+        return UserAddress.objects.filter(user=user, is_active=True).order_by("id")
 
     def get(self, request):
         user_addresses = self.get_queryset()
@@ -92,7 +92,7 @@ class UserAddressByIdAPIView(generics.GenericAPIView):
 
     def get_object(self, id):
         try:
-            return UserAddress.objects.get(id=id, user=self.request.user)
+            return UserAddress.objects.get(id=id, is_active=True, user=self.request.user)
         except UserAddress.DoesNotExist:
             response = {"message": "Unable to find user address with id " + str(id)}
             raise NotFound(response)
@@ -113,9 +113,10 @@ class UserAddressByIdAPIView(generics.GenericAPIView):
 
     def delete(self, request, id):
         user_address = self.get_object(id)
-        # Delete the associated address instance.
-        address = user_address.address
-        address.delete()
-        # Delete the user address instance.
-        user_address.delete()
+        """
+        Mark the user address as inactive because an order might reference the same address
+        and cause issues if tried to delete.
+        """
+        user_address.is_active = False
+        user_address.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

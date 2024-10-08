@@ -29,7 +29,12 @@ class Category(MPTTModel):
 
     def save(self, *args, **kwargs):
         if self.parent:
-            self.slug = slugify("%s %s" % (self.parent.get_root(), self.name))
+            parent_name = str(self.parent.get_root())
+            # Check if the category name starts with the parent's name
+            if self.name.lower().startswith(parent_name.lower()):
+                self.slug = slugify(self.name)
+            else:
+                self.slug = slugify("%s %s" % (parent_name, self.name))
         else:
             self.slug = slugify(self.name)
         super(Category, self).save(*args, **kwargs)
@@ -39,6 +44,7 @@ class Brand(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False, blank=False)
     slug = models.SlugField(max_length=255, null=True, blank=True)
     description = models.TextField(null=False, blank=False)
+    image = models.URLField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -120,7 +126,7 @@ class ProductVariant(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False, blank=False)
     sku = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
     images = ArrayField(models.URLField(max_length=255, null=False, blank=False))
-    price = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
+    price = models.DecimalField(max_digits=8, decimal_places=2, null=False, blank=False)
     discount = models.PositiveSmallIntegerField(default=0, null=False, blank=False)
     stock_count = models.PositiveIntegerField(default=0, null=False, blank=False)
     properties = models.ManyToManyField(

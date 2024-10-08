@@ -80,6 +80,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
     )
     type = serializers.ChoiceField(choices=[("Home", "Home"), ("Work", "Work"), ("Other", "Other")])
     is_default = serializers.BooleanField(allow_null=False)
+    is_active = serializers.BooleanField(default=True, read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
@@ -93,6 +94,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
             "alternate_phone",
             "type",
             "is_default",
+            "is_active",
             "created_at",
             "updated_at",
         ]

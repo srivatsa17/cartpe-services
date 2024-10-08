@@ -99,7 +99,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     name = serializers.CharField(min_length=1, max_length=255, read_only=True)
     sku = serializers.UUIDField(format="hex_verbose", read_only=True)
     images = serializers.ListField(child=serializers.URLField(max_length=255))
-    price = serializers.DecimalField(max_digits=7, decimal_places=2, coerce_to_string=False)
+    price = serializers.DecimalField(max_digits=8, decimal_places=2, coerce_to_string=False)
     discount = serializers.IntegerField(min_value=0, max_value=100)
     stock_count = serializers.IntegerField(min_value=0)
     properties = ProductVariantPropertyValueSerializer(many=True)
@@ -290,12 +290,13 @@ class BrandSerializer(serializers.ModelSerializer):
     description = serializers.CharField(
         min_length=1, max_length=255, allow_blank=False, trim_whitespace=True
     )
+    image = serializers.URLField(max_length=255)
     created_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
     updated_at = serializers.DateTimeField(read_only=True, format="%d %b %Y, %H:%M")
 
     class Meta:
         model = Brand
-        fields = ["id", "name", "slug", "description", "created_at", "updated_at"]
+        fields = ["id", "name", "slug", "description", "image", "created_at", "updated_at"]
 
     def validate(self, attrs):
         brandName = attrs.get("name", "")
